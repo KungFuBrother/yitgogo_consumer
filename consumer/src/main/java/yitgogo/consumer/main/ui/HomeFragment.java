@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -34,6 +35,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -87,6 +95,7 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
 
     LinearLayout timeLayout;
     TextView dayTextView, hourTextView, minuteTextView, secondsTextView;
+    ImageView bannerEggImageView;
 
     List<ModelProduct> products;
     HashMap<String, ModelListPrice> priceMap;
@@ -251,6 +260,8 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
         secondsTextView = (TextView) contentView.findViewById(R.id.tv_timer_second);
         minuteTextView = (TextView) contentView.findViewById(R.id.tv_timer_minute);
 
+        bannerEggImageView = (ImageView) contentView.findViewById(R.id.home_banner_egg);
+
         initViews();
         registerViews();
     }
@@ -259,10 +270,15 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
         handler.sendEmptyMessage(1);
         refreshScrollView.setMode(Mode.BOTH);
         productGridView.setAdapter(productAdapter);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, screenWidth / 3);
+
+        LinearLayout.LayoutParams bannerLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) ((float) screenWidth / 1920.0f * 320.0f));
+        bannerLayoutParams.setMargins(0, 0, 0, ScreenUtil.dip2px(8));
+        bannerEggImageView.setLayoutParams(bannerLayoutParams);
+
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, screenWidth / 3);
         layoutParams.setMargins(0, 0, 0, ScreenUtil.dip2px(8));
         nongfuButton.setLayoutParams(layoutParams);
+
         getFragmentManager().beginTransaction()
                 .replace(R.id.home_part_ads_layout,
                         PartAdsFragment.getAdsFragment())
@@ -321,6 +337,12 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
         scanButton.setOnClickListener(this);
         searchTextView.setOnClickListener(this);
         nongfuButton.setOnClickListener(this);
+        bannerEggImageView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                jump(jump);
+            }
+        });
     }
 
     private void refresh() {
@@ -755,4 +777,5 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
         });
         return entries.get(entries.size() - 1).getValue().getId();
     }
+
 }
