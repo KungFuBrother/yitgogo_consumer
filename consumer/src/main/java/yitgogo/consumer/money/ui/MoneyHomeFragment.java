@@ -4,7 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import yitgogo.consumer.BaseNotifyFragment;
-import yitgogo.consumer.activity.ActivityFragment;
+import yitgogo.consumer.activity.shake.ui.ActivityFragment;
 import yitgogo.consumer.bianmin.game.ui.GameFilterFragment;
 import yitgogo.consumer.bianmin.phoneCharge.ui.PhoneChargeFragment;
 import yitgogo.consumer.bianmin.qq.ui.QQChargeFragment;
@@ -15,7 +15,7 @@ import yitgogo.consumer.money.task.GetBankCards;
 import yitgogo.consumer.money.task.HavePayPasswordTask;
 import yitgogo.consumer.money.task.LoginMoneyTask;
 import yitgogo.consumer.tools.Parameters;
-import yitgogo.consumer.view.Notify;
+
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
 import android.text.TextUtils;

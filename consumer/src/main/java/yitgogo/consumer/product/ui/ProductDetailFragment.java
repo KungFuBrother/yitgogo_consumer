@@ -46,11 +46,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import yitgogo.consumer.BaseNotifyFragment;
 import yitgogo.consumer.order.ui.PlatformProductBuyFragment;
+import yitgogo.consumer.product.model.ModelFreight;
 import yitgogo.consumer.product.model.ModelProduct;
 import yitgogo.consumer.product.model.ModelSaleDetailMiaosha;
 import yitgogo.consumer.product.model.ModelSaleDetailTejia;
@@ -82,7 +82,7 @@ public class ProductDetailFragment extends BaseNotifyFragment {
 
     LinearLayout areaLayout;
     TextView areaTextView;
-    TextView freightTextView;
+    TextView freightTextView, freightLableTextView;
 
     FrameLayout countDeleteLayout;
     FrameLayout countAddLayout;
@@ -107,7 +107,7 @@ public class ProductDetailFragment extends BaseNotifyFragment {
     int buyCount = 1;
 
     boolean isSaleEnable = false;
-    HashMap<String, Double> freightMap;
+    HashMap<String, ModelFreight> freightMap;
 
     String areaName = "", areaId = "";
 
@@ -193,6 +193,7 @@ public class ProductDetailFragment extends BaseNotifyFragment {
         areaLayout = (LinearLayout) contentView.findViewById(R.id.platform_product_detail_area_layout);
         areaTextView = (TextView) contentView.findViewById(R.id.platform_product_detail_area);
         freightTextView = (TextView) contentView.findViewById(R.id.platform_product_detail_freight);
+        freightLableTextView = (TextView) contentView.findViewById(R.id.platform_product_detail_freight_lable);
 
         countDeleteLayout = (FrameLayout) contentView.findViewById(R.id.platform_product_detail_count_delete);
         countAddLayout = (FrameLayout) contentView.findViewById(R.id.platform_product_detail_count_add);
@@ -747,18 +748,22 @@ public class ProductDetailFragment extends BaseNotifyFragment {
                         JSONArray jsonArray = object.optJSONArray("dataList");
                         if (jsonArray != null) {
                             for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject jsonObject = jsonArray.optJSONObject(i);
-                                if (jsonObject != null) {
-                                    Iterator<String> keys = jsonObject.keys();
-                                    while (keys.hasNext()) {
-                                        String key = keys.next();
-                                        freightMap.put(key, jsonObject.optDouble(key));
-                                    }
+                                ModelFreight modelFreight = new ModelFreight(jsonArray.optJSONObject(i));
+                                if(!TextUtils.isEmpty(modelFreight.getAgencyId())){
+                                    freightMap.put(modelFreight.getAgencyId(), modelFreight);
                                 }
                             }
                             if (freightMap.containsKey(productDetail.getSupplierId())) {
-                                freightTextView.setText("运费:" + Parameters.CONSTANT_RMB + decimalFormat.format(freightMap.get(productDetail.getSupplierId())));
+                                freightTextView.setVisibility(View.VISIBLE);
+                                freightLableTextView.setVisibility(View.VISIBLE);
+                                freightTextView.setText("运费:" + Parameters.CONSTANT_RMB + decimalFormat.format(freightMap.get(productDetail.getSupplierId()).getFregith()));
+                                if (!TextUtils.isEmpty(freightMap.get(productDetail.getSupplierId()).getPrompt())) {
+                                    freightLableTextView.setText(freightMap.get(productDetail.getSupplierId()).getPrompt());
+                                }
                                 countTotalMoney();
+                            } else {
+                                freightTextView.setVisibility(View.GONE);
+                                freightLableTextView.setVisibility(View.GONE);
                             }
                         }
                         return;
@@ -793,7 +798,7 @@ public class ProductDetailFragment extends BaseNotifyFragment {
                     break;
             }
         }
-        totalMoneyTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format(buyCount * price + freightMap.get(productDetail.getSupplierId())));
+        totalMoneyTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format(buyCount * price + freightMap.get(productDetail.getSupplierId()).getFregith()));
     }
 
     private void buyProduct() {

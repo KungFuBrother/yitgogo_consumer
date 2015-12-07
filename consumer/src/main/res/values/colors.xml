@@ -27,4 +27,12 @@
     <color name="button_buy_normal">#ff5722</color>
     <color name="button_buy_pressed">#e94f1e</color>
 
+
+    <color name="golden_egg_no_btn_bg">#7ed7fc</color>
+    <color name="golden_egg_go_on_btn_bg">#ffdc87</color>
+    <color name="golden_btn_text_color">#534c3d</color>
+    <color name="golden_pay_money_text_color">#ffbe22</color>
+    <color name="dialog_bg">#00000000</color>
+    <color name="main_bottom_bg">#b3eef6</color>
+
 </resources>

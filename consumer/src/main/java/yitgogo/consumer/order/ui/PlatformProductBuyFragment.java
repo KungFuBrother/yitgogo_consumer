@@ -22,11 +22,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import yitgogo.consumer.BaseNotifyFragment;
 import yitgogo.consumer.money.ui.PayFragment;
+import yitgogo.consumer.product.model.ModelFreight;
 import yitgogo.consumer.store.model.Store;
 import yitgogo.consumer.tools.API;
 import yitgogo.consumer.tools.Parameters;
@@ -52,7 +52,7 @@ public class PlatformProductBuyFragment extends BaseNotifyFragment {
     double price = 0;
     int buyCount = 0;
 
-    HashMap<String, Double> freightMap;
+    HashMap<String, ModelFreight> freightMap;
 
     OrderConfirmPartAddressFragment addressFragment;
     OrderConfirmPartPaymentFragment paymentFragment;
@@ -303,18 +303,14 @@ public class PlatformProductBuyFragment extends BaseNotifyFragment {
                         JSONArray jsonArray = object.optJSONArray("dataList");
                         if (jsonArray != null) {
                             for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject jsonObject = jsonArray.optJSONObject(i);
-                                if (jsonObject != null) {
-                                    Iterator<String> keys = jsonObject.keys();
-                                    while (keys.hasNext()) {
-                                        String key = keys.next();
-                                        freightMap.put(key, jsonObject.optDouble(key));
-                                    }
+                                ModelFreight modelFreight = new ModelFreight(jsonArray.optJSONObject(i));
+                                if (!TextUtils.isEmpty(modelFreight.getAgencyId())) {
+                                    freightMap.put(modelFreight.getAgencyId(), modelFreight);
                                 }
                             }
                             if (freightMap.containsKey(supplierId)) {
                                 freightTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format(freightMap.get(supplierId)));
-                                totalMoneyTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format((buyCount * price) + freightMap.get(supplierId)));
+                                totalMoneyTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format((buyCount * price) + freightMap.get(supplierId).getFregith()));
                             }
                         }
                         return;

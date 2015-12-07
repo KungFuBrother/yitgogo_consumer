@@ -27,13 +27,13 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import yitgogo.consumer.BaseNotifyFragment;
 import yitgogo.consumer.home.model.ModelListPrice;
 import yitgogo.consumer.money.ui.PayFragment;
 import yitgogo.consumer.order.model.ModelOrderResult;
+import yitgogo.consumer.product.model.ModelFreight;
 import yitgogo.consumer.product.model.ModelProduct;
 import yitgogo.consumer.store.model.Store;
 import yitgogo.consumer.tools.API;
@@ -54,7 +54,7 @@ public class ShoppingCarPlatformBuyFragment extends BaseNotifyFragment {
     HashMap<String, ModelListPrice> priceMap;
     //供货商
     List<String> providers;
-    HashMap<String, Double> freightMap;
+    HashMap<String, ModelFreight> freightMap;
     //按供货商分组的商品
     HashMap<String, List<ModelShoppingCart>> shoppingCartByProvider;
 
@@ -201,7 +201,7 @@ public class ShoppingCarPlatformBuyFragment extends BaseNotifyFragment {
                     }
                 }
                 if (freightMap.containsKey(providers.get(i))) {
-                    freightMoney += freightMap.get(providers.get(i));
+                    freightMoney += freightMap.get(providers.get(i)).getFregith();
                 }
             }
         }
@@ -497,13 +497,9 @@ public class ShoppingCarPlatformBuyFragment extends BaseNotifyFragment {
                         JSONArray jsonArray = object.optJSONArray("dataList");
                         if (jsonArray != null) {
                             for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject jsonObject = jsonArray.optJSONObject(i);
-                                if (jsonObject != null) {
-                                    Iterator<String> keys = jsonObject.keys();
-                                    while (keys.hasNext()) {
-                                        String key = keys.next();
-                                        freightMap.put(key, jsonObject.optDouble(key));
-                                    }
+                                ModelFreight modelFreight = new ModelFreight(jsonArray.optJSONObject(i));
+                                if (!TextUtils.isEmpty(modelFreight.getAgencyId())) {
+                                    freightMap.put(modelFreight.getAgencyId(), modelFreight);
                                 }
                             }
                             carAdapter.notifyDataSetChanged();

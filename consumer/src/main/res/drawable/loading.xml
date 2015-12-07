@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="true" >
+
+    <item
+        android:drawable="@drawable/egg1"
+        android:duration="50"/>
+    <item
+        android:drawable="@drawable/egg2"
+        android:duration="50"/>
+    <item
+        android:drawable="@drawable/egg3"
+        android:duration="50"/>
+    <item
+        android:drawable="@drawable/egg4"
+        android:duration="50"/>
+    <item
+        android:drawable="@drawable/egg5"
+        android:duration="50"/>
+    <item
+        android:drawable="@drawable/egg6"
+        android:duration="50"/>
+
+</animation-list>

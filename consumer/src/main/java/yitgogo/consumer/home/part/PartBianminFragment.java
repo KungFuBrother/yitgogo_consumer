@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import yitgogo.consumer.BaseNormalFragment;
-import yitgogo.consumer.activity.ActivityFragment;
+import yitgogo.consumer.activity.shake.ui.ActivityFragment;
 import yitgogo.consumer.bianmin.phoneCharge.ui.PhoneChargeFragment;
 import yitgogo.consumer.bianmin.qq.ui.QQChargeFragment;
 import yitgogo.consumer.bianmin.telephone.ui.TelePhoneChargeFragment;

@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -35,13 +34,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -51,6 +43,8 @@ import java.util.List;
 import java.util.Map;
 
 import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.activity.egg.ui.EggMainFragment;
+import yitgogo.consumer.activity.egg.ui.FragmentMainGoldenEgg;
 import yitgogo.consumer.home.model.ModelListPrice;
 import yitgogo.consumer.home.model.ModelProduct;
 import yitgogo.consumer.home.part.PartAdsFragment;
@@ -340,7 +334,7 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
         bannerEggImageView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-//                jump(jump);
+                jumpFull(EggMainFragment.class.getName(), "砸金蛋", null);
             }
         });
     }
