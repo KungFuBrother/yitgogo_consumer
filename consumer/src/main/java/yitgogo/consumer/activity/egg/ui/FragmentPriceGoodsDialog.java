@@ -10,8 +10,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.smartown.yitian.gogo.R;
 
 public class FragmentPriceGoodsDialog extends DialogFragment implements OnClickListener {
@@ -19,16 +21,20 @@ public class FragmentPriceGoodsDialog extends DialogFragment implements OnClickL
 
     private int screenWidth;
     private int screenHeight;
+    private ImageView imageView;
     private TextView tvNoPlay;
     private TextView tvContinue;
     private TextView tvTips;
-    private String result;
+    private String name = "", image = "";
 
-    public static FragmentPriceGoodsDialog newInstance(String result) {
+    private OnDialogDismissListner onDialogDismissListner;
+
+    public static FragmentPriceGoodsDialog newInstance(String name, String image) {
         FragmentPriceGoodsDialog priceDialog = new FragmentPriceGoodsDialog();
 
         Bundle bundle = new Bundle();
-        bundle.putString("result", result);
+        bundle.putString("name", name);
+        bundle.putString("image", image);
         priceDialog.setArguments(bundle);
         return priceDialog;
     }
@@ -37,7 +43,8 @@ public class FragmentPriceGoodsDialog extends DialogFragment implements OnClickL
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        result = getArguments().getString("result");
+        name = getArguments().getString("name");
+        image = getArguments().getString("image");
 
         measureScreen();
     }
@@ -59,6 +66,7 @@ public class FragmentPriceGoodsDialog extends DialogFragment implements OnClickL
         tvNoPlay = (TextView) view.findViewById(R.id.no_play);
         tvContinue = (TextView) view.findViewById(R.id.continue_play);
         tvTips = (TextView) view.findViewById(R.id.no_price_tips_tv);
+        imageView = (ImageView) view.findViewById(R.id.no_price_tips_iv);
 
         tvNoPlay.setOnClickListener(this);
         tvContinue.setOnClickListener(this);
@@ -66,9 +74,10 @@ public class FragmentPriceGoodsDialog extends DialogFragment implements OnClickL
 
     private void loadTips() {
 
-        if (!TextUtils.isEmpty(result)) {
-            tvTips.setText(result);
+        if (!TextUtils.isEmpty(name)) {
+            tvTips.setText(name);
         }
+        ImageLoader.getInstance().displayImage(image, imageView);
     }
 
     @Override
@@ -90,13 +99,22 @@ public class FragmentPriceGoodsDialog extends DialogFragment implements OnClickL
         screenHeight = metrics.heightPixels;
     }
 
+    public void setOnDialogDismissListner(OnDialogDismissListner onDialogDismissListner) {
+        this.onDialogDismissListner = onDialogDismissListner;
+    }
+
     @Override
     public void onClick(View v) {
-        if (v == tvNoPlay) {
-            dismiss();
+        dismiss();
+        if (v.getId() == tvNoPlay.getId()) {
+            if (onDialogDismissListner != null) {
+                onDialogDismissListner.onDialogDismiss(false);
+            }
         } else {
             //支付界面
-
+            if (onDialogDismissListner != null) {
+                onDialogDismissListner.onDialogDismiss(true);
+            }
         }
     }
 

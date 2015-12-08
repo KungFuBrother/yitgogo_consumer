@@ -755,9 +755,9 @@ public class ProductDetailFragment extends BaseNotifyFragment {
                             }
                             if (freightMap.containsKey(productDetail.getSupplierId())) {
                                 freightTextView.setVisibility(View.VISIBLE);
-                                freightLableTextView.setVisibility(View.VISIBLE);
                                 freightTextView.setText("运费:" + Parameters.CONSTANT_RMB + decimalFormat.format(freightMap.get(productDetail.getSupplierId()).getFregith()));
                                 if (!TextUtils.isEmpty(freightMap.get(productDetail.getSupplierId()).getPrompt())) {
+                                    freightLableTextView.setVisibility(View.VISIBLE);
                                     freightLableTextView.setText(freightMap.get(productDetail.getSupplierId()).getPrompt());
                                 }
                                 countTotalMoney();

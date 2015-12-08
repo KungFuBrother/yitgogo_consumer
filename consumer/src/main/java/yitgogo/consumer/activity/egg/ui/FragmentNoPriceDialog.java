@@ -1,7 +1,5 @@
 package yitgogo.consumer.activity.egg.ui;
 
-import java.util.Random;
-
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.util.DisplayMetrics;
@@ -15,105 +13,115 @@ import android.widget.TextView;
 
 import com.smartown.yitian.gogo.R;
 
-public class FragmentNoPriceDialog extends DialogFragment implements
-		OnClickListener {
+import java.util.Random;
 
+public class FragmentNoPriceDialog extends DialogFragment implements OnClickListener {
 
-	private int screenWidth;
-	private int screenHeight;
-	private TextView tvNoPlay;
-	private TextView tvContinue;
-	private TextView tvTips;
-	private Random random;
-	private int num;
+    private int screenWidth;
+    private int screenHeight;
+    private TextView tvNoPlay;
+    private TextView tvContinue;
+    private TextView tvTips;
+    private Random random;
+    private int num;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    private OnDialogDismissListner onDialogDismissListner;
 
-		measureScreen();
-		random = new Random();
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-							 Bundle savedInstanceState) {
-		getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getDialog().getWindow().setBackgroundDrawableResource(R.color.dialog_bg);
+        measureScreen();
+        random = new Random();
+    }
 
-		View view = inflater.inflate(R.layout.no_price_fragment, null);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getDialog().getWindow().setBackgroundDrawableResource(R.color.dialog_bg);
 
-		initView(view);
-		loadRandomText();
-		return view;
-	}
+        View view = inflater.inflate(R.layout.no_price_fragment, null);
 
-	private void initView(View view) {
-		tvNoPlay = (TextView) view.findViewById(R.id.no_play);
-		tvContinue = (TextView) view.findViewById(R.id.continue_play);
-		tvTips = (TextView) view.findViewById(R.id.no_price_tips_tv);
+        initView(view);
+        loadRandomText();
+        return view;
+    }
 
-		tvNoPlay.setOnClickListener(this);
-		tvContinue.setOnClickListener(this);
-	}
+    private void initView(View view) {
+        tvNoPlay = (TextView) view.findViewById(R.id.no_play);
+        tvContinue = (TextView) view.findViewById(R.id.continue_play);
+        tvTips = (TextView) view.findViewById(R.id.no_price_tips_tv);
 
-	private void loadRandomText() {
-		num = random.nextInt(4);
-		switch (num) {
-			case 0:
+        tvNoPlay.setOnClickListener(this);
+        tvContinue.setOnClickListener(this);
+    }
 
-				tvTips.setText("换个姿势，再来一次");
-				break;
-			case 1:
+    private void loadRandomText() {
+        num = random.nextInt(4);
+        switch (num) {
+            case 0:
 
-				tvTips.setText("热下身，再来一次");
-				break;
-			case 2:
+                tvTips.setText("换个姿势，再来一次");
+                break;
+            case 1:
 
-				tvTips.setText("笑一个，再试试");
-				break;
-			case 3:
+                tvTips.setText("热下身，再来一次");
+                break;
+            case 2:
 
-				tvTips.setText("先求菩萨保佑，重新来一次");
-				break;
-			case 4:
+                tvTips.setText("笑一个，再试试");
+                break;
+            case 3:
 
-				tvTips.setText("不信不中，再来一次");
-				break;
-		}
+                tvTips.setText("先求菩萨保佑，重新来一次");
+                break;
+            case 4:
 
-	}
+                tvTips.setText("不信不中，再来一次");
+                break;
+        }
 
-	@Override
-	public void onResume() {
-		super.onResume();
+    }
 
-		if (getDialog() == null) {
-			return;
-		}
+    @Override
+    public void onResume() {
+        super.onResume();
 
-		getDialog().getWindow()
-				.setLayout(screenWidth * 5 / 7, screenHeight / 2);
-		getDialog().getWindow().setGravity(Gravity.CENTER);
-	}
+        if (getDialog() == null) {
+            return;
+        }
 
-	private void measureScreen() {
-		DisplayMetrics metrics = new DisplayMetrics();
-		getActivity().getWindowManager().getDefaultDisplay()
-				.getMetrics(metrics);
-		screenWidth = metrics.widthPixels;
-		screenHeight = metrics.heightPixels;
-	}
+        getDialog().getWindow()
+                .setLayout(screenWidth * 5 / 7, screenHeight / 2);
+        getDialog().getWindow().setGravity(Gravity.CENTER);
+    }
 
-	@Override
-	public void onClick(View v) {
-		if (v == tvNoPlay) {
-			dismiss();
-		} else {
-			// 支付界面
+    private void measureScreen() {
+        DisplayMetrics metrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay()
+                .getMetrics(metrics);
+        screenWidth = metrics.widthPixels;
+        screenHeight = metrics.heightPixels;
+    }
 
-		}
-	}
+    public void setOnDialogDismissListner(OnDialogDismissListner onDialogDismissListner) {
+        this.onDialogDismissListner = onDialogDismissListner;
+    }
 
+    @Override
+    public void onClick(View v) {
+        dismiss();
+        if (v.getId() == tvNoPlay.getId()) {
+            if (onDialogDismissListner != null) {
+                onDialogDismissListner.onDialogDismiss(false);
+            }
+        } else {
+            // 支付界面
+            if (onDialogDismissListner != null) {
+                onDialogDismissListner.onDialogDismiss(true);
+            }
+        }
+    }
 
 }

@@ -9,63 +9,132 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:scaleType="centerCrop"
-        android:src="@drawable/egg_back_header" />
+        android:src="@drawable/egg_back_1" />
+
+    <FrameLayout
+        android:id="@+id/egg_click_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/egg_click"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:clickable="false"
+            android:src="@drawable/egg_egg" />
+
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <FrameLayout
-            android:id="@+id/egg_anim_layout"
+        <ImageView
+            android:id="@+id/egg_anim"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:visibility="invisible" />
 
-            <ImageView
-                android:id="@+id/egg_click"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@drawable/image_egg" />
-
-            <ImageView
-                android:id="@+id/egg_anim"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-        </FrameLayout>
+        <Button
+            android:id="@+id/egg_pay"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_margin="8dp"
+            android:background="@drawable/shape_pay_money_btn_bg"
+            android:clickable="false"
+            android:gravity="center"
+            android:minWidth="160dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:text="1元砸惊喜"
+            android:textColor="@color/white"
+            android:textSize="16dp"
+            android:visibility="gone" />
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:scrollbars="none">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="6dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="6dp">
 
-                <include
-                    layout="@layout/layout_one"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="2dp" />
+                    android:layout_margin="2dp"
+                    android:background="@drawable/image_rule_back"
+                    android:orientation="vertical">
 
-                <include
-                    layout="@layout/layout_two"
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
+                        android:src="@drawable/egg_award" />
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/egg_award"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scrollbars="none" />
+
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="2dp" />
+                    android:layout_margin="2dp"
+                    android:background="@drawable/image_rule_back"
+                    android:orientation="vertical">
 
-                <include
-                    layout="@layout/layout_three"
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
+                        android:src="@drawable/egg_rule_award" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="2dp"
+                        android:text="1.如果中奖是现金，则系统会在24小时内发送到你的钱袋子，请注意查收。\n2.如果中奖是实物客服会在48小时内和你联系发放事宜，请放心等待。"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="14dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="2dp" />
+                    android:layout_margin="2dp"
+                    android:background="@drawable/image_rule_back"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
+                        android:src="@drawable/egg_rule" />
+
+                    <TextView
+                        android:id="@+id/egg_rule"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="2dp"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="14dp" />
+
+                </LinearLayout>
+
             </LinearLayout>
         </ScrollView>
-
 
     </LinearLayout>
 

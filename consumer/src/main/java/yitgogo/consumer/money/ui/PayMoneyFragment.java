@@ -110,15 +110,6 @@ public class PayMoneyFragment extends BaseNotifyFragment {
         super.onDestroy();
     }
 
-    private void payMoney() {
-        Bundle bundle = new Bundle();
-        bundle.putString("activityId", "activityId");
-        bundle.putString("activityName", "activityName");
-        bundle.putInt("activityType", PAY_TYPE_EGG);
-        bundle.putDouble("totalMoney", 0);
-        jump(PayMoneyFragment.class.getName(), "支付", bundle);
-    }
-
     private void init() {
         Bundle bundle = getArguments();
         if (bundle != null) {

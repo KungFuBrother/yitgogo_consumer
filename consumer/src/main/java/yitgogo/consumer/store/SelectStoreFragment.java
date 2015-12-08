@@ -161,8 +161,7 @@ public class SelectStoreFragment extends BaseNotifyFragment {
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder holder;
             if (convertView == null) {
-                convertView = layoutInflater.inflate(
-                        R.layout.list_store_selected, null);
+                convertView = layoutInflater.inflate(R.layout.list_store_selected, null);
                 holder = new ViewHolder();
                 holder.nameTextView = (TextView) convertView.findViewById(R.id.list_store_name);
                 holder.addressTextView = (TextView) convertView.findViewById(R.id.list_store_address);
@@ -336,6 +335,9 @@ public class SelectStoreFragment extends BaseNotifyFragment {
     }
 
     private int getAreaType() {
+        if (areaHashMap.size() < 4) {
+            return 0;
+        }
         List<Map.Entry<Integer, ModelStoreArea>> entries = new ArrayList<>(areaHashMap.entrySet());
         Collections.sort(entries, new Comparator<Map.Entry<Integer, ModelStoreArea>>() {
             @Override

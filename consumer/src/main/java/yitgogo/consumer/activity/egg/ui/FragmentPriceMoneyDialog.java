@@ -14,90 +14,101 @@ import android.widget.TextView;
 
 import com.smartown.yitian.gogo.R;
 
-public class FragmentPriceMoneyDialog extends DialogFragment implements OnClickListener{
+public class FragmentPriceMoneyDialog extends DialogFragment implements OnClickListener {
 
 
-	private int screenWidth;
-	private int screenHeight;
-	private TextView tvNoPlay;
-	private TextView tvContinue;
-	private TextView tvTips;
-	private String result;
+    private int screenWidth;
+    private int screenHeight;
+    private TextView tvNoPlay;
+    private TextView tvContinue;
+    private TextView tvTips;
+    private String result;
 
-	public static FragmentPriceMoneyDialog newInstance(String result){
-		FragmentPriceMoneyDialog priceDialog = new FragmentPriceMoneyDialog();
+    private OnDialogDismissListner onDialogDismissListner;
 
-		Bundle bundle = new Bundle();
-		bundle.putString("result", result);
-		priceDialog.setArguments(bundle);
-		return priceDialog;
-	}
+    public static FragmentPriceMoneyDialog newInstance(String result) {
+        FragmentPriceMoneyDialog priceDialog = new FragmentPriceMoneyDialog();
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+        Bundle bundle = new Bundle();
+        bundle.putString("result", result);
+        priceDialog.setArguments(bundle);
+        return priceDialog;
+    }
 
-		result = getArguments().getString("result");
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-		measureScreen();
-	}
+        result = getArguments().getString("result");
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-							 Bundle savedInstanceState) {
-		getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getDialog().getWindow().setBackgroundDrawableResource(R.color.dialog_bg);
+        measureScreen();
+    }
 
-		View view = inflater.inflate(R.layout.price_money_fragment, null);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getDialog().getWindow().setBackgroundDrawableResource(R.color.dialog_bg);
 
-		initView(view);
-		loadTips();
-		return view;
-	}
+        View view = inflater.inflate(R.layout.price_money_fragment, null);
 
-	private void initView(View view) {
-		tvNoPlay = (TextView) view.findViewById(R.id.no_play);
-		tvContinue = (TextView) view.findViewById(R.id.continue_play);
-		tvTips = (TextView) view.findViewById(R.id.no_price_tips_tv);
+        initView(view);
+        loadTips();
+        return view;
+    }
 
-		tvNoPlay.setOnClickListener(this);
-		tvContinue.setOnClickListener(this);
-	}
+    private void initView(View view) {
+        tvNoPlay = (TextView) view.findViewById(R.id.no_play);
+        tvContinue = (TextView) view.findViewById(R.id.continue_play);
+        tvTips = (TextView) view.findViewById(R.id.no_price_tips_tv);
 
-	private void loadTips() {
+        tvNoPlay.setOnClickListener(this);
+        tvContinue.setOnClickListener(this);
+    }
 
-		if(!TextUtils.isEmpty(result)){
-			tvTips.setText(result);
-		}
-	}
+    private void loadTips() {
 
-	@Override
-	public void onResume() {
-		super.onResume();
+        if (!TextUtils.isEmpty(result)) {
+            tvTips.setText(result);
+        }
+    }
 
-		if(getDialog() == null){
-			return;
-		}
+    @Override
+    public void onResume() {
+        super.onResume();
 
-		getDialog().getWindow().setLayout(screenWidth*5/7, screenHeight/2);
-		getDialog().getWindow().setGravity(Gravity.CENTER);
-	}
+        if (getDialog() == null) {
+            return;
+        }
 
-	private void measureScreen() {
-		DisplayMetrics metrics = new DisplayMetrics();
-		getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-		screenWidth = metrics.widthPixels;
-		screenHeight = metrics.heightPixels;
-	}
+        getDialog().getWindow().setLayout(screenWidth * 5 / 7, screenHeight / 2);
+        getDialog().getWindow().setGravity(Gravity.CENTER);
+    }
 
-	@Override
-	public void onClick(View v) {
-		if(v == tvNoPlay){
-			dismiss();
-		}else {
-			//支付界面
+    private void measureScreen() {
+        DisplayMetrics metrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        screenWidth = metrics.widthPixels;
+        screenHeight = metrics.heightPixels;
+    }
 
-		}
-	}
+    public void setOnDialogDismissListner(OnDialogDismissListner onDialogDismissListner) {
+        this.onDialogDismissListner = onDialogDismissListner;
+    }
+
+    @Override
+    public void onClick(View v) {
+        dismiss();
+        if (v.getId() == tvNoPlay.getId()) {
+            if (onDialogDismissListner != null) {
+                onDialogDismissListner.onDialogDismiss(false);
+            }
+        } else {
+            //支付界面
+            if (onDialogDismissListner != null) {
+                onDialogDismissListner.onDialogDismiss(true);
+            }
+        }
+    }
 
 }

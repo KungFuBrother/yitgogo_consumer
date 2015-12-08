@@ -11,11 +11,6 @@
       </config>
     </shared>
     <layouts>
-      <layout url="file://$PROJECT_DIR$/consumer/src/main/res/layout/fragment_main_golden_egg.xml">
-        <config>
-          <theme>@style/yitgogo.theme</theme>
-        </config>
-      </layout>
       <layout url="file://$PROJECT_DIR$/consumer/src/main/res/layout/fragment_product_detail_new.xml">
         <config>
           <theme>@style/yitgogo.theme</theme>
@@ -24,92 +19,576 @@
     </layouts>
   </component>
   <component name="AndroidLogFilters">
-    <option name="TOOL_WINDOW_LOG_LEVEL" value="ERROR" />
-    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
+    <option name="TOOL_WINDOW_CUSTOM_FILTER" value="Req" />
+    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="No Filters" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8d8ef22a-e981-4a74-b969-3c7236b5a24d" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/after_top_bg.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/before_top_bg.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/big_eyes.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/big_money.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/egg1.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/egg2.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/egg3.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/egg4.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/egg5.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/egg6.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/egg_back_header.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/entrance_img.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/image_back_rule.9.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable-xhdpi/image_egg.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable-xhdpi/lable_back.9.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/no_price_bg.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/pay_after_bg.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/pay_before_bg.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/result_bg.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/EggMainFragment.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentMainGoldenEgg.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentNoPriceDialog.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentPriceGoodsDialog.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentPriceMoneyDialog.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentResultDialog.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/adapter/GoldenPriceGoodsAdapter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/adapter/GoldenResultListViewAdapter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/product/model/ModelFreight.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/money/ui/PayMoneyFragment.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/layout/fragment_main_egg.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/layout/fragment_main_golden_egg.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/layout/fragment_pay_money.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/layout/golden_egg_result_fragment.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/layout/layout_one.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/layout/layout_three.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/layout/layout_two.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/loading.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/layout/no_price_fragment.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/layout/price_good_item.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/layout/price_goods_fragment.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/layout/price_money_fragment.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/layout/result_item.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/shape_go_on_btn_bg.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/shape_no_btn_bg.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/shape_pay_money_btn_bg.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/shape_price_good_bg.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/assets/egg.mp3" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/egg_anim_1.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/egg_anim_2.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/egg_anim_3.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/egg_anim_4.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/egg_anim_5.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/egg_anim_6.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/egg_anim_7.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/egg_anim_8.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/egg_anim_9.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable-xxhdpi/egg_award.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/egg_award_money.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/egg_back_1.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/egg_back_2.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/egg_egg.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable-xxhdpi/egg_rule.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable-xxhdpi/egg_rule_award.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/shake/model/ModelAward.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/shake/model/ModelAwardHistory.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/OnDialogDismissListner.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/shape_pay_money_btn_disable.xml" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\generated\source\buildConfig\androidTest\debug\com\viewpagerindicator\test\BuildConfig.java" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\generated\source\buildConfig\debug\com\viewpagerindicator\BuildConfig.java" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\generated\source\buildConfig\release\com\viewpagerindicator\BuildConfig.java" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\generated\source\r\androidTest\debug\com\viewpagerindicator\R.java" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\generated\source\r\androidTest\debug\com\viewpagerindicator\test\R.java" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\generated\source\r\debug\com\viewpagerindicator\R.java" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\generated\source\r\release\com\viewpagerindicator\R.java" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\debug\AndroidManifest.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\debug\R.txt" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\debug\aapt\AndroidManifest.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\debug\classes.jar" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\debug\res\color\vpi__dark_theme.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\debug\res\color\vpi__light_theme.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\debug\res\drawable-hdpi\vpi__tab_selected_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\debug\res\drawable-hdpi\vpi__tab_selected_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\debug\res\drawable-hdpi\vpi__tab_selected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\debug\res\drawable-hdpi\vpi__tab_unselected_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\debug\res\drawable-hdpi\vpi__tab_unselected_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\debug\res\drawable-hdpi\vpi__tab_unselected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\debug\res\drawable-mdpi\vpi__tab_selected_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\debug\res\drawable-mdpi\vpi__tab_selected_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\debug\res\drawable-mdpi\vpi__tab_selected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\debug\res\drawable-mdpi\vpi__tab_unselected_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\debug\res\drawable-mdpi\vpi__tab_unselected_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\debug\res\drawable-mdpi\vpi__tab_unselected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\debug\res\drawable-xhdpi\vpi__tab_selected_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\debug\res\drawable-xhdpi\vpi__tab_selected_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\debug\res\drawable-xhdpi\vpi__tab_selected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\debug\res\drawable-xhdpi\vpi__tab_unselected_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\debug\res\drawable-xhdpi\vpi__tab_unselected_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\debug\res\drawable-xhdpi\vpi__tab_unselected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\debug\res\drawable\vpi__tab_indicator.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\debug\res\values\values.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\release\AndroidManifest.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\release\R.txt" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\release\aapt\AndroidManifest.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\release\classes.jar" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\release\res\color\vpi__dark_theme.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\release\res\color\vpi__light_theme.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\release\res\drawable-hdpi\vpi__tab_selected_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\release\res\drawable-hdpi\vpi__tab_selected_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\release\res\drawable-hdpi\vpi__tab_selected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\release\res\drawable-hdpi\vpi__tab_unselected_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\release\res\drawable-hdpi\vpi__tab_unselected_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\release\res\drawable-hdpi\vpi__tab_unselected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\release\res\drawable-mdpi\vpi__tab_selected_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\release\res\drawable-mdpi\vpi__tab_selected_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\release\res\drawable-mdpi\vpi__tab_selected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\release\res\drawable-mdpi\vpi__tab_unselected_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\release\res\drawable-mdpi\vpi__tab_unselected_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\release\res\drawable-mdpi\vpi__tab_unselected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\release\res\drawable-xhdpi\vpi__tab_selected_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\release\res\drawable-xhdpi\vpi__tab_selected_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\release\res\drawable-xhdpi\vpi__tab_selected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\release\res\drawable-xhdpi\vpi__tab_unselected_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\release\res\drawable-xhdpi\vpi__tab_unselected_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\release\res\drawable-xhdpi\vpi__tab_unselected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\release\res\drawable\vpi__tab_indicator.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\bundles\release\res\values\values.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\androidTest\debug\com\viewpagerindicator\R$attr.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\androidTest\debug\com\viewpagerindicator\R$bool.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\androidTest\debug\com\viewpagerindicator\R$color.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\androidTest\debug\com\viewpagerindicator\R$dimen.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\androidTest\debug\com\viewpagerindicator\R$drawable.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\androidTest\debug\com\viewpagerindicator\R$id.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\androidTest\debug\com\viewpagerindicator\R$integer.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\androidTest\debug\com\viewpagerindicator\R$style.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\androidTest\debug\com\viewpagerindicator\R$styleable.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\androidTest\debug\com\viewpagerindicator\R.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\androidTest\debug\com\viewpagerindicator\test\BuildConfig.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\androidTest\debug\com\viewpagerindicator\test\R$attr.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\androidTest\debug\com\viewpagerindicator\test\R$bool.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\androidTest\debug\com\viewpagerindicator\test\R$color.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\androidTest\debug\com\viewpagerindicator\test\R$dimen.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\androidTest\debug\com\viewpagerindicator\test\R$drawable.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\androidTest\debug\com\viewpagerindicator\test\R$id.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\androidTest\debug\com\viewpagerindicator\test\R$integer.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\androidTest\debug\com\viewpagerindicator\test\R$style.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\androidTest\debug\com\viewpagerindicator\test\R$styleable.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\androidTest\debug\com\viewpagerindicator\test\R.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\BuildConfig.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\CirclePageIndicator$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\CirclePageIndicator$SavedState$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\CirclePageIndicator$SavedState.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\CirclePageIndicator.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\IconPageIndicator$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\IconPageIndicator.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\IconPagerAdapter.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\IcsLinearLayout.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\LinePageIndicator$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\LinePageIndicator$SavedState$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\LinePageIndicator$SavedState.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\LinePageIndicator.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\PageIndicator.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\R$attr.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\R$bool.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\R$color.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\R$dimen.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\R$drawable.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\R$id.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\R$integer.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\R$style.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\R$styleable.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\R.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\TabPageIndicator$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\TabPageIndicator$2.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\TabPageIndicator$OnTabReselectedListener.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\TabPageIndicator$TabView.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\TabPageIndicator.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\TitlePageIndicator$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\TitlePageIndicator$IndicatorStyle.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\TitlePageIndicator$LinePosition.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\TitlePageIndicator$OnCenterItemClickListener.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\TitlePageIndicator$SavedState$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\TitlePageIndicator$SavedState.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\TitlePageIndicator.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\UnderlinePageIndicator$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\UnderlinePageIndicator$2.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\UnderlinePageIndicator$SavedState$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\UnderlinePageIndicator$SavedState.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\debug\com\viewpagerindicator\UnderlinePageIndicator.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\BuildConfig.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\CirclePageIndicator$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\CirclePageIndicator$SavedState$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\CirclePageIndicator$SavedState.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\CirclePageIndicator.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\IconPageIndicator$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\IconPageIndicator.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\IconPagerAdapter.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\IcsLinearLayout.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\LinePageIndicator$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\LinePageIndicator$SavedState$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\LinePageIndicator$SavedState.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\LinePageIndicator.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\PageIndicator.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\R$attr.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\R$bool.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\R$color.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\R$dimen.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\R$drawable.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\R$id.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\R$integer.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\R$style.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\R$styleable.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\R.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\TabPageIndicator$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\TabPageIndicator$2.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\TabPageIndicator$OnTabReselectedListener.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\TabPageIndicator$TabView.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\TabPageIndicator.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\TitlePageIndicator$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\TitlePageIndicator$IndicatorStyle.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\TitlePageIndicator$LinePosition.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\TitlePageIndicator$OnCenterItemClickListener.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\TitlePageIndicator$SavedState$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\TitlePageIndicator$SavedState.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\TitlePageIndicator.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\UnderlinePageIndicator$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\UnderlinePageIndicator$2.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\UnderlinePageIndicator$SavedState$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\UnderlinePageIndicator$SavedState.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\classes\release\com\viewpagerindicator\UnderlinePageIndicator.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\incremental\aidl\androidTest\debug\dependency.store" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\incremental\aidl\debug\dependency.store" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\incremental\aidl\release\dependency.store" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\incremental\mergeAssets\androidTest\debug\merger.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\incremental\mergeAssets\debug\merger.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\incremental\mergeAssets\release\merger.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\incremental\mergeResourcesandroidTest\debug\merger.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\incremental\packageResourcesdebug\merger.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\incremental\packageResourcesrelease\merger.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\manifest\androidTest\debug\AndroidManifest.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\manifest\tmp\manifestMerger9146008070009670847.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\res\merged\androidTest\debug\color\vpi__dark_theme.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\res\merged\androidTest\debug\color\vpi__light_theme.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\res\merged\androidTest\debug\drawable-hdpi\vpi__tab_selected_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\res\merged\androidTest\debug\drawable-hdpi\vpi__tab_selected_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\res\merged\androidTest\debug\drawable-hdpi\vpi__tab_selected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\res\merged\androidTest\debug\drawable-hdpi\vpi__tab_unselected_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\res\merged\androidTest\debug\drawable-hdpi\vpi__tab_unselected_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\res\merged\androidTest\debug\drawable-hdpi\vpi__tab_unselected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\res\merged\androidTest\debug\drawable-mdpi\vpi__tab_selected_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\res\merged\androidTest\debug\drawable-mdpi\vpi__tab_selected_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\res\merged\androidTest\debug\drawable-mdpi\vpi__tab_selected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\res\merged\androidTest\debug\drawable-mdpi\vpi__tab_unselected_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\res\merged\androidTest\debug\drawable-mdpi\vpi__tab_unselected_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\res\merged\androidTest\debug\drawable-mdpi\vpi__tab_unselected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\res\merged\androidTest\debug\drawable-xhdpi\vpi__tab_selected_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\res\merged\androidTest\debug\drawable-xhdpi\vpi__tab_selected_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\res\merged\androidTest\debug\drawable-xhdpi\vpi__tab_selected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\res\merged\androidTest\debug\drawable-xhdpi\vpi__tab_unselected_focused_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\res\merged\androidTest\debug\drawable-xhdpi\vpi__tab_unselected_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\res\merged\androidTest\debug\drawable-xhdpi\vpi__tab_unselected_pressed_holo.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\res\merged\androidTest\debug\drawable\vpi__tab_indicator.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\res\merged\androidTest\debug\values\values.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\res\resources-debug-androidTest.ap_" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\intermediates\symbols\androidTest\debug\R.txt" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\outputs\aar\ViewPagerIndicator-debug.aar" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\outputs\aar\ViewPagerIndicator-release.aar" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\tmp\packageDebugJar\MANIFEST.MF" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\ViewPagerIndicator\build\tmp\packageReleaseJar\MANIFEST.MF" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\captures\SystemInfo_2015.12.07_16.25.46.txt" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\java\yitgogo\consumer\activity\egg\ui\FragmentMainGoldenEgg.java" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\java\yitgogo\consumer\money\tools\MoneyAPI.java" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\java\yitgogo\consumer\money\tools\PayAPI.java" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable-xhdpi\image_egg.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable-xhdpi\image_rule_back.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable\after_top_bg.jpg" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable\before_top_bg.jpg" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable\egg1.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable\egg2.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable\egg3.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable\egg4.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable\egg5.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable\egg6.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable\egg_back_header.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable\entrance_img.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable\image_back_rule.9.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable\pay_after_bg.jpg" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable\pay_alipay.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable\pay_before_bg.jpg" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable\pay_kuaiqian.jpg" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\res\layout\fragment_main_golden_egg.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\res\layout\layout_one.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\res\layout\layout_three.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\res\layout\layout_two.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\generated\source\buildConfig\androidTest\debug\com\handmark\pulltorefresh\library\test\BuildConfig.java" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\generated\source\buildConfig\debug\com\handmark\pulltorefresh\library\BuildConfig.java" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\generated\source\buildConfig\release\com\handmark\pulltorefresh\library\BuildConfig.java" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\generated\source\r\androidTest\debug\com\handmark\pulltorefresh\library\R.java" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\generated\source\r\androidTest\debug\com\handmark\pulltorefresh\library\test\R.java" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\generated\source\r\debug\com\handmark\pulltorefresh\library\R.java" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\generated\source\r\release\com\handmark\pulltorefresh\library\R.java" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\AndroidManifest.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\R.txt" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\aapt\AndroidManifest.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\classes.jar" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\anim\slide_in_from_bottom.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\anim\slide_in_from_top.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\anim\slide_out_to_bottom.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\anim\slide_out_to_top.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\drawable-hdpi\default_ptr_flip.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\drawable-hdpi\default_ptr_rotate.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\drawable-hdpi\indicator_arrow.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\drawable-mdpi\default_ptr_flip.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\drawable-mdpi\default_ptr_rotate.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\drawable-mdpi\indicator_arrow.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\drawable-xhdpi\default_ptr_flip.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\drawable-xhdpi\default_ptr_rotate.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\drawable-xhdpi\indicator_arrow.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\drawable\indicator_bg_bottom.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\drawable\indicator_bg_top.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\layout\pull_to_refresh_header_horizontal.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\layout\pull_to_refresh_header_vertical.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\values-ar\values-ar.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\values-cs\values-cs.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\values-de\values-de.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\values-es\values-es.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\values-fi\values-fi.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\values-fr\values-fr.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\values-he\values-he.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\values-it\values-it.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\values-iw\values-iw.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\values-ja\values-ja.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\values-ko\values-ko.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\values-nl\values-nl.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\values-pl\values-pl.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\values-pt-rBR\values-pt-rBR.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\values-pt\values-pt.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\values-ro\values-ro.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\values-ru\values-ru.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\values-zh\values-zh.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\debug\res\values\values.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\AndroidManifest.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\R.txt" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\aapt\AndroidManifest.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\classes.jar" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\anim\slide_in_from_bottom.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\anim\slide_in_from_top.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\anim\slide_out_to_bottom.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\anim\slide_out_to_top.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\drawable-hdpi\default_ptr_flip.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\drawable-hdpi\default_ptr_rotate.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\drawable-hdpi\indicator_arrow.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\drawable-mdpi\default_ptr_flip.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\drawable-mdpi\default_ptr_rotate.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\drawable-mdpi\indicator_arrow.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\drawable-xhdpi\default_ptr_flip.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\drawable-xhdpi\default_ptr_rotate.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\drawable-xhdpi\indicator_arrow.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\drawable\indicator_bg_bottom.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\drawable\indicator_bg_top.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\layout\pull_to_refresh_header_horizontal.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\layout\pull_to_refresh_header_vertical.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\values-ar\values-ar.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\values-cs\values-cs.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\values-de\values-de.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\values-es\values-es.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\values-fi\values-fi.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\values-fr\values-fr.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\values-he\values-he.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\values-it\values-it.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\values-iw\values-iw.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\values-ja\values-ja.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\values-ko\values-ko.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\values-nl\values-nl.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\values-pl\values-pl.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\values-pt-rBR\values-pt-rBR.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\values-pt\values-pt.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\values-ro\values-ro.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\values-ru\values-ru.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\values-zh\values-zh.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\bundles\release\res\values\values.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\androidTest\debug\com\handmark\pulltorefresh\library\R$anim.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\androidTest\debug\com\handmark\pulltorefresh\library\R$attr.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\androidTest\debug\com\handmark\pulltorefresh\library\R$dimen.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\androidTest\debug\com\handmark\pulltorefresh\library\R$drawable.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\androidTest\debug\com\handmark\pulltorefresh\library\R$id.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\androidTest\debug\com\handmark\pulltorefresh\library\R$layout.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\androidTest\debug\com\handmark\pulltorefresh\library\R$string.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\androidTest\debug\com\handmark\pulltorefresh\library\R$styleable.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\androidTest\debug\com\handmark\pulltorefresh\library\R.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\androidTest\debug\com\handmark\pulltorefresh\library\test\BuildConfig.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\androidTest\debug\com\handmark\pulltorefresh\library\test\R$anim.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\androidTest\debug\com\handmark\pulltorefresh\library\test\R$attr.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\androidTest\debug\com\handmark\pulltorefresh\library\test\R$dimen.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\androidTest\debug\com\handmark\pulltorefresh\library\test\R$drawable.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\androidTest\debug\com\handmark\pulltorefresh\library\test\R$id.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\androidTest\debug\com\handmark\pulltorefresh\library\test\R$layout.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\androidTest\debug\com\handmark\pulltorefresh\library\test\R$string.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\androidTest\debug\com\handmark\pulltorefresh\library\test\R$styleable.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\androidTest\debug\com\handmark\pulltorefresh\library\test\R.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\BuildConfig.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\ILoadingLayout.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\IPullToRefresh.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\LoadingLayoutProxy.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\OverscrollHelper$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\OverscrollHelper.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshAdapterViewBase$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshAdapterViewBase.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshBase$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshBase$2.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshBase$3.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshBase$4.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshBase$AnimationStyle.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshBase$Mode.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshBase$OnLastItemVisibleListener.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshBase$OnPullEventListener.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshBase$OnRefreshListener.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshBase$OnRefreshListener2.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshBase$OnSmoothScrollFinishedListener.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshBase$Orientation.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshBase$SmoothScrollRunnable.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshBase$State.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshBase.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshExpandableListView$InternalExpandableListView.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshExpandableListView$InternalExpandableListViewSDK9.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshExpandableListView.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshGridView$InternalGridView.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshGridView$InternalGridViewSDK9.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshGridView.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshHorizontalScrollView$InternalHorizontalScrollViewSDK9.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshHorizontalScrollView.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshListView$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshListView$InternalListView.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshListView$InternalListViewSDK9.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshListView.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshScrollView$InternalScrollViewSDK9.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshScrollView.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshWebView$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshWebView$2.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshWebView$InternalWebViewSDK9.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\PullToRefreshWebView.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\R$anim.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\R$attr.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\R$dimen.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\R$drawable.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\R$id.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\R$layout.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\R$string.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\R$styleable.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\R.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\extras\PullToRefreshWebView2$JsValueCallback.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\extras\PullToRefreshWebView2.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\extras\SoundPullEventListener.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\internal\EmptyViewMethodAccessor.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\internal\FlipLoadingLayout$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\internal\FlipLoadingLayout.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\internal\IndicatorLayout$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\internal\IndicatorLayout.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\internal\LoadingLayout$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\internal\LoadingLayout.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\internal\RotateLoadingLayout.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\internal\Utils.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\internal\ViewCompat$SDK11.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\internal\ViewCompat$SDK16.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\debug\com\handmark\pulltorefresh\library\internal\ViewCompat.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\BuildConfig.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\ILoadingLayout.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\IPullToRefresh.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\LoadingLayoutProxy.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\OverscrollHelper$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\OverscrollHelper.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshAdapterViewBase$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshAdapterViewBase.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshBase$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshBase$2.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshBase$3.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshBase$4.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshBase$AnimationStyle.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshBase$Mode.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshBase$OnLastItemVisibleListener.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshBase$OnPullEventListener.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshBase$OnRefreshListener.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshBase$OnRefreshListener2.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshBase$OnSmoothScrollFinishedListener.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshBase$Orientation.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshBase$SmoothScrollRunnable.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshBase$State.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshBase.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshExpandableListView$InternalExpandableListView.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshExpandableListView$InternalExpandableListViewSDK9.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshExpandableListView.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshGridView$InternalGridView.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshGridView$InternalGridViewSDK9.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshGridView.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshHorizontalScrollView$InternalHorizontalScrollViewSDK9.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshHorizontalScrollView.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshListView$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshListView$InternalListView.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshListView$InternalListViewSDK9.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshListView.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshScrollView$InternalScrollViewSDK9.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshScrollView.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshWebView$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshWebView$2.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshWebView$InternalWebViewSDK9.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\PullToRefreshWebView.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\R$anim.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\R$attr.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\R$dimen.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\R$drawable.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\R$id.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\R$layout.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\R$string.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\R$styleable.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\R.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\extras\PullToRefreshWebView2$JsValueCallback.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\extras\PullToRefreshWebView2.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\extras\SoundPullEventListener.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\internal\EmptyViewMethodAccessor.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\internal\FlipLoadingLayout$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\internal\FlipLoadingLayout.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\internal\IndicatorLayout$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\internal\IndicatorLayout.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\internal\LoadingLayout$1.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\internal\LoadingLayout.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\internal\RotateLoadingLayout.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\internal\Utils.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\internal\ViewCompat$SDK11.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\internal\ViewCompat$SDK16.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\classes\release\com\handmark\pulltorefresh\library\internal\ViewCompat.class" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\incremental\aidl\androidTest\debug\dependency.store" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\incremental\aidl\debug\dependency.store" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\incremental\aidl\release\dependency.store" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\incremental\mergeAssets\androidTest\debug\merger.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\incremental\mergeAssets\debug\merger.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\incremental\mergeAssets\release\merger.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\incremental\mergeResourcesandroidTest\debug\merger.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\incremental\packageResourcesdebug\merger.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\incremental\packageResourcesrelease\merger.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\manifest\androidTest\debug\AndroidManifest.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\manifest\tmp\manifestMerger2539878992375660432.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\anim\slide_in_from_bottom.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\anim\slide_in_from_top.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\anim\slide_out_to_bottom.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\anim\slide_out_to_top.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\drawable-hdpi\default_ptr_flip.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\drawable-hdpi\default_ptr_rotate.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\drawable-hdpi\indicator_arrow.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\drawable-mdpi\default_ptr_flip.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\drawable-mdpi\default_ptr_rotate.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\drawable-mdpi\indicator_arrow.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\drawable-xhdpi\default_ptr_flip.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\drawable-xhdpi\default_ptr_rotate.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\drawable-xhdpi\indicator_arrow.png" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\drawable\indicator_bg_bottom.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\drawable\indicator_bg_top.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\layout\pull_to_refresh_header_horizontal.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\layout\pull_to_refresh_header_vertical.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\values-ar\values-ar.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\values-cs\values-cs.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\values-de\values-de.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\values-es\values-es.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\values-fi\values-fi.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\values-fr\values-fr.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\values-he\values-he.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\values-it\values-it.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\values-iw\values-iw.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\values-ja\values-ja.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\values-ko\values-ko.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\values-nl\values-nl.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\values-pl\values-pl.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\values-pt-rBR\values-pt-rBR.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\values-pt\values-pt.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\values-ro\values-ro.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\values-ru\values-ru.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\values-zh\values-zh.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\merged\androidTest\debug\values\values.xml" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\res\resources-debug-androidTest.ap_" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\intermediates\symbols\androidTest\debug\R.txt" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\outputs\aar\pullToRefresh-debug.aar" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\outputs\aar\pullToRefresh-release.aar" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\tmp\packageDebugJar\MANIFEST.MF" afterPath="" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\pullToRefresh\build\tmp\packageReleaseJar\MANIFEST.MF" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/cache.properties.lock" afterPath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/cache.properties.lock" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/fileHashes.bin" afterPath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/fileHashes.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/fileSnapshots.bin" afterPath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/fileSnapshots.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/outputFileStates.bin" afterPath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/outputFileStates.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/taskArtifacts.bin" afterPath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/taskArtifacts.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/tools/API.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/tools/API.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/EggMainFragment.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/EggMainFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentNoPriceDialog.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentNoPriceDialog.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentPriceGoodsDialog.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentPriceGoodsDialog.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentPriceMoneyDialog.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentPriceMoneyDialog.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/adapter/GoldenPriceGoodsAdapter.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/adapter/GoldenPriceGoodsAdapter.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/main/ui/HomeFragment.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/main/ui/HomeFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/money/ui/MoneyHomeFragment.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/money/ui/MoneyHomeFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/home/part/PartBianminFragment.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/home/part/PartBianminFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/shake/model/ModelActivity.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/shake/model/ModelActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/money/ui/PayMoneyFragment.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/money/ui/PayMoneyFragment.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/order/ui/PlatformProductBuyFragment.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/order/ui/PlatformProductBuyFragment.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/product/ui/ProductDetailFragment.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/product/ui/ProductDetailFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/store/SelectStoreFragment.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/store/SelectStoreFragment.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/order/ui/ShoppingCarPlatformBuyFragment.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/order/ui/ShoppingCarPlatformBuyFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/model/SuningManager.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/model/SuningManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ViewPagerIndicator/ViewPagerIndicator.iml" afterPath="$PROJECT_DIR$/ViewPagerIndicator/ViewPagerIndicator.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/YitgogoApplication.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/YitgogoApplication.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/appcompat_v7_22_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/appcompat_v7_22_2_1.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/cardview_v7_22_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/cardview_v7_22_2_1.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/res/values/colors.xml" afterPath="$PROJECT_DIR$/consumer/src/main/res/values/colors.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/consumer.iml" afterPath="$PROJECT_DIR$/consumer/consumer.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/res/layout/fragment_product_detail_new.xml" afterPath="$PROJECT_DIR$/consumer/src/main/res/layout/fragment_product_detail_new.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/gradle.xml" afterPath="$PROJECT_DIR$/.idea/gradle.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/local.properties" afterPath="$PROJECT_DIR$/local.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pullToRefresh/pullToRefresh.iml" afterPath="$PROJECT_DIR$/pullToRefresh/pullToRefresh.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/recyclerview_v7_22_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/recyclerview_v7_22_2_1.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/support_annotations_22_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/support_annotations_22_2_1.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/support_v4_18_0_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/support_v4_18_0_0.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/support_v4_22_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/support_v4_22_2_1.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/res/layout/fragment_main_egg.xml" afterPath="$PROJECT_DIR$/consumer/src/main/res/layout/fragment_main_egg.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/res/layout/home_part_miaosha.xml" afterPath="$PROJECT_DIR$/consumer/src/main/res/layout/home_part_miaosha.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/res/drawable/loading.xml" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/loading.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/res/layout/no_price_fragment.xml" afterPath="$PROJECT_DIR$/consumer/src/main/res/layout/no_price_fragment.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/res/layout/price_good_item.xml" afterPath="$PROJECT_DIR$/consumer/src/main/res/layout/price_good_item.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/res/layout/price_goods_fragment.xml" afterPath="$PROJECT_DIR$/consumer/src/main/res/layout/price_goods_fragment.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/res/drawable/shape_pay_money_btn_bg.xml" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/shape_pay_money_btn_bg.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/yitgogo_consumer.iml" afterPath="$PROJECT_DIR$/yitgogo_consumer.iml" />
-      <change type="MOVED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\java\yitgogo\consumer\activity\ActivityFragment.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/shake/ui/ActivityFragment.java" />
-      <change type="MOVED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\java\yitgogo\consumer\activity\ShakeFragment.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/shake/ui/ShakeFragment.java" />
-      <change type="MOVED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\java\yitgogo\consumer\activity\model\ModelActivity.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/shake/model/ModelActivity.java" />
     </list>
     <ignored path="yitgogo_consumer.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -136,70 +615,12 @@
     <favorites_list name="yitgogo_consumer" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="EggMainFragment.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/EggMainFragment.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="106" column="63" selection-start-line="106" selection-start-column="63" selection-end-line="106" selection-end-column="63" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="loading.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/consumer/src/main/res/drawable/loading.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="23" column="17" selection-start-line="23" selection-start-column="17" selection-end-line="23" selection-end-column="17" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="FragmentMainGoldenEgg.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentMainGoldenEgg.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="fragment_main_golden_egg.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/consumer/src/main/res/layout/fragment_main_golden_egg.xml">
-          <provider editor-type-id="android-designer">
-            <state />
-          </provider>
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="27" column="35" selection-start-line="27" selection-start-column="35" selection-end-line="27" selection-end-column="35" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="fragment_main_egg.xml" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/consumer/src/main/res/layout/fragment_main_egg.xml">
-          <provider editor-type-id="android-designer">
-            <state />
-          </provider>
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.2657926">
-              <caret line="48" column="24" selection-start-line="48" selection-start-column="24" selection-end-line="48" selection-end-column="24" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
@@ -3094,31 +3515,41 @@
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/YitgogoApplication.java" />
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/money/ui/PayFragment.java" />
         <option value="$PROJECT_DIR$/consumer/src/main/res/layout/fragment_pay_money.xml" />
-        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/money/ui/PayMoneyFragment.java" />
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/model/SuningManager.java" />
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/product/model/ModelFreight.java" />
         <option value="$PROJECT_DIR$/consumer/src/main/res/layout/fragment_product_detail_new.xml" />
-        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/product/ui/ProductDetailFragment.java" />
-        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/order/ui/ShoppingCarPlatformBuyFragment.java" />
-        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/order/ui/PlatformProductBuyFragment.java" />
-        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/tools/API.java" />
-        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/EntranceActivity.java" />
-        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/adapter/GoldenPriceGoodsAdapter.java" />
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/adapter/GoldenResultListViewAdapter.java" />
-        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentNoPriceDialog.java" />
         <option value="$PROJECT_DIR$/consumer/src/main/res/values/colors.xml" />
-        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentPriceGoodsDialog.java" />
-        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentPriceMoneyDialog.java" />
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentResultDialog.java" />
-        <option value="$PROJECT_DIR$/consumer/src/main/res/layout/price_good_item.xml" />
-        <option value="$PROJECT_DIR$/consumer/src/main/res/layout/price_goods_fragment.xml" />
         <option value="$PROJECT_DIR$/consumer/src/main/res/layout/layout_one.xml" />
         <option value="$PROJECT_DIR$/consumer/src/main/res/layout/fragment_main_golden_egg.xml" />
         <option value="$PROJECT_DIR$/captures/SystemInfo_2015.12.07_16.25.46.txt" />
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/main/ui/HomeFragment.java" />
+        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/shake/model/ModelAward.java" />
+        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/adapter/GoldenPriceGoodsAdapter.java" />
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentMainGoldenEgg.java" />
-        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/EggMainFragment.java" />
+        <option value="$PROJECT_DIR$/consumer/src/main/res/layout/price_good_item.xml" />
+        <option value="$PROJECT_DIR$/consumer/src/main/res/drawable/loading.xml" />
+        <option value="$PROJECT_DIR$/consumer/src/main/res/layout/home_part_miaosha.xml" />
+        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/EntranceActivity.java" />
+        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/product/ui/ProductDetailFragment.java" />
+        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/store/SelectStoreFragment.java" />
+        <option value="$PROJECT_DIR$/consumer/src/main/res/drawable/shape_pay_money_btn_bg.xml" />
+        <option value="$PROJECT_DIR$/consumer/src/main/res/drawable/shape_pay_money_btn_disable.xml" />
+        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/order/ui/PlatformProductBuyFragment.java" />
+        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/order/ui/ShoppingCarPlatformBuyFragment.java" />
+        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/shake/model/ModelActivity.java" />
+        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/tools/API.java" />
+        <option value="$PROJECT_DIR$/consumer/src/main/res/layout/no_price_fragment.xml" />
         <option value="$PROJECT_DIR$/consumer/src/main/res/layout/fragment_main_egg.xml" />
+        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/money/ui/PayMoneyFragment.java" />
+        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/OnDialogDismissListner.java" />
+        <option value="$PROJECT_DIR$/consumer/src/main/res/layout/price_goods_fragment.xml" />
+        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/EggMainFragment.java" />
+        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/shake/model/ModelAwardHistory.java" />
+        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentPriceMoneyDialog.java" />
+        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentNoPriceDialog.java" />
+        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentPriceGoodsDialog.java" />
       </list>
     </option>
   </component>
@@ -3154,6 +3585,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -3186,7 +3618,21 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="consumer" />
+              <option name="myItemId" value="ViewPagerIndicator" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="yitgogo_consumer" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="yitgogo_consumer" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="pullToRefresh" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -3201,192 +3647,11 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="consumer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="yitgogo_consumer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="yitgogo_consumer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="consumer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="yitgogo_consumer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="yitgogo_consumer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="consumer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="drawable-xxhdpi" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="yitgogo_consumer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="yitgogo_consumer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="consumer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="drawable-xhdpi" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="yitgogo_consumer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="yitgogo_consumer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="consumer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="drawable" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="yitgogo_consumer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="yitgogo_consumer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="consumer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="consumer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="yitgogo_consumer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="yitgogo_consumer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="consumer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
       <pane id="AndroidView">
         <subPane>
           <PATH>
@@ -3397,7 +3662,7 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="PackagesPane" />
     </panes>
   </component>
@@ -3405,7 +3670,7 @@
     <property name="android.sdk.path" value="D:/DevelopeTools/ADT/sdk" />
     <property name="android.project.structure.last.selected" value="SDK Location" />
     <property name="android.project.structure.proportion" value="0.15" />
-    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.completion" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="recentsLimit" value="5" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth0" value="258" />
@@ -3425,21 +3690,25 @@
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth3" value="1058" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder3" value="3" />
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="0123456789ABCDEF" />
+    <property name="OverrideImplement.combined" value="true" />
+    <property name="OverrideImplement.overriding.sorted" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable-xxhdpi" />
       <recent name="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable" />
+      <recent name="E:\Github\yitgogo_consumer\consumer\src\main\assets" />
+      <recent name="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable-xxhdpi" />
       <recent name="E:\Github\yitgogo_consumer\consumer\src\main\res\layout" />
       <recent name="E:\Github\yitgogo_consumer\consumer\src\main\res" />
-      <recent name="E:\Github\yitgogo_consumer\consumer\src\main\java\yitgogo\consumer\activity\egg\ui" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable-xxhdpi" />
       <recent name="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable-xhdpi" />
       <recent name="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable" />
       <recent name="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable-hdpi" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="yitgogo.consumer.activity.shake.model" />
       <recent name="yitgogo.consumer.product.model" />
       <recent name="yitgogo.consumer.money.ui" />
     </key>
@@ -3618,6 +3887,9 @@
     </configuration>
   </component>
   <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="8d8ef22a-e981-4a74-b969-3c7236b5a24d" name="Default" comment="" />
@@ -3638,37 +3910,37 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962137" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962137" sideWeight="0.4978678" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="true" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.3496659" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" x="22" y="372" width="1876" height="296" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.66035634" sideWeight="0.5042644" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.8296214" sideWeight="0.5127932" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32942432" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.66035634" sideWeight="0.49573562" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Preview" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.37793177" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962137" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962137" sideWeight="0.4978678" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.8296214" sideWeight="0.48720682" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6336303" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962137" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32959402" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962137" sideWeight="0.5" order="12" side_tool="true" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="true" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="true" internal_type="SLIDING" type="SLIDING" visible="true" weight="0.4914712" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32959402" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32995737" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32995737" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3997773" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2947761" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962137" sideWeight="0.49573562" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -3684,101 +3956,28 @@
           <properties />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="1" />
+      <option name="time" value="6" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/EggMainFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="106" column="63" selection-start-line="106" selection-start-column="63" selection-end-line="106" selection-end-column="63" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/drawable/loading.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="23" column="17" selection-start-line="23" selection-start-column="17" selection-end-line="23" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentMainGoldenEgg.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/layout/fragment_main_golden_egg.xml">
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="27" column="35" selection-start-line="27" selection-start-column="35" selection-end-line="27" selection-end-column="35" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/layout/fragment_main_egg.xml">
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="48" column="24" selection-start-line="48" selection-start-column="24" selection-end-line="48" selection-end-column="24" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/YitgogoApplication.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="49" column="0" selection-start-line="49" selection-start-column="0" selection-end-line="49" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/layout/fragment_pay.xml">
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-16.866667">
-          <caret line="23" column="55" selection-start-line="23" selection-start-column="55" selection-end-line="23" selection-end-column="55" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/consumer/src/main/res/drawable-xhdpi/lable_back.9.png">
-      <provider selected="true" editor-type-id="ninepatcheditor">
-        <state />
-      </provider>
       <provider editor-type-id="images">
         <state />
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/money/ui/PayMoneyFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="146" column="105" selection-start-line="146" selection-start-column="105" selection-end-line="146" selection-end-column="105" />
-        </state>
+      <provider selected="true" editor-type-id="ninepatcheditor">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/consumer/src/main/res/layout/fragment_pay_money.xml">
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-9.533334">
           <caret line="31" column="58" selection-start-line="31" selection-start-column="58" selection-end-line="31" selection-end-column="58" />
           <folding />
         </state>
+      </provider>
+      <provider editor-type-id="android-designer">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/money/ui/PayFragment.java">
@@ -3788,64 +3987,15 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/product/model/ModelFreight.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.3821989">
-          <caret line="36" column="28" selection-start-line="36" selection-start-column="28" selection-end-line="36" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/consumer/src/main/res/layout/fragment_product_detail_new.xml">
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.27071825">
           <caret line="42" column="29" selection-start-line="42" selection-start-column="29" selection-end-line="42" selection-end-column="29" />
           <folding />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/product/ui/ProductDetailFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="737" column="45" selection-start-line="737" selection-start-column="45" selection-end-line="737" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/order/ui/ShoppingCarPlatformBuyFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.504363">
-          <caret line="486" column="45" selection-start-line="486" selection-start-column="45" selection-end-line="486" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/model/SuningManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3071553">
-          <caret line="14" column="28" selection-start-line="14" selection-start-column="28" selection-end-line="14" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/EntranceActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="221" column="60" selection-start-line="221" selection-start-column="60" selection-end-line="221" selection-end-column="60" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/order/ui/PlatformProductBuyFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="293" column="9" selection-start-line="293" selection-start-column="9" selection-end-line="293" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/tools/API.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="10" column="16" selection-start-line="10" selection-start-column="16" selection-end-line="10" selection-end-column="16" />
-        </state>
+      <provider editor-type-id="android-designer">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/tools/ScreenUtil.java">
@@ -3855,19 +4005,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/adapter/GoldenPriceGoodsAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="61" column="56" selection-start-line="61" selection-start-column="56" selection-end-line="61" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/adapter/GoldenResultListViewAdapter.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="14" column="62" selection-start-line="14" selection-start-column="62" selection-end-line="14" selection-end-column="62" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -3887,30 +4030,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentNoPriceDialog.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="41" column="79" selection-start-line="41" selection-start-column="70" selection-end-line="41" selection-end-column="79" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentPriceGoodsDialog.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="48" column="63" selection-start-line="48" selection-start-column="63" selection-end-line="48" selection-end-column="63" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentPriceMoneyDialog.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="48" column="63" selection-start-line="48" selection-start-column="63" selection-end-line="48" selection-end-column="63" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentResultDialog.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -3918,119 +4037,357 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/layout/layout_one.xml">
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/shake/ui/ActivityFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-18.333334">
-          <caret line="25" column="37" selection-start-line="25" selection-start-column="37" selection-end-line="25" selection-end-column="37" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="422" column="0" selection-start-line="422" selection-start-column="0" selection-end-line="422" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/drawable/after_top_bg.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/captures/SystemInfo_2015.12.07_16.25.46.txt">
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/model/SuningManager.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="15" column="0" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/captures/SystemInfo_2015.12.07_16.25.46.txt">
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/YitgogoApplication.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="32" column="5" selection-start-line="32" selection-start-column="5" selection-end-line="32" selection-end-column="5" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/layout/price_goods_fragment.xml">
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-11.0">
-          <caret line="15" column="63" selection-start-line="15" selection-start-column="63" selection-end-line="15" selection-end-column="63" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/layout/price_good_item.xml">
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-15.4">
-          <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/EggMainFragment.java">
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/home/part/PartBianminFragment.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="106" column="63" selection-start-line="106" selection-start-column="63" selection-end-line="106" selection-end-column="63" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+          <caret line="143" column="31" selection-start-line="143" selection-start-column="31" selection-end-line="143" selection-end-column="31" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/main/ui/HomeFragment.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="395" column="13" selection-start-line="395" selection-start-column="13" selection-end-line="395" selection-end-column="13" />
+          <caret line="325" column="48" selection-start-line="325" selection-start-column="48" selection-end-line="325" selection-end-column="48" />
           <folding>
-            <element signature="e#13098#13284#0" expanded="true" />
-            <element signature="e#13283#13284#0" expanded="true" />
+            <element signature="e#13164#13555#0" expanded="false" />
+            <element signature="e#13554#13555#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/drawable/egg_back_header.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentMainGoldenEgg.java">
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/adapter/GoldenPriceGoodsAdapter.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
-          <folding />
+          <caret line="16" column="13" selection-start-line="16" selection-start-column="13" selection-end-line="16" selection-end-column="13" />
         </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/drawable-xxhdpi/image_rule_back.9.png">
+      <provider editor-type-id="images">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="ninepatcheditor">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/consumer/src/main/res/drawable/loading.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="23" column="17" selection-start-line="23" selection-start-column="17" selection-end-line="23" selection-end-column="17" />
+          <caret line="15" column="32" selection-start-line="15" selection-start-column="32" selection-end-line="15" selection-end-column="32" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/layout/fragment_main_golden_egg.xml">
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/home/part/PartMiaoshaFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="76" column="59" selection-start-line="76" selection-start-column="59" selection-end-line="76" selection-end-column="59" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/drawable/egg_back_1.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/drawable/egg_egg.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/EntranceActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="53" column="72" selection-start-line="53" selection-start-column="72" selection-end-line="53" selection-end-column="72" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/layout/price_good_item.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-3.6666667">
+          <caret line="5" column="34" selection-start-line="5" selection-start-column="34" selection-end-line="5" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
       <provider editor-type-id="android-designer">
         <state />
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/drawable/egg_anim_3.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/drawable/egg_anim_4.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/drawable/egg_anim_5.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/drawable/egg_anim_1.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/drawable/egg_anim_2.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/store/SelectStoreFragment.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="27" column="35" selection-start-line="27" selection-start-column="35" selection-end-line="27" selection-end-column="35" />
+          <caret line="168" column="39" selection-start-line="168" selection-start-column="23" selection-end-line="168" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/product/model/ModelFreight.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="11" column="44" selection-start-line="11" selection-start-column="44" selection-end-line="11" selection-end-column="44" />
+          <folding>
+            <element signature="e#852#853#0" expanded="false" />
+            <element signature="e#881#882#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/layout/home_part_miaosha.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-15.5">
+          <caret line="60" column="47" selection-start-line="60" selection-start-column="47" selection-end-line="60" selection-end-column="47" />
           <folding />
         </state>
+      </provider>
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/drawable/shape_pay_money_btn_bg.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="14" column="16" selection-start-line="14" selection-start-column="16" selection-end-line="14" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/drawable/shape_pay_money_btn_disable.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="5" column="36" selection-start-line="5" selection-start-column="36" selection-end-line="5" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/order/ui/PlatformProductBuyFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33333334">
+          <caret line="312" column="137" selection-start-line="312" selection-start-column="127" selection-end-line="312" selection-end-column="137" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://D:/DevelopeTools/ADT/sdk/platforms/android-22/android.jar!/android/os/AsyncTask.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-2.6785715">
+          <caret line="87" column="0" selection-start-line="87" selection-start-column="0" selection-end-line="87" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/product/ui/ShoppingCarFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="414" column="36" selection-start-line="414" selection-start-column="36" selection-end-line="414" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/order/ui/ShoppingCarPlatformBuyFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="63" column="26" selection-start-line="63" selection-start-column="26" selection-end-line="63" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/product/ui/ProductDetailFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="215" column="11" selection-start-line="215" selection-start-column="11" selection-end-line="215" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/shake/model/ModelActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="240" column="8" selection-start-line="240" selection-start-column="8" selection-end-line="240" selection-end-column="25" />
+          <folding>
+            <element signature="e#7432#7433#0" expanded="true" />
+            <element signature="e#7464#7465#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/tools/API.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="20" column="46" selection-start-line="20" selection-start-column="46" selection-end-line="20" selection-end-column="46" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/drawable/shape_no_btn_bg.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/layout/no_price_fragment.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-21.266666">
+          <caret line="44" column="31" selection-start-line="44" selection-start-column="31" selection-end-line="44" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/consumer/src/main/res/layout/fragment_main_egg.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-16.866667">
+          <caret line="38" column="41" selection-start-line="38" selection-start-column="41" selection-end-line="38" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
       <provider editor-type-id="android-designer">
         <state />
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/money/ui/PayMoneyFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.2657926">
-          <caret line="48" column="24" selection-start-line="48" selection-start-column="24" selection-end-line="48" selection-end-column="24" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="550" column="8" selection-start-line="550" selection-start-column="8" selection-end-line="550" selection-end-column="8" />
+          <folding>
+            <element signature="e#9076#9091#0" expanded="true" />
+            <element signature="e#15701#15716#0" expanded="true" />
+            <element signature="e#19824#19839#0" expanded="true" />
+            <element signature="e#22261#22276#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/OnDialogDismissListner.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.17721519">
+          <caret line="7" column="34" selection-start-line="7" selection-start-column="34" selection-end-line="7" selection-end-column="34" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/layout/price_goods_fragment.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="21" column="22" selection-start-line="21" selection-start-column="22" selection-end-line="21" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/shake/model/ModelAward.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.34177214">
+          <caret line="50" column="5" selection-start-line="50" selection-start-column="5" selection-end-line="50" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/shake/model/ModelAwardHistory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.11392405">
+          <caret line="59" column="32" selection-start-line="59" selection-start-column="32" selection-end-line="59" selection-end-column="32" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1867#1868#0" expanded="true" />
+            <element signature="e#1892#1893#0" expanded="true" />
+            <element signature="e#1956#1957#0" expanded="true" />
+            <element signature="e#1994#1995#0" expanded="true" />
+            <element signature="e#2028#2029#0" expanded="true" />
+            <element signature="e#2062#2063#0" expanded="true" />
+            <element signature="e#2092#2093#0" expanded="true" />
+            <element signature="e#2124#2125#0" expanded="true" />
+            <element signature="e#2152#2153#0" expanded="true" />
+            <element signature="e#2187#2188#0" expanded="true" />
+            <element signature="e#2218#2219#0" expanded="true" />
+            <element signature="e#2249#2250#0" expanded="true" />
+            <element signature="e#2279#2280#0" expanded="true" />
+            <element signature="e#2320#2321#0" expanded="true" />
+            <element signature="e#2353#2354#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentPriceMoneyDialog.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.49367088">
+          <caret line="100" column="18" selection-start-line="100" selection-start-column="18" selection-end-line="100" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentNoPriceDialog.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.56962025">
+          <caret line="116" column="62" selection-start-line="116" selection-start-column="62" selection-end-line="116" selection-end-column="62" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/FragmentPriceGoodsDialog.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5443038">
+          <caret line="110" column="62" selection-start-line="110" selection-start-column="62" selection-end-line="110" selection-end-column="62" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/EggMainFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.6835443">
+          <caret line="411" column="56" selection-start-line="411" selection-start-column="56" selection-end-line="411" selection-end-column="56" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#15463#15763#0" expanded="true" />
+            <element signature="e#15762#15763#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

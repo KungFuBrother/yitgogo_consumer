@@ -44,7 +44,6 @@ import java.util.Map;
 
 import yitgogo.consumer.BaseNotifyFragment;
 import yitgogo.consumer.activity.egg.ui.EggMainFragment;
-import yitgogo.consumer.activity.egg.ui.FragmentMainGoldenEgg;
 import yitgogo.consumer.home.model.ModelListPrice;
 import yitgogo.consumer.home.model.ModelProduct;
 import yitgogo.consumer.home.part.PartAdsFragment;
@@ -78,7 +77,10 @@ import yitgogo.consumer.tools.API;
 import yitgogo.consumer.tools.Content;
 import yitgogo.consumer.tools.Parameters;
 import yitgogo.consumer.tools.ScreenUtil;
+import yitgogo.consumer.user.model.User;
+import yitgogo.consumer.user.ui.UserLoginFragment;
 import yitgogo.consumer.view.InnerGridView;
+import yitgogo.consumer.view.Notify;
 
 public class HomeFragment extends BaseNotifyFragment implements OnClickListener {
 
@@ -334,7 +336,12 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
         bannerEggImageView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                jumpFull(EggMainFragment.class.getName(), "砸金蛋", null);
+                if (User.getUser().isLogin()) {
+                    jumpFull(EggMainFragment.class.getName(), "砸金蛋", null);
+                } else {
+                    Notify.show("请先登录");
+                    jump(UserLoginFragment.class.getName(), "会员登录");
+                }
             }
         });
     }

@@ -231,7 +231,7 @@ public class PlatformProductBuyFragment extends BaseNotifyFragment {
                 JSONArray freightArray = new JSONArray();
                 JSONObject freightObject = new JSONObject();
                 freightObject.put("supplyId", supplierId);
-                freightObject.put("freight", freightMap.get(supplierId));
+                freightObject.put("freight", freightMap.get(supplierId).getFregith());
                 freightArray.put(freightObject);
                 nameValuePairs.add(new BasicNameValuePair("freights", freightArray.toString()));
 
@@ -309,7 +309,7 @@ public class PlatformProductBuyFragment extends BaseNotifyFragment {
                                 }
                             }
                             if (freightMap.containsKey(supplierId)) {
-                                freightTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format(freightMap.get(supplierId)));
+                                freightTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format(freightMap.get(supplierId).getFregith()));
                                 totalMoneyTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format((buyCount * price) + freightMap.get(supplierId).getFregith()));
                             }
                         }

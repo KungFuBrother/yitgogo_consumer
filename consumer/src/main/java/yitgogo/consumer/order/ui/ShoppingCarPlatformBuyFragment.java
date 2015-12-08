@@ -276,7 +276,7 @@ public class ShoppingCarPlatformBuyFragment extends BaseNotifyFragment {
                 holder.providerNameTextView.setText("");
             }
             if (freightMap.containsKey(providers.get(position))) {
-                holder.freightTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format(freightMap.get(providers.get(position))));
+                holder.freightTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format(freightMap.get(providers.get(position)).getFregith()));
             } else {
                 holder.freightTextView.setText("");
             }
@@ -396,7 +396,7 @@ public class ShoppingCarPlatformBuyFragment extends BaseNotifyFragment {
                     if (freightMap.containsKey(providers.get(i))) {
                         JSONObject freightObject = new JSONObject();
                         freightObject.put("supplyId", providers.get(i));
-                        freightObject.put("freight", freightMap.get(providers.get(i)));
+                        freightObject.put("freight", freightMap.get(providers.get(i)).getFregith());
                         freightArray.put(freightObject);
                     }
                 }
