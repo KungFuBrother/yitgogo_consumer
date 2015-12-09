@@ -10,11 +10,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.SparseIntArray;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -37,6 +35,7 @@ import yitgogo.consumer.activity.shake.model.ModelActivity;
 import yitgogo.consumer.activity.shake.model.ModelAward;
 import yitgogo.consumer.money.ui.PayMoneyFragment;
 import yitgogo.consumer.tools.API;
+import yitgogo.consumer.tools.NetUtil;
 import yitgogo.consumer.tools.Parameters;
 import yitgogo.consumer.tools.ScreenUtil;
 import yitgogo.consumer.user.model.User;
@@ -47,11 +46,9 @@ import yitgogo.consumer.view.Notify;
  */
 public class EggMainFragment extends BaseNotifyFragment {
 
-    ImageView headerImageView;
+    ImageView backgroundImageView;
 
-    FrameLayout clickLayout;
-
-    ImageView animClickImageView, animImageView;
+    ImageView animImageView;
 
     TextView historyTextView;
     Button payButton;
@@ -64,7 +61,7 @@ public class EggMainFragment extends BaseNotifyFragment {
     private SparseIntArray soundIds;
     private int eggMusic = 1;
 
-    String activityId = "58";
+    String activityId = "16";
 
     ModelActivity activityetail = new ModelActivity();
     List<ModelAward> awards;
@@ -92,10 +89,8 @@ public class EggMainFragment extends BaseNotifyFragment {
 
     @Override
     protected void findViews() {
-        headerImageView = (ImageView) contentView.findViewById(R.id.egg_header);
+        backgroundImageView = (ImageView) contentView.findViewById(R.id.egg_back);
 
-        clickLayout = (FrameLayout) contentView.findViewById(R.id.egg_click_layout);
-        animClickImageView = (ImageView) contentView.findViewById(R.id.egg_click);
         animImageView = (ImageView) contentView.findViewById(R.id.egg_anim);
 
         historyTextView = (TextView) contentView.findViewById(R.id.egg_history);
@@ -109,17 +104,8 @@ public class EggMainFragment extends BaseNotifyFragment {
 
     @Override
     protected void initViews() {
-        FrameLayout.LayoutParams headerLayoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, (int) ((float) ScreenUtil.getScreenWidth() / 540.0f * 453.0f));
-        headerImageView.setLayoutParams(headerLayoutParams);
-
         LinearLayout.LayoutParams animLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) ((float) ScreenUtil.getScreenWidth() / 540.0f * 453.0f));
         animImageView.setLayoutParams(animLayoutParams);
-
-        FrameLayout.LayoutParams clickLayoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, (int) ((float) ScreenUtil.getScreenWidth() / 540.0f * 350.0f));
-        clickLayout.setLayoutParams(clickLayoutParams);
-        FrameLayout.LayoutParams clickImageLayoutParams = new FrameLayout.LayoutParams((int) ((float) ScreenUtil.getScreenWidth() * 197.0f / 540.0f), (int) ((float) ScreenUtil.getScreenWidth() * 205.0f / 540.0f));
-        clickImageLayoutParams.gravity = Gravity.CENTER;
-        animClickImageView.setLayoutParams(clickImageLayoutParams);
 
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) ((float) ScreenUtil.getScreenWidth() / 4.0f));
         awardRecyclerView.setLayoutParams(layoutParams);
@@ -131,22 +117,23 @@ public class EggMainFragment extends BaseNotifyFragment {
     }
 
     int position = 0;
-    int[] eggImages = {R.drawable.egg_anim_2, R.drawable.egg_anim_3, R.drawable.egg_anim_4, R.drawable.egg_anim_5, R.drawable.egg_anim_6, R.drawable.egg_anim_7, R.drawable.egg_anim_8, R.drawable.egg_anim_9};
+    int[] eggImages = {R.drawable.egg_anim_2, R.drawable.egg_anim_3, R.drawable.egg_anim_4, R.drawable.egg_anim_5, R.drawable.egg_anim_6, R.drawable.egg_anim_7, R.drawable.egg_anim_8};
 
     private void animate() {
         animImageView.postDelayed(new Runnable() {
             @Override
             public void run() {
-                animClickImageView.setVisibility(View.GONE);
-                if (position == 4) {
+                if (position == 3) {
                     playSound();
                 }
                 if (position < eggImages.length) {
                     animImageView.setImageResource(eggImages[position]);
                     position++;
-                    animate();
-                } else {
-                    new WinEgg().execute();
+                    if (position < eggImages.length) {
+                        animate();
+                    } else {
+                        new WinEgg().execute();
+                    }
                 }
             }
         }, 100);
@@ -157,17 +144,14 @@ public class EggMainFragment extends BaseNotifyFragment {
         historyTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentResultDialog dialog = FragmentResultDialog.newInstance(activityId);
-                dialog.show(getFragmentManager(), FragmentResultDialog.class.getName());
+                new GetAwardHistory().execute();
             }
         });
-        animClickImageView.setOnClickListener(new View.OnClickListener() {
+        animImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                animImageView.setVisibility(View.VISIBLE);
-                headerImageView.setImageResource(R.drawable.egg_back_2);
-                position = 0;
                 showLoading();
+                position = 0;
                 animate();
             }
         });
@@ -177,6 +161,67 @@ public class EggMainFragment extends BaseNotifyFragment {
                 payMoney();
             }
         });
+    }
+
+    private void showActivityDetail() {
+        //初始状态
+        position = 0;
+        ImageLoader.getInstance().displayImage(activityetail.getActivityImg(), backgroundImageView);
+        animImageView.setImageResource(R.drawable.egg_anim_0);
+        ruleTextView.setText(activityetail.getRule());
+        awardAdapter.notifyDataSetChanged();
+        switch (activityetail.getJoinState()) {
+            case 0:
+                //能参与活动
+                animImageView.setEnabled(true);
+                payButton.setVisibility(View.GONE);
+                break;
+            case 1:
+                //未付款
+                if (activityetail.getJoinMoney() == 0) {
+                    animImageView.setEnabled(true);
+                    payButton.setVisibility(View.GONE);
+                    break;
+                }
+                animImageView.setEnabled(false);
+                payButton.setEnabled(true);
+                payButton.setVisibility(View.VISIBLE);
+                payButton.setBackgroundResource(R.drawable.shape_pay_money_btn_bg);
+                payButton.setText((int) activityetail.getJoinMoney() + "元砸惊喜");
+                break;
+            case 2:
+                //活动结束
+                animImageView.setEnabled(false);
+                payButton.setEnabled(false);
+                payButton.setVisibility(View.VISIBLE);
+                payButton.setBackgroundResource(R.drawable.shape_pay_money_btn_disable);
+                payButton.setText("已结束");
+                break;
+            case 3:
+                //未开始
+                animImageView.setEnabled(false);
+                payButton.setEnabled(false);
+                payButton.setVisibility(View.VISIBLE);
+                payButton.setBackgroundResource(R.drawable.shape_pay_money_btn_disable);
+                payButton.setText("未开始");
+                break;
+            case 4:
+                //参与次数上限
+                animImageView.setEnabled(false);
+                payButton.setEnabled(false);
+                payButton.setVisibility(View.VISIBLE);
+                payButton.setBackgroundResource(R.drawable.shape_pay_money_btn_disable);
+                payButton.setText("参与次数已达上限");
+                break;
+            case 5:
+                //当天参与次数上限
+                animImageView.setEnabled(false);
+                payButton.setEnabled(false);
+                payButton.setVisibility(View.VISIBLE);
+                payButton.setBackgroundResource(R.drawable.shape_pay_money_btn_disable);
+                payButton.setText("今日参与次数已达上限");
+                break;
+        }
     }
 
     private void payMoney() {
@@ -253,7 +298,6 @@ public class EggMainFragment extends BaseNotifyFragment {
         @Override
         protected void onPreExecute() {
             showLoading();
-            headerImageView.setImageResource(R.drawable.egg_back_1);
         }
 
         @Override
@@ -277,16 +321,11 @@ public class EggMainFragment extends BaseNotifyFragment {
                                 awards.add(new ModelAward(awardArray.optJSONObject(i)));
                             }
                         }
-                        ModelActivity activity = new ModelActivity(object.optJSONObject("object"));
-                        if (activity.getJoinMoney() == 0) {
-                            activityetail = activity;
-                            showActivityDetail();
-                        } else {
-                            if (activity.getJoinState() == 1) {
+                        activityetail = new ModelActivity(object.optJSONObject("object"));
+                        showActivityDetail();
+                        if (activityetail.getJoinMoney() > 0) {
+                            if (activityetail.getJoinState() == 1) {
                                 payMoney();
-                            } else {
-                                activityetail = activity;
-                                showActivityDetail();
                             }
                         }
                         return;
@@ -295,6 +334,31 @@ public class EggMainFragment extends BaseNotifyFragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            }
+        }
+    }
+
+    class GetAwardHistory extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            showLoading();
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            List<NameValuePair> nameValuePairs = new ArrayList<>();
+            nameValuePairs.add(new BasicNameValuePair("activityId", activityId));
+            nameValuePairs.add(new BasicNameValuePair("memberAccount", User.getUser().getUseraccount()));
+            return NetUtil.getInstance().postWithCookie(API.API_ACTIVITY_AWARD_HISTORY, nameValuePairs);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            hideLoading();
+            if (!TextUtils.isEmpty(result)) {
+                FragmentResultDialog dialog = FragmentResultDialog.newInstance(result);
+                dialog.show(getFragmentManager(), FragmentResultDialog.class.getName());
             }
         }
     }
@@ -387,69 +451,6 @@ public class EggMainFragment extends BaseNotifyFragment {
         dialog.show(getFragmentManager(), FragmentPriceGoodsDialog.class.getName());
     }
 
-    private void showActivityDetail() {
-        //初始状态
-        position = 0;
-        animClickImageView.setVisibility(View.VISIBLE);
-        animImageView.setVisibility(View.INVISIBLE);
-        headerImageView.setImageResource(R.drawable.egg_back_1);
-
-        ruleTextView.setText(activityetail.getRule());
-        awardAdapter.notifyDataSetChanged();
-        switch (activityetail.getJoinState()) {
-            case 0:
-                //能参与活动
-                animClickImageView.setEnabled(true);
-                payButton.setVisibility(View.GONE);
-                break;
-            case 1:
-                //未付款
-                if (activityetail.getJoinMoney() == 0) {
-                    animClickImageView.setEnabled(true);
-                    payButton.setVisibility(View.GONE);
-                    break;
-                }
-                animClickImageView.setEnabled(false);
-                payButton.setEnabled(true);
-                payButton.setVisibility(View.VISIBLE);
-                payButton.setBackgroundResource(R.drawable.shape_pay_money_btn_bg);
-                payButton.setText((int) activityetail.getJoinMoney() + "元砸惊喜");
-                break;
-            case 2:
-                //活动结束
-                animClickImageView.setEnabled(false);
-                payButton.setEnabled(false);
-                payButton.setVisibility(View.VISIBLE);
-                payButton.setBackgroundResource(R.drawable.shape_pay_money_btn_disable);
-                payButton.setText("已结束");
-                break;
-            case 3:
-                //未开始
-                animClickImageView.setEnabled(false);
-                payButton.setEnabled(false);
-                payButton.setVisibility(View.VISIBLE);
-                payButton.setBackgroundResource(R.drawable.shape_pay_money_btn_disable);
-                payButton.setText("未开始");
-                break;
-            case 4:
-                //参与次数上限
-                animClickImageView.setEnabled(false);
-                payButton.setEnabled(false);
-                payButton.setVisibility(View.VISIBLE);
-                payButton.setBackgroundResource(R.drawable.shape_pay_money_btn_disable);
-                payButton.setText("参与次数已达上限");
-                break;
-            case 5:
-                //当天参与次数上限
-                animClickImageView.setEnabled(false);
-                payButton.setEnabled(false);
-                payButton.setVisibility(View.VISIBLE);
-                payButton.setBackgroundResource(R.drawable.shape_pay_money_btn_disable);
-                payButton.setText("今日参与次数已达上限");
-                break;
-        }
-    }
-
     class AwardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         class AwardViewHolder extends RecyclerView.ViewHolder {
@@ -483,52 +484,12 @@ public class EggMainFragment extends BaseNotifyFragment {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup arg0, int arg1) {
             View view = layoutInflater.inflate(R.layout.price_good_item, null);
-            ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams((int) ((float) ScreenUtil.getScreenWidth() / 5.0f), ViewGroup.LayoutParams.MATCH_PARENT);
+            ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams((int) ((float) ScreenUtil.getScreenWidth() / 4.5f), ViewGroup.LayoutParams.MATCH_PARENT);
             view.setLayoutParams(layoutParams);
             AwardViewHolder viewHolder = new AwardViewHolder(view);
             return viewHolder;
         }
     }
-
-//    @Override
-//    protected void registerViews() {
-//        animClickImageView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                startEgg();
-//            }
-//        });
-//    }
-//
-//    private AnimationDrawable drawable;
-//
-//    private void startEgg() {
-//
-//        if (drawable == null) {
-//            animImageView.setImageResource(R.drawable.loading);
-//            drawable = (AnimationDrawable) animImageView.getDrawable();
-//        }
-//        drawable.start();
-//
-//        int duration = 0;
-//
-//        for (int i = 0; i < drawable.getNumberOfFrames(); i++) {
-//            duration += drawable.getDuration(i);
-//        }
-//
-//        Handler handler = new Handler();
-//        handler.postDelayed(new Runnable() {
-//
-//            @Override
-//            public void run() {
-//                stopEgg();
-//            }
-//        }, duration + 300);
-//    }
-//
-//    private void stopEgg() {
-//        drawable.stop();
-//    }
 
 }
 

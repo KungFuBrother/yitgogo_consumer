@@ -1,6 +1,5 @@
 package yitgogo.consumer.activity.egg.ui;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
@@ -16,8 +15,6 @@ import android.widget.TextView;
 
 import com.smartown.yitian.gogo.R;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,9 +24,6 @@ import java.util.List;
 
 import yitgogo.consumer.activity.egg.ui.adapter.GoldenResultListViewAdapter;
 import yitgogo.consumer.activity.shake.model.ModelAwardHistory;
-import yitgogo.consumer.tools.API;
-import yitgogo.consumer.tools.NetUtil;
-import yitgogo.consumer.user.model.User;
 import yitgogo.consumer.view.Notify;
 
 public class FragmentResultDialog extends DialogFragment implements OnClickListener {
@@ -40,12 +34,12 @@ public class FragmentResultDialog extends DialogFragment implements OnClickListe
     private TextView tvEnsure;
     private ListView mListView;
 
-    private String activityId = "";
+    private String result = "";
 
-    public static FragmentResultDialog newInstance(String activityId) {
+    public static FragmentResultDialog newInstance(String result) {
         FragmentResultDialog priceDialog = new FragmentResultDialog();
         Bundle bundle = new Bundle();
-        bundle.putString("activityId", activityId);
+        bundle.putString("result", result);
         priceDialog.setArguments(bundle);
         return priceDialog;
     }
@@ -60,15 +54,39 @@ public class FragmentResultDialog extends DialogFragment implements OnClickListe
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        new GetEggHistory().execute();
+        showHistory();
+    }
+
+    private void showHistory() {
+        if (!TextUtils.isEmpty(result)) {
+            try {
+                JSONObject object = new JSONObject(result);
+                if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                    JSONArray array = object.optJSONArray("dataList");
+                    if (array != null) {
+                        List<ModelAwardHistory> awardHistories = new ArrayList<>();
+                        for (int i = 0; i < array.length(); i++) {
+                            awardHistories.add(new ModelAwardHistory(array.optJSONObject(i)));
+                        }
+                        if (getActivity() != null) {
+                            mListView.setAdapter(new GoldenResultListViewAdapter(getActivity(), awardHistories));
+                        }
+                    }
+                    return;
+                }
+                Notify.show(object.optString("message"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void init() {
 
         Bundle bundle = getArguments();
         if (bundle != null) {
-            if (bundle.containsKey("activityId")) {
-                activityId = bundle.getString("activityId");
+            if (bundle.containsKey("result")) {
+                result = bundle.getString("result");
             }
         }
     }
@@ -119,42 +137,5 @@ public class FragmentResultDialog extends DialogFragment implements OnClickListe
             dismiss();
         }
     }
-
-    class GetEggHistory extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("activityId", activityId));
-            nameValuePairs.add(new BasicNameValuePair("memberAccount", User.getUser().getUseraccount()));
-            return NetUtil.getInstance().postWithCookie(API.API_ACTIVITY_AWARD_HISTORY, nameValuePairs);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            if (!TextUtils.isEmpty(result)) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONArray array = object.optJSONArray("dataList");
-                        if (array != null) {
-                            List<ModelAwardHistory> awardHistories = new ArrayList<>();
-                            for (int i = 0; i < array.length(); i++) {
-                                awardHistories.add(new ModelAwardHistory(array.optJSONObject(i)));
-                            }
-                            if (getActivity() != null) {
-                                mListView.setAdapter(new GoldenResultListViewAdapter(getActivity(), awardHistories));
-                            }
-                        }
-                        return;
-                    }
-                    Notify.show(object.optString("message"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
 
 }	

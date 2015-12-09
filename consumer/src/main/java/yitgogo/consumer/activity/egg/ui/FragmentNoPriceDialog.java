@@ -1,5 +1,6 @@
 package yitgogo.consumer.activity.egg.ui;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.util.DisplayMetrics;
@@ -46,6 +47,14 @@ public class FragmentNoPriceDialog extends DialogFragment implements OnClickList
         initView(view);
         loadRandomText();
         return view;
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if (onDialogDismissListner != null) {
+            onDialogDismissListner.dismiss(false);
+        }
     }
 
     private void initView(View view) {
@@ -111,17 +120,16 @@ public class FragmentNoPriceDialog extends DialogFragment implements OnClickList
 
     @Override
     public void onClick(View v) {
-        dismiss();
         if (v.getId() == tvNoPlay.getId()) {
             if (onDialogDismissListner != null) {
-                onDialogDismissListner.onDialogDismiss(false);
+                onDialogDismissListner.dismiss(false);
             }
         } else {
-            // 支付界面
             if (onDialogDismissListner != null) {
-                onDialogDismissListner.onDialogDismiss(true);
+                onDialogDismissListner.dismiss(true);
             }
         }
+        dismiss();
     }
 
 }

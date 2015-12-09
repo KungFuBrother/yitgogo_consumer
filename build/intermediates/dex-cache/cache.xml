@@ -5,14 +5,14 @@
         jar="E:\Github\yitgogo_consumer\consumer\build\intermediates\exploded-aar\yitgogo_consumer\ViewPagerIndicator\unspecified\jars\classes.jar"
         jumboMode="false"
         revision="23.0.2"
-        sha1="2b0f41a4688fb1eba0c12293e312588422da808b">
+        sha1="6ae0f9077c0915985c131e54f26698dceb57e6f6">
         <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\debug\classes-c2dc35be7b5dcafe895f0209aca6454102e25bf6.jar" />
     </item>
     <item
         jar="E:\Github\yitgogo_consumer\consumer\build\intermediates\exploded-aar\yitgogo_consumer\pullToRefresh\unspecified\jars\classes.jar"
         jumboMode="false"
         revision="23.0.2"
-        sha1="77f1c7c2ff3deb85c269943a53791a9b36a2384c">
+        sha1="177e6a8e4c6ee67157d6269b630bd92928c76981">
         <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\debug\classes-0aad4f0d29650045cbdb354e31f5b2af74d9ef54.jar" />
     </item>
     <item
@@ -72,18 +72,18 @@
         <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\debug\classes-28a5eee17d09393318a16e3d3f5c97bb39a7eb73.jar" />
     </item>
     <item
-        jar="E:\Github\yitgogo_consumer\consumer\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.1\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.2"
-        sha1="f8efd0096475e0daf054267b61544e10dc776503">
-        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\debug\classes-58c2cc737fd2ef8cbced13512da35b688e1dd953.jar" />
-    </item>
-    <item
         jar="D:\DevelopeTools\ADT\sdk\extras\android\m2repository\com\android\support\support-annotations\22.2.1\support-annotations-22.2.1.jar"
         jumboMode="false"
         revision="23.0.2"
         sha1="61a0ff5c29295ec56d7e0bd3d25d95dbf71b4b2b">
         <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\debug\support-annotations-22.2.1-d2085f87634137d8ec7f8730a106f8472496e572.jar" />
+    </item>
+    <item
+        jar="E:\Github\yitgogo_consumer\consumer\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.1\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="f8efd0096475e0daf054267b61544e10dc776503">
+        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\debug\classes-58c2cc737fd2ef8cbced13512da35b688e1dd953.jar" />
     </item>
     <item
         jar="E:\Github\yitgogo_consumer\consumer\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.1\jars\libs\internal_impl-22.2.1.jar"

@@ -1,5 +1,6 @@
 package yitgogo.consumer.activity.egg.ui;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
@@ -57,6 +58,14 @@ public class FragmentPriceMoneyDialog extends DialogFragment implements OnClickL
         return view;
     }
 
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if (onDialogDismissListner != null) {
+            onDialogDismissListner.dismiss(false);
+        }
+    }
+
     private void initView(View view) {
         tvNoPlay = (TextView) view.findViewById(R.id.no_play);
         tvContinue = (TextView) view.findViewById(R.id.continue_play);
@@ -98,17 +107,16 @@ public class FragmentPriceMoneyDialog extends DialogFragment implements OnClickL
 
     @Override
     public void onClick(View v) {
-        dismiss();
         if (v.getId() == tvNoPlay.getId()) {
             if (onDialogDismissListner != null) {
-                onDialogDismissListner.onDialogDismiss(false);
+                onDialogDismissListner.dismiss(false);
             }
         } else {
-            //支付界面
             if (onDialogDismissListner != null) {
-                onDialogDismissListner.onDialogDismiss(true);
+                onDialogDismissListner.dismiss(true);
             }
         }
+        dismiss();
     }
 
 }

@@ -1,5 +1,6 @@
 package yitgogo.consumer.activity.egg.ui;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,6 +23,7 @@ public class FragmentPriceGoodsDialog extends DialogFragment implements OnClickL
 
     private int screenWidth;
     private int screenHeight;
+    FrameLayout imageLayout;
     private ImageView imageView;
     private TextView tvNoPlay;
     private TextView tvContinue;
@@ -62,11 +65,31 @@ public class FragmentPriceGoodsDialog extends DialogFragment implements OnClickL
         return view;
     }
 
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if (onDialogDismissListner != null) {
+            onDialogDismissListner.dismiss(false);
+        }
+    }
+
     private void initView(View view) {
         tvNoPlay = (TextView) view.findViewById(R.id.no_play);
         tvContinue = (TextView) view.findViewById(R.id.continue_play);
         tvTips = (TextView) view.findViewById(R.id.no_price_tips_tv);
+
+        imageLayout = (FrameLayout) view.findViewById(R.id.no_price_tips_iv_layout);
         imageView = (ImageView) view.findViewById(R.id.no_price_tips_iv);
+
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams((int) ((float) screenWidth / 2.0f), (int) ((float) screenWidth / 2.0f));
+        layoutParams.gravity = Gravity.CENTER;
+        imageLayout.setLayoutParams(layoutParams);
+
+        double imageWidth = Math.sqrt(((float) screenWidth / 2.0f) * ((float) screenWidth / 2.0f) / 2.0f);
+
+        FrameLayout.LayoutParams imageLayoutParams = new FrameLayout.LayoutParams((int) imageWidth, (int) imageWidth);
+        layoutParams.gravity = Gravity.CENTER;
+        imageView.setLayoutParams(imageLayoutParams);
 
         tvNoPlay.setOnClickListener(this);
         tvContinue.setOnClickListener(this);
@@ -105,18 +128,16 @@ public class FragmentPriceGoodsDialog extends DialogFragment implements OnClickL
 
     @Override
     public void onClick(View v) {
-        dismiss();
         if (v.getId() == tvNoPlay.getId()) {
             if (onDialogDismissListner != null) {
-                onDialogDismissListner.onDialogDismiss(false);
+                onDialogDismissListner.dismiss(false);
             }
         } else {
-            //支付界面
             if (onDialogDismissListner != null) {
-                onDialogDismissListner.onDialogDismiss(true);
+                onDialogDismissListner.dismiss(true);
             }
         }
+        dismiss();
     }
-
 
 }

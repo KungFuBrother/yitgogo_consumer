@@ -55,7 +55,7 @@ public class YitgogoApplication extends Application {
                 .showImageOnLoading(R.drawable.loading_default)
                 .showImageForEmptyUri(R.drawable.loading_default)
                 .showImageOnFail(R.drawable.loading_default)
-                .resetViewBeforeLoading(true).cacheInMemory(false)
+                .resetViewBeforeLoading(false).cacheInMemory(false)
                 .cacheOnDisk(true).considerExifParams(true)
                 .bitmapConfig(Bitmap.Config.RGB_565).build();
         ImageLoaderConfiguration configuration = new ImageLoaderConfiguration.Builder(

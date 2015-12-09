@@ -80,7 +80,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
-                    android:text="客户电话(苏宁):4008156516"
+                    android:text="客户电话(苏宁):4008516516"
                     android:textColor="@color/product_price"
                     android:textSize="16dp" />
 

@@ -2,80 +2,76 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/no_price_bg"
-    android:orientation="vertical">
+    android:background="@drawable/egg_award_back"
+    android:orientation="vertical"
+    android:padding="8dp">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="5">
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp">
 
-        <RelativeLayout
+        <FrameLayout
+            android:id="@+id/no_price_tips_iv_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_price_good_bg"></FrameLayout>
+
+        <ImageView
+            android:id="@+id/no_price_tips_iv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/shape_price_good_bg">
+            android:layout_gravity="center"
+            android:scaleType="fitCenter"
+            android:src="@drawable/loading_default" />
 
-            <ImageView
-                android:id="@+id/no_price_tips_iv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="fitCenter"
-                android:src="@drawable/loading_default" />
-        </RelativeLayout>
-    </LinearLayout>
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="4dp">
 
         <TextView
             android:id="@+id/no_price_tips_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:gravity="center"
-            android:textColor="#ffffff"
-            android:textSize="16sp" />
+            android:layout_margin="4dp"
+            android:textColor="@color/white"
+            android:textSize="16dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="3"
+            android:layout_height="wrap_content"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="2dp">
 
             <TextView
                 android:id="@+id/no_play"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="8dp"
-                android:layout_marginTop="5dp"
+                android:layout_margin="2dp"
                 android:background="@drawable/shape_no_btn_bg"
-                android:padding="7dp"
+                android:padding="8dp"
                 android:text="我不想玩了"
                 android:textColor="@color/textColorPrimary"
-                android:textSize="13sp" />
+                android:textSize="12dp" />
 
             <TextView
                 android:id="@+id/continue_play"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="5dp"
+                android:layout_margin="2dp"
                 android:background="@drawable/shape_go_on_btn_bg"
-                android:paddingBottom="9dp"
-                android:paddingLeft="18dp"
-                android:paddingRight="18dp"
-                android:paddingTop="9dp"
+                android:padding="8dp"
                 android:text="继续砸金蛋"
                 android:textColor="@color/textColorPrimary"
-                android:textSize="16sp" />
+                android:textSize="16dp" />
         </LinearLayout>
+
     </LinearLayout>
+
 </LinearLayout>

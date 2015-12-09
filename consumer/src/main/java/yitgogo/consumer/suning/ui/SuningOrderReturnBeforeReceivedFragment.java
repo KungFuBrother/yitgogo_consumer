@@ -103,7 +103,7 @@ public class SuningOrderReturnBeforeReceivedFragment extends BaseNotifyFragment 
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_DIAL);
-                Uri data = Uri.parse("tel:4008156516");
+                Uri data = Uri.parse("tel:4008516516");
                 intent.setData(data);
                 startActivity(intent);
             }
