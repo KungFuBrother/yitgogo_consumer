@@ -16,7 +16,7 @@ public interface API {
 //    String IP_SUNING = "http://gcapi.suning.com";
 //    String IP_MONEY = "http://pay.yitos.net";
 
-//    String IP_PUBLIC = "http://115.29.44.159:88";
+//    String IP_PUBLIC = "http://42.96.249.111";
 //    String IP_SUNING = "http://58.240.86.161";
 //    String IP_MONEY = "http://115.28.252.7";
 

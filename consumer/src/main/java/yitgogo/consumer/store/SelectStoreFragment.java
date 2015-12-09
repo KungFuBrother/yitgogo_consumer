@@ -61,10 +61,13 @@ public class SelectStoreFragment extends BaseNotifyFragment {
 
     boolean firstTime = false;
 
+    boolean located = false;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_select_store);
+        initLocationTool();
         findViews();
     }
 
@@ -100,7 +103,7 @@ public class SelectStoreFragment extends BaseNotifyFragment {
             bundle.putInt("type", SelectAreaFragment.TYPE_GET_AREA);
             jumpForResult(SelectAreaFragment.class.getName(), "选择区域", bundle, 22);
         } else {
-            new GetStoreArea().execute();
+            locate();
         }
     }
 
@@ -119,8 +122,10 @@ public class SelectStoreFragment extends BaseNotifyFragment {
             @Override
             public void onClick(View view) {
                 Bundle bundle = new Bundle();
-                if (Content.getBooleanContent(Parameters.CACHE_KEY_LOCATE_SUCCESS, false)) {
-                    if (getAreaType() < 5) {
+                if (located) {
+                    if (getAreaType() == 0) {
+                        bundle.putInt("type", SelectAreaFragment.TYPE_GET_AREA);
+                    } else if (getAreaType() < 4) {
                         return;
                     } else {
                         bundle.putString("area", getAreaJsonArray());
@@ -200,8 +205,10 @@ public class SelectStoreFragment extends BaseNotifyFragment {
                     if (firstTime) {
                         Intent intent = new Intent(getActivity(), MainActivity.class);
                         startActivity(intent);
+                        getActivity().finish();
+                    } else {
+                        notifyDataSetChanged();
                     }
-                    getActivity().finish();
                 }
             });
             return convertView;
@@ -280,8 +287,10 @@ public class SelectStoreFragment extends BaseNotifyFragment {
                     if (firstTime) {
                         Intent intent = new Intent(getActivity(), MainActivity.class);
                         startActivity(intent);
+                        getActivity().finish();
+                    } else {
+                        notifyDataSetChanged();
                     }
-                    getActivity().finish();
                 }
             });
             return convertView;
@@ -306,6 +315,9 @@ public class SelectStoreFragment extends BaseNotifyFragment {
     }
 
     private String getAreaName() {
+        if (areaHashMap.isEmpty()) {
+            return "";
+        }
         StringBuilder builder = new StringBuilder();
         List<Map.Entry<Integer, ModelStoreArea>> entries = new ArrayList<>(areaHashMap.entrySet());
         Collections.sort(entries, new Comparator<Map.Entry<Integer, ModelStoreArea>>() {
@@ -324,6 +336,9 @@ public class SelectStoreFragment extends BaseNotifyFragment {
     }
 
     private String getAreaId() {
+        if (areaHashMap.isEmpty()) {
+            return "";
+        }
         List<Map.Entry<Integer, ModelStoreArea>> entries = new ArrayList<>(areaHashMap.entrySet());
         Collections.sort(entries, new Comparator<Map.Entry<Integer, ModelStoreArea>>() {
             @Override
@@ -335,7 +350,7 @@ public class SelectStoreFragment extends BaseNotifyFragment {
     }
 
     private int getAreaType() {
-        if (areaHashMap.size() < 4) {
+        if (areaHashMap.isEmpty()) {
             return 0;
         }
         List<Map.Entry<Integer, ModelStoreArea>> entries = new ArrayList<>(areaHashMap.entrySet());
@@ -348,7 +363,7 @@ public class SelectStoreFragment extends BaseNotifyFragment {
         return entries.get(entries.size() - 1).getValue().getType();
     }
 
-    class GetStoreArea extends AsyncTask<Void, Void, String> {
+    class GetStoreArea extends AsyncTask<String, Void, String> {
 
         @Override
         protected void onPreExecute() {
@@ -356,9 +371,13 @@ public class SelectStoreFragment extends BaseNotifyFragment {
         }
 
         @Override
-        protected String doInBackground(Void... params) {
+        protected String doInBackground(String... params) {
             List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("spid", Store.getStore().getStoreId()));
+            if (params.length > 0) {
+                nameValuePairs.add(new BasicNameValuePair("spid", params[0]));
+            } else {
+                nameValuePairs.add(new BasicNameValuePair("spid", Store.getStore().getStoreId()));
+            }
             return netUtil.postWithoutCookie(API.API_STORE_SELECTED_AREA, nameValuePairs, false, false);
         }
 
@@ -377,10 +396,7 @@ public class SelectStoreFragment extends BaseNotifyFragment {
                                 areaHashMap.put(storeArea.getType(), storeArea);
                             }
                             areaTextView.setText(getAreaName());
-                            if (Content.getIntContent(Parameters.CACHE_KEY_STORE_TYPE, Parameters.CACHE_VALUE_STORE_TYPE_LOCATED) == Parameters.CACHE_VALUE_STORE_TYPE_LOCATED) {
-                                initLocationTool();
-                                locate();
-                            } else {
+                            if (listView.getAdapter().isEmpty()) {
                                 new GetStore().execute(getAreaId());
                             }
                         }
@@ -421,6 +437,7 @@ public class SelectStoreFragment extends BaseNotifyFragment {
                                 storeSelecteds.add(new ModelStoreSelected(array.getJSONObject(i)));
                             }
                             if (storeSelecteds.size() > 0) {
+                                located = false;
                                 listView.setAdapter(new SelectedStoreAdapter(storeSelecteds));
                             } else {
                                 loadingEmpty("该区域暂无服务中心");
@@ -451,6 +468,7 @@ public class SelectStoreFragment extends BaseNotifyFragment {
 
             @Override
             public void onReceiveLocation(BDLocation bdLocation) {
+                hideLoading();
                 locateTime++;
                 // 防止重复定位，locateTime>1 表示已经定位过，无需再定位
                 if (locateTime > 1) {
@@ -468,18 +486,20 @@ public class SelectStoreFragment extends BaseNotifyFragment {
     }
 
     private void locate() {
+        showLoading();
         locationClient.start();
         locationClient.requestLocation();
     }
 
     private void getNearestStore(BDLocation location) {
+        showLoading();
         RequestParams requestParams = new RequestParams();
         requestParams.add("ak", Parameters.CONSTANT_LBS_AK);
         requestParams.add("geotable_id", Parameters.CONSTANT_LBS_TABLE);
         requestParams.add("sortby", "distance:1");
         requestParams.add("radius", "30000");
         requestParams.add("page_index", "0");
-        requestParams.add("page_size", "1");
+        requestParams.add("page_size", "20");
         requestParams.add("location", location.getLongitude() + "," + location.getLatitude());
         AsyncHttpClient httpClient = new AsyncHttpClient();
         httpClient.get(API.API_LBS_NEARBY, requestParams,
@@ -487,8 +507,10 @@ public class SelectStoreFragment extends BaseNotifyFragment {
 
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        hideLoading();
                         if (statusCode == 200) {
                             if (response != null) {
+                                System.out.println(response.toString());
                                 try {
                                     JSONArray array = response.optJSONArray("contents");
                                     if (array != null) {
@@ -498,6 +520,8 @@ public class SelectStoreFragment extends BaseNotifyFragment {
                                         }
                                         listView.setAdapter(new LocatedStoreAdapter(storeLocateds));
                                         if (!storeLocateds.isEmpty()) {
+                                            located = true;
+                                            new GetStoreArea().execute(storeLocateds.get(0).getJmdId());
                                             return;
                                         }
                                     }
@@ -507,10 +531,9 @@ public class SelectStoreFragment extends BaseNotifyFragment {
                             }
                         }
                         // 执行到这里说明没有自动定位到到最近加盟店，需要手选
-                        new GetStore().execute(getAreaId());
+                        new GetStoreArea().execute();
                     }
                 });
     }
-
 
 }

@@ -37,6 +37,7 @@
             android:background="@drawable/shape_no_btn_bg"
             android:padding="7dp"
             android:text="我不想玩了"
+            android:textColor="@color/textColorPrimary"
             android:textSize="13sp" />
 
         <TextView
@@ -51,6 +52,7 @@
             android:paddingRight="18dp"
             android:paddingTop="9dp"
             android:text="继续砸金蛋"
+            android:textColor="@color/textColorPrimary"
             android:textSize="16sp" />
     </LinearLayout>
 

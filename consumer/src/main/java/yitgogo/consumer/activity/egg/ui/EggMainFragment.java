@@ -6,8 +6,6 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -55,6 +53,7 @@ public class EggMainFragment extends BaseNotifyFragment {
 
     ImageView animClickImageView, animImageView;
 
+    TextView historyTextView;
     Button payButton;
 
     RecyclerView awardRecyclerView;
@@ -64,6 +63,8 @@ public class EggMainFragment extends BaseNotifyFragment {
     private SoundPool soundPool;
     private SparseIntArray soundIds;
     private int eggMusic = 1;
+
+    String activityId = "58";
 
     ModelActivity activityetail = new ModelActivity();
     List<ModelAward> awards;
@@ -81,8 +82,6 @@ public class EggMainFragment extends BaseNotifyFragment {
     public void onResume() {
         super.onResume();
         new GetEggActivity().execute();
-
-        new GetEggHistory().execute();
     }
 
     private void init() {
@@ -99,6 +98,7 @@ public class EggMainFragment extends BaseNotifyFragment {
         animClickImageView = (ImageView) contentView.findViewById(R.id.egg_click);
         animImageView = (ImageView) contentView.findViewById(R.id.egg_anim);
 
+        historyTextView = (TextView) contentView.findViewById(R.id.egg_history);
         payButton = (Button) contentView.findViewById(R.id.egg_pay);
         awardRecyclerView = (RecyclerView) contentView.findViewById(R.id.egg_award);
         ruleTextView = (TextView) contentView.findViewById(R.id.egg_rule);
@@ -133,24 +133,11 @@ public class EggMainFragment extends BaseNotifyFragment {
     int position = 0;
     int[] eggImages = {R.drawable.egg_anim_2, R.drawable.egg_anim_3, R.drawable.egg_anim_4, R.drawable.egg_anim_5, R.drawable.egg_anim_6, R.drawable.egg_anim_7, R.drawable.egg_anim_8, R.drawable.egg_anim_9};
 
-    Handler handler = new Handler() {
-
-        @Override
-        public void handleMessage(Message msg) {
-            if (position < eggImages.length) {
-                animImageView.setImageResource(eggImages[position]);
-                position++;
-                handler.sendEmptyMessageDelayed(0, 200);
-            } else {
-                animClickImageView.setVisibility(View.VISIBLE);
-            }
-        }
-    };
-
     private void animate() {
         animImageView.postDelayed(new Runnable() {
             @Override
             public void run() {
+                animClickImageView.setVisibility(View.GONE);
                 if (position == 4) {
                     playSound();
                 }
@@ -162,15 +149,21 @@ public class EggMainFragment extends BaseNotifyFragment {
                     new WinEgg().execute();
                 }
             }
-        }, 10);
+        }, 100);
     }
 
     @Override
     protected void registerViews() {
+        historyTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentResultDialog dialog = FragmentResultDialog.newInstance(activityId);
+                dialog.show(getFragmentManager(), FragmentResultDialog.class.getName());
+            }
+        });
         animClickImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                animClickImageView.setVisibility(View.GONE);
                 animImageView.setVisibility(View.VISIBLE);
                 headerImageView.setImageResource(R.drawable.egg_back_2);
                 position = 0;
@@ -225,7 +218,7 @@ public class EggMainFragment extends BaseNotifyFragment {
         @Override
         protected String doInBackground(Void... params) {
             List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("id", "16"));
+            nameValuePairs.add(new BasicNameValuePair("id", activityId));
             nameValuePairs.add(new BasicNameValuePair("memberAccount", User.getUser().getUseraccount()));
             return netUtil.postWithCookie(API.API_ACTIVITY_EGG_DETAIL, nameValuePairs);
         }
@@ -260,12 +253,13 @@ public class EggMainFragment extends BaseNotifyFragment {
         @Override
         protected void onPreExecute() {
             showLoading();
+            headerImageView.setImageResource(R.drawable.egg_back_1);
         }
 
         @Override
         protected String doInBackground(Void... params) {
             List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("id", "16"));
+            nameValuePairs.add(new BasicNameValuePair("id", activityId));
             nameValuePairs.add(new BasicNameValuePair("memberAccount", User.getUser().getUseraccount()));
             return netUtil.postWithCookie(API.API_ACTIVITY_EGG_DETAIL, nameValuePairs);
         }
@@ -284,44 +278,17 @@ public class EggMainFragment extends BaseNotifyFragment {
                             }
                         }
                         ModelActivity activity = new ModelActivity(object.optJSONObject("object"));
-                        if (activity.getType() == 1) {
-                            payMoney();
-                        } else {
+                        if (activity.getJoinMoney() == 0) {
                             activityetail = activity;
                             showActivityDetail();
+                        } else {
+                            if (activity.getJoinState() == 1) {
+                                payMoney();
+                            } else {
+                                activityetail = activity;
+                                showActivityDetail();
+                            }
                         }
-                        return;
-                    }
-                    Notify.show(object.optString("message"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    class GetEggHistory extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("activityId", "16"));
-            nameValuePairs.add(new BasicNameValuePair("memberAccount", User.getUser().getUseraccount()));
-            return netUtil.postWithCookie(API.API_ACTIVITY_AWARD_HISTORY, nameValuePairs);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (!TextUtils.isEmpty(result)) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
                         return;
                     }
                     Notify.show(object.optString("message"));
@@ -342,7 +309,7 @@ public class EggMainFragment extends BaseNotifyFragment {
         @Override
         protected String doInBackground(Void... params) {
             List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("activctId", "16"));
+            nameValuePairs.add(new BasicNameValuePair("activctId", activityId));
             nameValuePairs.add(new BasicNameValuePair("memberAccount", User.getUser().getUseraccount()));
             return netUtil.postWithCookie(API.API_ACTIVITY_EGG_WIN, nameValuePairs);
         }
@@ -437,7 +404,13 @@ public class EggMainFragment extends BaseNotifyFragment {
                 break;
             case 1:
                 //未付款
+                if (activityetail.getJoinMoney() == 0) {
+                    animClickImageView.setEnabled(true);
+                    payButton.setVisibility(View.GONE);
+                    break;
+                }
                 animClickImageView.setEnabled(false);
+                payButton.setEnabled(true);
                 payButton.setVisibility(View.VISIBLE);
                 payButton.setBackgroundResource(R.drawable.shape_pay_money_btn_bg);
                 payButton.setText((int) activityetail.getJoinMoney() + "元砸惊喜");
@@ -445,12 +418,15 @@ public class EggMainFragment extends BaseNotifyFragment {
             case 2:
                 //活动结束
                 animClickImageView.setEnabled(false);
+                payButton.setEnabled(false);
                 payButton.setVisibility(View.VISIBLE);
                 payButton.setBackgroundResource(R.drawable.shape_pay_money_btn_disable);
                 payButton.setText("已结束");
                 break;
             case 3:
+                //未开始
                 animClickImageView.setEnabled(false);
+                payButton.setEnabled(false);
                 payButton.setVisibility(View.VISIBLE);
                 payButton.setBackgroundResource(R.drawable.shape_pay_money_btn_disable);
                 payButton.setText("未开始");
@@ -458,9 +434,18 @@ public class EggMainFragment extends BaseNotifyFragment {
             case 4:
                 //参与次数上限
                 animClickImageView.setEnabled(false);
+                payButton.setEnabled(false);
                 payButton.setVisibility(View.VISIBLE);
                 payButton.setBackgroundResource(R.drawable.shape_pay_money_btn_disable);
                 payButton.setText("参与次数已达上限");
+                break;
+            case 5:
+                //当天参与次数上限
+                animClickImageView.setEnabled(false);
+                payButton.setEnabled(false);
+                payButton.setVisibility(View.VISIBLE);
+                payButton.setBackgroundResource(R.drawable.shape_pay_money_btn_disable);
+                payButton.setText("今日参与次数已达上限");
                 break;
         }
     }

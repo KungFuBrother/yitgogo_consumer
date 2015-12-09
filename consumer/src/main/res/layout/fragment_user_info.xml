@@ -1,36 +1,35 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:focusableInTouchMode="true"
-        android:scrollbars="none" >
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:background="@color/white"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="1px"
-                    android:background="@color/divider" >
-                </LinearLayout>
+                    android:background="@color/divider"></LinearLayout>
 
                 <RelativeLayout
                     android:id="@+id/user_info_modify_password"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:background="@drawable/selector_trans_divider" >
+                    android:background="@drawable/selector_trans_divider">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -53,14 +52,15 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="1px"
-                    android:background="@color/divider" >
-                </LinearLayout>
+                    android:background="@color/divider"
+                    android:visibility="gone"></LinearLayout>
 
                 <RelativeLayout
                     android:id="@+id/user_info_modify_phone"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:background="@drawable/selector_trans_divider" >
+                    android:background="@drawable/selector_trans_divider"
+                    android:visibility="gone">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -83,14 +83,13 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="1px"
-                    android:background="@color/divider" >
-                </LinearLayout>
+                    android:background="@color/divider"></LinearLayout>
 
                 <RelativeLayout
                     android:id="@+id/user_info_modify_idcard"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:background="@drawable/selector_trans_divider" >
+                    android:background="@drawable/selector_trans_divider">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -113,8 +112,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="1px"
-                    android:background="@color/divider" >
-                </LinearLayout>
+                    android:background="@color/divider"></LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -122,7 +120,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:background="@color/white"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <View
                     android:layout_width="match_parent"
@@ -132,7 +130,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="80dp"
@@ -168,7 +166,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="80dp"
@@ -205,7 +203,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="80dp"
@@ -241,7 +239,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="80dp"
@@ -281,7 +279,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:background="@color/white"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <View
                     android:layout_width="match_parent"
@@ -291,7 +289,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="80dp"
@@ -330,7 +328,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="80dp"
@@ -368,7 +366,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="80dp"
@@ -406,7 +404,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="80dp"
@@ -444,7 +442,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="80dp"
@@ -483,7 +481,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="80dp"
@@ -524,13 +522,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="32dp"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="1px"
-                    android:background="@color/divider" >
-                </LinearLayout>
+                    android:background="@color/divider"></LinearLayout>
 
                 <Button
                     android:id="@+id/user_info_modify"
@@ -544,8 +541,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="1px"
-                    android:background="@color/divider" >
-                </LinearLayout>
+                    android:background="@color/divider"></LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

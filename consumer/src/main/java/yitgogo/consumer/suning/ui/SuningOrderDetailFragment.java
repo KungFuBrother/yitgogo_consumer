@@ -243,7 +243,7 @@ public class SuningOrderDetailFragment extends BaseNotifyFragment {
                 holder.actionLayout.removeAllViews();
             } else {
                 if (!suningOrder.getOrderType().equalsIgnoreCase("已完成")) {
-                    //申请退货
+                    //收货前申请退货
                     holder.actionLayout.addView(createActionButton("申请退货", R.drawable.button_buy, new OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -259,10 +259,11 @@ public class SuningOrderDetailFragment extends BaseNotifyFragment {
                             bundle.putInt("type", 4);
 
                             jump(SuningOrderReturnBeforeReceivedFragment.class.getName(), "申请退货", bundle);
+                            getActivity().finish();
                         }
                     }));
                 } else {
-                    //申请退货
+                    //收货后申请退货
                     holder.actionLayout.addView(createActionButton("申请退货", R.drawable.button_buy, new OnClickListener() {
                         @Override
                         public void onClick(View view) {

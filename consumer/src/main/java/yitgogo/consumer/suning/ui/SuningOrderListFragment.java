@@ -45,6 +45,7 @@ public class SuningOrderListFragment extends BaseNotifyFragment {
     PullToRefreshListView orderList;
     OrderAdapter orderAdapter;
     List<ModelSuningOrder> orders;
+    public static boolean needRefersh=true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,18 +59,16 @@ public class SuningOrderListFragment extends BaseNotifyFragment {
     public void onResume() {
         super.onResume();
         MobclickAgent.onPageStart(SuningOrderListFragment.class.getName());
+        if (needRefersh){
+            needRefersh=false;
+            refresh();
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
         MobclickAgent.onPageEnd(SuningOrderListFragment.class.getName());
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        new GetOrders().execute();
     }
 
     private void init() {

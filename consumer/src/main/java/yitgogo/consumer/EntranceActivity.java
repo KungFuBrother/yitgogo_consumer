@@ -196,7 +196,7 @@ public class EntranceActivity extends BaseActivity {
         requestParams.add("ak", Parameters.CONSTANT_LBS_AK);
         requestParams.add("geotable_id", Parameters.CONSTANT_LBS_TABLE);
         requestParams.add("sortby", "distance:1");
-        requestParams.add("radius", "100000");
+        requestParams.add("radius", "30000");
         requestParams.add("page_index", "0");
         requestParams.add("page_size", "1");
         requestParams.add("location", location.getLongitude() + "," + location.getLatitude());
@@ -216,7 +216,6 @@ public class EntranceActivity extends BaseActivity {
                                     array = response.getJSONArray("contents");
                                     if (array.length() > 0) {
                                         Content.saveIntContent(Parameters.CACHE_KEY_STORE_TYPE, Parameters.CACHE_VALUE_STORE_TYPE_LOCATED);
-                                        Content.saveBooleanContent(Parameters.CACHE_KEY_LOCATE_SUCCESS, true);
                                         Content.saveStringContent(Parameters.CACHE_KEY_STORE_JSONSTRING, array.getString(0));
                                         Store.init(getApplicationContext());
                                         // 自动定位到到最近加盟店，跳转到主页

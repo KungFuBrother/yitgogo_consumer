@@ -32,7 +32,7 @@ public class SuningOrderReturnBeforeReceivedFragment extends BaseNotifyFragment 
 
     String productName = "";
     double productPrice = 0;
-    int buyCount=0;
+    int buyCount = 0;
     String tradeNo = "", produNo = "";
     int type = 0;
 
@@ -88,7 +88,7 @@ public class SuningOrderReturnBeforeReceivedFragment extends BaseNotifyFragment 
     @Override
     protected void initViews() {
         productNameTextView.setText(productName);
-        productPriceTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format(productPrice)+"  ×"+buyCount);
+        productPriceTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format(productPrice) + "  ×" + buyCount);
     }
 
     @Override
@@ -139,6 +139,7 @@ public class SuningOrderReturnBeforeReceivedFragment extends BaseNotifyFragment 
                 try {
                     JSONObject object = new JSONObject(result);
                     if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                        SuningOrderListFragment.needRefersh = true;
                         Notify.show("申请退货成功");
                         getActivity().finish();
                     } else {

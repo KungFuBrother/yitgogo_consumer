@@ -8,9 +8,10 @@ import org.json.JSONObject;
  */
 public class ModelAwardHistory {
 
-    String id = "", winDate = "", orderNumber = "", prizeId = "", prize = "";
+    String id = "", winDate = "", orderNumber = "", prizeId = "";
     double winMoney = 0;
     int isGrant = 0;
+    ModelAward award = new ModelAward();
     JSONObject jsonObject = new JSONObject();
 
     public ModelAwardHistory() {
@@ -39,17 +40,13 @@ public class ModelAwardHistory {
                     prizeId = object.optString("prizeId");
                 }
             }
-            if (object.has("prize")) {
-                if (!object.optString("prize").equalsIgnoreCase("null")) {
-                    prize = object.optString("prize");
-                }
-            }
             if (object.has("winMoney")) {
                 if (!object.optString("winMoney").equalsIgnoreCase("null")) {
                     winMoney = object.optDouble("winMoney");
                 }
             }
             isGrant = object.optInt("isGrant");
+            award = new ModelAward(object.optJSONObject("prize"));
         }
     }
 
@@ -69,8 +66,8 @@ public class ModelAwardHistory {
         return prizeId;
     }
 
-    public String getPrize() {
-        return prize;
+    public ModelAward getAward() {
+        return award;
     }
 
     public double getWinMoney() {

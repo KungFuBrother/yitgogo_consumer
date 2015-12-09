@@ -1,7 +1,9 @@
 package yitgogo.consumer.activity.egg.ui;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -14,9 +16,21 @@ import android.widget.TextView;
 
 import com.smartown.yitian.gogo.R;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import yitgogo.consumer.activity.egg.ui.adapter.GoldenResultListViewAdapter;
+import yitgogo.consumer.activity.shake.model.ModelAwardHistory;
+import yitgogo.consumer.tools.API;
+import yitgogo.consumer.tools.NetUtil;
+import yitgogo.consumer.user.model.User;
+import yitgogo.consumer.view.Notify;
 
 public class FragmentResultDialog extends DialogFragment implements OnClickListener {
 
@@ -25,24 +39,38 @@ public class FragmentResultDialog extends DialogFragment implements OnClickListe
     private int screenHeight;
     private TextView tvEnsure;
     private ListView mListView;
-    private GoldenResultListViewAdapter mAdapter;
-    private ArrayList<String> datas;
+
+    private String activityId = "";
+
+    public static FragmentResultDialog newInstance(String activityId) {
+        FragmentResultDialog priceDialog = new FragmentResultDialog();
+        Bundle bundle = new Bundle();
+        bundle.putString("activityId", activityId);
+        priceDialog.setArguments(bundle);
+        return priceDialog;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         measureScreen();
         init();
     }
 
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        new GetEggHistory().execute();
+    }
+
     private void init() {
-        datas = new ArrayList<String>();
-        datas.add("11:00\t\t\t恭喜你砸中品牌电视");
-        datas.add("12:00\t\t\t什么也没有砸中");
-        datas.add("12:30\t\t\t什么也没有砸中");
-        datas.add("13:00\t\t\t什么也没有砸中");
-        datas.add("15:00\t\t\t恭喜你砸中10元现金");
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            if (bundle.containsKey("activityId")) {
+                activityId = bundle.getString("activityId");
+            }
+        }
     }
 
     @Override
@@ -55,21 +83,13 @@ public class FragmentResultDialog extends DialogFragment implements OnClickListe
         View view = inflater.inflate(R.layout.golden_egg_result_fragment, null);
 
         initView(view);
-        loadResultDatas();
         return view;
     }
 
     private void initView(View view) {
         tvEnsure = (TextView) view.findViewById(R.id.ensure_tv);
         mListView = (ListView) view.findViewById(R.id.result_tips_listview);
-        mAdapter = new GoldenResultListViewAdapter(getActivity());
-        mListView.setAdapter(mAdapter);
-
         tvEnsure.setOnClickListener(this);
-    }
-
-    private void loadResultDatas() {
-        mAdapter.addDatas(datas);
     }
 
     @Override
@@ -96,9 +116,45 @@ public class FragmentResultDialog extends DialogFragment implements OnClickListe
     @Override
     public void onClick(View v) {
         if (v == tvEnsure) {
-
             dismiss();
         }
     }
+
+    class GetEggHistory extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected String doInBackground(Void... params) {
+            List<NameValuePair> nameValuePairs = new ArrayList<>();
+            nameValuePairs.add(new BasicNameValuePair("activityId", activityId));
+            nameValuePairs.add(new BasicNameValuePair("memberAccount", User.getUser().getUseraccount()));
+            return NetUtil.getInstance().postWithCookie(API.API_ACTIVITY_AWARD_HISTORY, nameValuePairs);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            if (!TextUtils.isEmpty(result)) {
+                try {
+                    JSONObject object = new JSONObject(result);
+                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                        JSONArray array = object.optJSONArray("dataList");
+                        if (array != null) {
+                            List<ModelAwardHistory> awardHistories = new ArrayList<>();
+                            for (int i = 0; i < array.length(); i++) {
+                                awardHistories.add(new ModelAwardHistory(array.optJSONObject(i)));
+                            }
+                            if (getActivity() != null) {
+                                mListView.setAdapter(new GoldenResultListViewAdapter(getActivity(), awardHistories));
+                            }
+                        }
+                        return;
+                    }
+                    Notify.show(object.optString("message"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
 
 }	

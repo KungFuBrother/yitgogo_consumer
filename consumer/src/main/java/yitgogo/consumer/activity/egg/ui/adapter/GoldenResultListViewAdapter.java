@@ -9,33 +9,33 @@ import android.widget.TextView;
 
 import com.smartown.yitian.gogo.R;
 
-import java.util.ArrayList;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+
+import yitgogo.consumer.activity.shake.model.ModelAwardHistory;
 
 public class GoldenResultListViewAdapter extends BaseAdapter {
 
 
-    private List<String> datas;
+    private List<ModelAwardHistory> awardHistories;
     private LayoutInflater inflater;
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    public GoldenResultListViewAdapter(Context context) {
+    public GoldenResultListViewAdapter(Context context, List<ModelAwardHistory> awardHistories) {
         inflater = LayoutInflater.from(context);
-        datas = new ArrayList<String>();
-    }
-
-    public void addDatas(List<String> datas) {
-        this.datas.addAll(datas);
-        notifyDataSetChanged();
+        this.awardHistories = awardHistories;
     }
 
     @Override
     public int getCount() {
-        return datas.size();
+        return awardHistories.size();
     }
 
     @Override
-    public String getItem(int position) {
-        return datas.get(position);
+    public Object getItem(int position) {
+        return awardHistories.get(position);
     }
 
     @Override
@@ -56,9 +56,27 @@ public class GoldenResultListViewAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-
-        String result = datas.get(position);
-        holder.resultTv.setText(result);
+        ModelAwardHistory awardHistory = awardHistories.get(position);
+        try {
+            String name = "";
+            if (awardHistory.getAward().getType() == 1) {
+                name = "现金" + (int) awardHistory.getAward().getTypeValue() + "元";
+            } else {
+                name = awardHistory.getAward().getName();
+            }
+            Date date = simpleDateFormat.parse(awardHistories.get(position).getWinDate());
+            String hour = String.valueOf(date.getHours());
+            String minute = String.valueOf(date.getMinutes());
+            if (date.getHours() < 10) {
+                hour = "0" + date.getHours();
+            }
+            if (date.getMinutes() < 10) {
+                minute = "0" + date.getMinutes();
+            }
+            holder.resultTv.setText(hour + ":" + minute + "\t\t恭喜你砸中" + name);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         return convertView;
     }
 
