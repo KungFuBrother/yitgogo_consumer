@@ -229,11 +229,12 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
         refreshScrollView.setMode(Mode.BOTH);
         productGridView.setAdapter(productAdapter);
 
-        LinearLayout.LayoutParams bannerLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) ((float) screenWidth / 1920.0f * 320.0f));
+        LinearLayout.LayoutParams bannerLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) ((float) screenWidth / 6.0f));
         bannerLayoutParams.setMargins(0, 0, 0, ScreenUtil.dip2px(8));
         bannerEggImageView.setLayoutParams(bannerLayoutParams);
+        bannerEggImageView.setImageResource(R.drawable.image_home_banner_egg);
 
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, screenWidth / 3);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) ((float) screenWidth / 3.0f));
         layoutParams.setMargins(0, 0, 0, ScreenUtil.dip2px(8));
         nongfuButton.setLayoutParams(layoutParams);
 
