@@ -39,15 +39,31 @@
             android:orientation="vertical"
             android:padding="12dp">
 
-            <ListView
-                android:id="@+id/result_tips_listview"
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:divider="@null"
-                android:listSelector="@android:color/transparent"
-                android:scrollbars="none" />
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/result_empty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="暂未中奖"
+                    android:textColor="@color/white"
+                    android:textSize="20dp"
+                    android:visibility="gone" />
+
+                <ListView
+                    android:id="@+id/result_tips_listview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:divider="@null"
+                    android:listSelector="@android:color/transparent"
+                    android:scrollbars="none" />
+
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/ensure_tv"

@@ -170,7 +170,12 @@ public class SelectStoreByLocateFragment extends BaseNotifyFragment {
                 if (locateTime > 1) {
                     return;
                 }
-                getNearestStore(bdLocation);
+                if (bdLocation == null) {
+                    contentView.setVisibility(View.GONE);
+                    loadingEmpty("自动定位失败，请手动选择服务中心");
+                } else {
+                    getNearestStore(bdLocation);
+                }
                 locationClient.stop();
             }
 
@@ -208,7 +213,19 @@ public class SelectStoreByLocateFragment extends BaseNotifyFragment {
                                         for (int i = 0; i < array.length(); i++) {
                                             storeLocateds.add(new ModelStoreLocated(array.optJSONObject(i)));
                                         }
-                                        storeAdapter.notifyDataSetChanged();
+                                        if (storeLocateds.isEmpty()) {
+                                            contentView.setVisibility(View.GONE);
+                                            loadingEmpty("自动定位失败，请手动选择服务中心");
+                                        } else {
+                                            if (getActivity() != null) {
+                                                storeAdapter.notifyDataSetChanged();
+                                                Content.saveIntContent(Parameters.CACHE_KEY_STORE_TYPE, Parameters.CACHE_VALUE_STORE_TYPE_LOCATED);
+                                                Content.saveStringContent(Parameters.CACHE_KEY_STORE_JSONSTRING, storeLocateds.get(0).getJsonObject().toString());
+                                                Store.init(getActivity());
+                                                storeNameTextView.setText(Store.getStore().getStoreName());
+                                                storeAddressTextView.setText(Store.getStore().getStoreAddess());
+                                            }
+                                        }
                                     }
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -217,9 +234,6 @@ public class SelectStoreByLocateFragment extends BaseNotifyFragment {
                         }
                     }
                 });
-        if (!storeLocateds.isEmpty()) {
-            loadingEmpty("自动定位失败，请手动选择服务中心");
-        }
     }
 
 }

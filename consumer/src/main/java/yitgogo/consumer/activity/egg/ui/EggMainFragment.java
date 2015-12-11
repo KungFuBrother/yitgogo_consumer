@@ -193,6 +193,7 @@ public class EggMainFragment extends BaseNotifyFragment {
             case 0:
                 //能参与活动
                 animImageView.setEnabled(true);
+                historyButton.setVisibility(View.VISIBLE);
                 payButton.setVisibility(View.GONE);
                 break;
             case 1:
@@ -203,6 +204,7 @@ public class EggMainFragment extends BaseNotifyFragment {
                     break;
                 }
                 animImageView.setEnabled(false);
+                historyButton.setVisibility(View.VISIBLE);
                 payButton.setEnabled(true);
                 payButton.setVisibility(View.VISIBLE);
                 payButton.setBackgroundResource(R.drawable.shape_pay_money_btn_bg);
@@ -211,6 +213,7 @@ public class EggMainFragment extends BaseNotifyFragment {
             case 2:
                 //活动结束
                 animImageView.setEnabled(false);
+                historyButton.setVisibility(View.VISIBLE);
                 payButton.setEnabled(false);
                 payButton.setVisibility(View.VISIBLE);
                 payButton.setBackgroundResource(R.drawable.shape_pay_money_btn_disable);
@@ -219,6 +222,7 @@ public class EggMainFragment extends BaseNotifyFragment {
             case 3:
                 //未开始
                 animImageView.setEnabled(false);
+                historyButton.setVisibility(View.GONE);
                 payButton.setEnabled(false);
                 payButton.setVisibility(View.VISIBLE);
                 payButton.setBackgroundResource(R.drawable.shape_pay_money_btn_disable);
@@ -227,6 +231,7 @@ public class EggMainFragment extends BaseNotifyFragment {
             case 4:
                 //参与次数上限
                 animImageView.setEnabled(false);
+                historyButton.setVisibility(View.VISIBLE);
                 payButton.setEnabled(false);
                 payButton.setVisibility(View.VISIBLE);
                 payButton.setBackgroundResource(R.drawable.shape_pay_money_btn_disable);
@@ -235,6 +240,7 @@ public class EggMainFragment extends BaseNotifyFragment {
             case 5:
                 //当天参与次数上限
                 animImageView.setEnabled(false);
+                historyButton.setVisibility(View.VISIBLE);
                 payButton.setEnabled(false);
                 payButton.setVisibility(View.VISIBLE);
                 payButton.setBackgroundResource(R.drawable.shape_pay_money_btn_disable);
@@ -308,6 +314,8 @@ public class EggMainFragment extends BaseNotifyFragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            } else {
+                Notify.show("参与人数太多，请稍后再试。");
             }
         }
     }
@@ -353,6 +361,8 @@ public class EggMainFragment extends BaseNotifyFragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            } else {
+                Notify.show("参与人数太多，请稍后再试。");
             }
         }
     }
@@ -421,6 +431,8 @@ public class EggMainFragment extends BaseNotifyFragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            } else {
+                Notify.show("参与人数太多，请稍后再试。");
             }
         }
     }

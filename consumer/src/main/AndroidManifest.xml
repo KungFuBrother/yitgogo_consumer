@@ -84,7 +84,7 @@
         <!--Tencent 腾讯应用宝 Qihu 360手机助手 Baidu 百度手机助手 Wandoujia 豌豆荚 Update 自动更新-->
         <meta-data
             android:name="UMENG_CHANNEL"
-            android:value="Wandoujia" />
+            android:value="Tencent" />
 
     </application>
 

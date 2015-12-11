@@ -2,7 +2,6 @@ package yitgogo.consumer.suning.ui;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -45,7 +44,7 @@ public class SuningOrderListFragment extends BaseNotifyFragment {
     PullToRefreshListView orderList;
     OrderAdapter orderAdapter;
     List<ModelSuningOrder> orders;
-    public static boolean needRefersh=true;
+    public static boolean needRefersh = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,8 +58,8 @@ public class SuningOrderListFragment extends BaseNotifyFragment {
     public void onResume() {
         super.onResume();
         MobclickAgent.onPageStart(SuningOrderListFragment.class.getName());
-        if (needRefersh){
-            needRefersh=false;
+        if (needRefersh) {
+            needRefersh = false;
             refresh();
         }
     }
@@ -69,6 +68,12 @@ public class SuningOrderListFragment extends BaseNotifyFragment {
     public void onPause() {
         super.onPause();
         MobclickAgent.onPageEnd(SuningOrderListFragment.class.getName());
+    }
+
+    @Override
+    public void onDestroy() {
+        needRefersh = true;
+        super.onDestroy();
     }
 
     private void init() {

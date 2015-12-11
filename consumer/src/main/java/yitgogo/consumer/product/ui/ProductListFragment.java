@@ -54,7 +54,6 @@ import yitgogo.consumer.view.InnerListView;
 
 public class ProductListFragment extends BaseNotifyFragment {
 
-    String TAG = ProductListFragment.class.getName();
     PullToRefreshListView productList;
     DrawerLayout drawerLayout;
     FrameLayout selectorLayout, attrSelectorLayout;
@@ -96,7 +95,7 @@ public class ProductListFragment extends BaseNotifyFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setDefaultParameters();
-        new GetProduct().execute();
+        refresh();
     }
 
     @Override
@@ -205,6 +204,7 @@ public class ProductListFragment extends BaseNotifyFragment {
             @Override
             public void onPullDownToRefresh(
                     PullToRefreshBase<ListView> refreshView) {
+                useCache = false;
                 refresh();
             }
 
@@ -221,7 +221,6 @@ public class ProductListFragment extends BaseNotifyFragment {
         products.clear();
         productAdapter.notifyDataSetChanged();
         productList.setMode(Mode.BOTH);
-        useCache = false;
         new GetProduct().execute();
     }
 
@@ -249,8 +248,7 @@ public class ProductListFragment extends BaseNotifyFragment {
             if (selectParameters != null) {
                 nameValuePairs.addAll(selectParameters);
             }
-            return netUtil.postWithoutCookie(API.API_PRODUCT_LIST,
-                    nameValuePairs, true, true);
+            return netUtil.postWithoutCookie(API.API_PRODUCT_LIST, nameValuePairs, useCache, true);
         }
 
         @Override
@@ -305,11 +303,9 @@ public class ProductListFragment extends BaseNotifyFragment {
         protected String doInBackground(String... value) {
             // TODO Auto-generated method stub
             List<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
-            valuePairs.add(new BasicNameValuePair("jmdId", Store.getStore()
-                    .getStoreId()));
+            valuePairs.add(new BasicNameValuePair("jmdId", Store.getStore().getStoreId()));
             valuePairs.add(new BasicNameValuePair("productId", value[0]));
-            return netUtil.postWithoutCookie(API.API_PRICE_LIST, valuePairs,
-                    false, false);
+            return netUtil.postWithoutCookie(API.API_PRICE_LIST, valuePairs, false, false);
         }
 
         @Override
@@ -326,10 +322,8 @@ public class ProductListFragment extends BaseNotifyFragment {
                         if (priceArray != null) {
                             if (priceArray.length() > 0) {
                                 for (int i = 0; i < priceArray.length(); i++) {
-                                    ModelListPrice priceList = new ModelListPrice(
-                                            priceArray.getJSONObject(i));
-                                    priceMap.put(priceList.getProductId(),
-                                            priceList);
+                                    ModelListPrice priceList = new ModelListPrice(priceArray.getJSONObject(i));
+                                    priceMap.put(priceList.getProductId(), priceList);
                                 }
                                 productAdapter.notifyDataSetChanged();
                             }
@@ -767,11 +761,9 @@ public class ProductListFragment extends BaseNotifyFragment {
             @Override
             protected String doInBackground(Void... arg0) {
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-                nameValuePairs.add(new BasicNameValuePair("jmdId", Store.getStore()
-                        .getStoreId()));
+                nameValuePairs.add(new BasicNameValuePair("jmdId", Store.getStore().getStoreId()));
                 nameValuePairs.add(new BasicNameValuePair("minClassId", value));
-                return netUtil.postWithCookie(API.API_PRODUCT_CLASS_ATTR,
-                        nameValuePairs);
+                return netUtil.postWithCookie(API.API_PRODUCT_CLASS_ATTR, nameValuePairs);
             }
 
             @Override

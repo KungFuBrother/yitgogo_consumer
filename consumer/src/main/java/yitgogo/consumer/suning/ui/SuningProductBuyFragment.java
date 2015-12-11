@@ -213,6 +213,11 @@ public class SuningProductBuyFragment extends BaseNotifyFragment {
     }
 
     private void countTotalPrice() {
+        if (productPrice.getPrice() > 0) {
+            priceTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format(productPrice.getPrice()));
+        } else {
+            priceTextView.setText("价格查询失败");
+        }
         goodsMoney = 0;
         double sendMoney = 0;
         goodsMoney = productPrice.getPrice() * buyCount;
@@ -386,6 +391,8 @@ public class SuningProductBuyFragment extends BaseNotifyFragment {
                         } else {
                             additionTextView.setText("无货");
                         }
+                    } else {
+                        additionTextView.setText(object.optString("returnMsg"));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -399,6 +406,7 @@ public class SuningProductBuyFragment extends BaseNotifyFragment {
         @Override
         protected void onPreExecute() {
             showLoading();
+            productPrice = new ModelProductPrice();
         }
 
         @Override
@@ -452,15 +460,14 @@ public class SuningProductBuyFragment extends BaseNotifyFragment {
                         if (array != null) {
                             for (int j = 0; j < array.length(); j++) {
                                 productPrice = new ModelProductPrice(array.optJSONObject(j));
-                                priceTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format(productPrice.getPrice()));
                             }
-                            countTotalPrice();
                         }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
+            countTotalPrice();
         }
     }
 }
