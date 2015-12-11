@@ -28,7 +28,6 @@ import yitgogo.consumer.view.Notify;
 
 public class FragmentResultDialog extends DialogFragment implements OnClickListener {
 
-
     private int screenWidth;
     private int screenHeight;
     private TextView tvEnsure;
@@ -118,8 +117,7 @@ public class FragmentResultDialog extends DialogFragment implements OnClickListe
             return;
         }
 
-        getDialog().getWindow()
-                .setLayout(screenWidth * 5 / 7, screenHeight / 2);
+        getDialog().getWindow().setLayout(screenWidth * 4 / 5, screenWidth);
         getDialog().getWindow().setGravity(Gravity.CENTER);
     }
 

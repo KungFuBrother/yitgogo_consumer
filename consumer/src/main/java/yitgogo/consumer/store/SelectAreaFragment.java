@@ -44,10 +44,6 @@ public class SelectAreaFragment extends BaseNotifyFragment {
     LinearLayout selectedAreaLayout;
     ListView listView;
     /**
-     * 定位区域
-     */
-    HashMap<Integer, ModelStoreArea> locatedAreaHashMap = new HashMap<>();
-    /**
      * 各级区域
      */
     HashMap<Integer, ModelStoreArea> selectedAreaHashMap = new HashMap<>();
@@ -61,11 +57,6 @@ public class SelectAreaFragment extends BaseNotifyFragment {
     ModelStoreArea currentArea = new ModelStoreArea();
     AreaListAdapter areaListAdapter;
 
-    public final static int TYPE_STORE_LOCATE = 1;
-    public final static int TYPE_GET_AREA = 2;
-
-    int type = TYPE_GET_AREA;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,54 +68,23 @@ public class SelectAreaFragment extends BaseNotifyFragment {
     @Override
     public void onResume() {
         super.onResume();
-        MobclickAgent.onPageStart(SelectStoreFragment.class.getName());
+        MobclickAgent.onPageStart(SelectStoreByAreaFragment.class.getName());
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        MobclickAgent.onPageEnd(SelectStoreFragment.class.getName());
+        MobclickAgent.onPageEnd(SelectStoreByAreaFragment.class.getName());
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ModelStoreArea area = null;
-        if (type == TYPE_STORE_LOCATE) {
-            if (locatedAreaHashMap.containsKey(4)) {
-                area = locatedAreaHashMap.get(4);
-            } else if (locatedAreaHashMap.containsKey(3)) {
-                area = locatedAreaHashMap.get(3);
-            } else if (locatedAreaHashMap.containsKey(2)) {
-                area = locatedAreaHashMap.get(2);
-            } else if (locatedAreaHashMap.containsKey(1)) {
-                area = locatedAreaHashMap.get(1);
-            }
-        }
-        selectArea(area);
+        new GetArea().execute();
     }
 
     private void init() {
         measureScreen();
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            if (bundle.containsKey("type")) {
-                type = bundle.getInt("type");
-                if (type == TYPE_STORE_LOCATE) {
-                    try {
-                        JSONArray array = new JSONArray(bundle.getString("area"));
-                        if (array != null) {
-                            for (int i = 0; i < array.length(); i++) {
-                                ModelStoreArea storeArea = new ModelStoreArea(array.optJSONObject(i));
-                                locatedAreaHashMap.put(storeArea.getType(), storeArea);
-                            }
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
     }
 
     @Override
@@ -155,71 +115,10 @@ public class SelectAreaFragment extends BaseNotifyFragment {
     private void selectArea(ModelStoreArea area) {
         if (area != null) {
             currentArea = area;
-            switch (type) {
-                case TYPE_STORE_LOCATE:
-                    locatedAreaHashMap.put(currentArea.getType(), currentArea);
-                    refreshLocatedArea();
-                    break;
-                case TYPE_GET_AREA:
-                    selectedAreaHashMap.put(currentArea.getType(), currentArea);
-                    refreshSelectedArea();
-                    break;
-            }
+            selectedAreaHashMap.put(currentArea.getType(), currentArea);
+            refreshSelectedArea();
         }
         new GetArea().execute();
-    }
-
-    private void refreshLocatedArea() {
-        selectedAreaLayout.removeAllViews();
-        List<Map.Entry<Integer, ModelStoreArea>> entries = new ArrayList<>(locatedAreaHashMap.entrySet());
-        Collections.sort(entries, new Comparator<Map.Entry<Integer, ModelStoreArea>>() {
-            @Override
-            public int compare(Map.Entry<Integer, ModelStoreArea> area1, Map.Entry<Integer, ModelStoreArea> area2) {
-                return area1.getKey().compareTo(area2.getKey());
-            }
-        });
-        for (int i = 0; i < entries.size(); i++) {
-            View.OnClickListener onClickListener = null;
-            final ModelStoreArea area = entries.get(i).getValue();
-            if (area.getType() > 3) {
-                onClickListener = new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        removeLocatedChildArea(area);
-                    }
-                };
-            }
-            selectedAreaLayout.addView(newTextView(entries.get(i).getValue().getName(), R.color.textColorPrimary, onClickListener));
-        }
-    }
-
-    private void removeLocatedChildArea(ModelStoreArea area) {
-        List<Map.Entry<Integer, ModelStoreArea>> entries = new ArrayList<>(locatedAreaHashMap.entrySet());
-        for (int i = 0; i < entries.size(); i++) {
-            if (entries.get(i).getValue().getType() > area.getType()) {
-                locatedAreaHashMap.remove(entries.get(i).getValue().getType());
-            }
-        }
-        refreshLocatedArea();
-        selectArea(area);
-    }
-
-    private String getLocatedAreaName() {
-        StringBuilder builder = new StringBuilder();
-        List<Map.Entry<Integer, ModelStoreArea>> entries = new ArrayList<>(locatedAreaHashMap.entrySet());
-        Collections.sort(entries, new Comparator<Map.Entry<Integer, ModelStoreArea>>() {
-            @Override
-            public int compare(Map.Entry<Integer, ModelStoreArea> area1, Map.Entry<Integer, ModelStoreArea> area2) {
-                return area1.getKey().compareTo(area2.getKey());
-            }
-        });
-        for (int i = 0; i < entries.size(); i++) {
-            if (i > 0) {
-                builder.append(">");
-            }
-            builder.append(entries.get(i).getValue().getName());
-        }
-        return builder.toString();
     }
 
     private void refreshSelectedArea() {
@@ -249,7 +148,7 @@ public class SelectAreaFragment extends BaseNotifyFragment {
                 selectedAreaHashMap.remove(entries.get(i).getValue().getType());
             }
         }
-        refreshLocatedArea();
+        refreshSelectedArea();
         selectArea(area);
     }
 
@@ -376,14 +275,7 @@ public class SelectAreaFragment extends BaseNotifyFragment {
                         }
                         Intent intent = new Intent();
                         intent.putExtra("id", currentArea.getId());
-                        switch (type) {
-                            case TYPE_STORE_LOCATE:
-                                intent.putExtra("name", getLocatedAreaName());
-                                break;
-                            case TYPE_GET_AREA:
-                                intent.putExtra("name", getSelectedAreaName());
-                                break;
-                        }
+                        intent.putExtra("name", getSelectedAreaName());
                         getActivity().setResult(23, intent);
                         getActivity().finish();
                     }

@@ -63,6 +63,9 @@
         <activity
             android:name="yitgogo.consumer.main.ui.MainActivity"
             android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="yitgogo.consumer.store.SelectStoreActivity"
+            android:screenOrientation="portrait"></activity>
 
 
         <!-- 百度定位 -->

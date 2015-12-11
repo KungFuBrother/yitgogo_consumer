@@ -31,7 +31,7 @@ import yitgogo.consumer.money.model.MoneyAccount;
 import yitgogo.consumer.money.ui.MoneyHomeFragment;
 import yitgogo.consumer.order.ui.OrderFragment;
 import yitgogo.consumer.product.ui.ShoppingCarFragment;
-import yitgogo.consumer.store.SelectStoreFragment;
+import yitgogo.consumer.store.SelectStoreActivity;
 import yitgogo.consumer.store.model.Store;
 import yitgogo.consumer.tools.API;
 import yitgogo.consumer.tools.Content;
@@ -185,7 +185,7 @@ public class HomeUserFragment extends BaseNotifyFragment implements
 
             @Override
             public void onClick(View v) {
-                jump(SelectStoreFragment.class.getName(), "修改服务中心");
+                startActivity(new Intent(getActivity(), SelectStoreActivity.class));
             }
         });
         openStoreButton.setOnClickListener(new OnClickListener() {

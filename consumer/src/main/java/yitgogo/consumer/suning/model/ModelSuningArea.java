@@ -13,12 +13,13 @@ import org.json.JSONObject;
  */
 public class ModelSuningArea {
 
+    int type = 0;
     String code = "", name = "";
 
     public ModelSuningArea() {
     }
 
-    public ModelSuningArea(JSONObject object) {
+    public ModelSuningArea(JSONObject object, int type) {
         if (object != null) {
             if (object.has("code")) {
                 if (!object.optString("code").equalsIgnoreCase("null")) {
@@ -30,6 +31,7 @@ public class ModelSuningArea {
                     name = object.optString("name");
                 }
             }
+            this.type = type;
         }
     }
 
@@ -39,6 +41,10 @@ public class ModelSuningArea {
 
     public String getName() {
         return name;
+    }
+
+    public int getType() {
+        return type;
     }
 
     public JSONObject toJsonObject() {

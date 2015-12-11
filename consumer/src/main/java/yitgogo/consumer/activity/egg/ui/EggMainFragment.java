@@ -2,6 +2,7 @@ package yitgogo.consumer.activity.egg.ui;
 
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.AsyncTask;
@@ -13,10 +14,12 @@ import android.util.SparseIntArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.smartown.yitian.gogo.R;
 
@@ -46,26 +49,26 @@ import yitgogo.consumer.view.Notify;
  */
 public class EggMainFragment extends BaseNotifyFragment {
 
-    ImageView backgroundImageView;
+    private ImageView backgroundImageView;
 
-    ImageView animImageView;
+    private ImageView animImageView;
 
-    TextView historyTextView;
-    Button payButton;
+    private LinearLayout historyButton;
+    private Button payButton;
 
-    RecyclerView awardRecyclerView;
+    private RecyclerView awardRecyclerView;
 
-    TextView ruleTextView;
+    private TextView ruleTextView;
 
     private SoundPool soundPool;
     private SparseIntArray soundIds;
     private int eggMusic = 1;
 
-    String activityId = "16";
+    private String activityId = "90";
 
-    ModelActivity activityetail = new ModelActivity();
-    List<ModelAward> awards;
-    AwardAdapter awardAdapter;
+    private ModelActivity activityetail = new ModelActivity();
+    private List<ModelAward> awards;
+    private AwardAdapter awardAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,6 +84,11 @@ public class EggMainFragment extends BaseNotifyFragment {
         new GetEggActivity().execute();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
     private void init() {
         awards = new ArrayList<>();
         awardAdapter = new AwardAdapter();
@@ -93,7 +101,7 @@ public class EggMainFragment extends BaseNotifyFragment {
 
         animImageView = (ImageView) contentView.findViewById(R.id.egg_anim);
 
-        historyTextView = (TextView) contentView.findViewById(R.id.egg_history);
+        historyButton = (LinearLayout) contentView.findViewById(R.id.egg_history);
         payButton = (Button) contentView.findViewById(R.id.egg_pay);
         awardRecyclerView = (RecyclerView) contentView.findViewById(R.id.egg_award);
         ruleTextView = (TextView) contentView.findViewById(R.id.egg_rule);
@@ -104,6 +112,11 @@ public class EggMainFragment extends BaseNotifyFragment {
 
     @Override
     protected void initViews() {
+        animImageView.setEnabled(false);
+
+        FrameLayout.LayoutParams backLayoutParams = new FrameLayout.LayoutParams(ScreenUtil.getScreenWidth(), (int) ((float) ScreenUtil.getScreenWidth() / 9.0f * 16.0f));
+        backgroundImageView.setLayoutParams(backLayoutParams);
+
         LinearLayout.LayoutParams animLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) ((float) ScreenUtil.getScreenWidth() / 540.0f * 453.0f));
         animImageView.setLayoutParams(animLayoutParams);
 
@@ -141,7 +154,7 @@ public class EggMainFragment extends BaseNotifyFragment {
 
     @Override
     protected void registerViews() {
-        historyTextView.setOnClickListener(new View.OnClickListener() {
+        historyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 new GetAwardHistory().execute();
@@ -166,7 +179,13 @@ public class EggMainFragment extends BaseNotifyFragment {
     private void showActivityDetail() {
         //初始状态
         position = 0;
-        ImageLoader.getInstance().displayImage(activityetail.getActivityImg(), backgroundImageView);
+        ImageLoader.getInstance().displayImage(getBigImageUrl(activityetail.getActivityImg()), backgroundImageView, new DisplayImageOptions.Builder()
+                .showImageOnLoading(R.drawable.egg_back_default)
+                .showImageForEmptyUri(R.drawable.egg_back_default)
+                .showImageOnFail(R.drawable.egg_back_default)
+                .resetViewBeforeLoading(true).cacheInMemory(false)
+                .cacheOnDisk(true).considerExifParams(true)
+                .bitmapConfig(Bitmap.Config.RGB_565).build());
         animImageView.setImageResource(R.drawable.egg_anim_0);
         ruleTextView.setText(activityetail.getRule());
         awardAdapter.notifyDataSetChanged();
@@ -211,7 +230,7 @@ public class EggMainFragment extends BaseNotifyFragment {
                 payButton.setEnabled(false);
                 payButton.setVisibility(View.VISIBLE);
                 payButton.setBackgroundResource(R.drawable.shape_pay_money_btn_disable);
-                payButton.setText("参与次数已达上限");
+                payButton.setText("次数已达上限");
                 break;
             case 5:
                 //当天参与次数上限
@@ -219,7 +238,7 @@ public class EggMainFragment extends BaseNotifyFragment {
                 payButton.setEnabled(false);
                 payButton.setVisibility(View.VISIBLE);
                 payButton.setBackgroundResource(R.drawable.shape_pay_money_btn_disable);
-                payButton.setText("今日参与次数已达上限");
+                payButton.setText("次数已达上限");
                 break;
         }
     }

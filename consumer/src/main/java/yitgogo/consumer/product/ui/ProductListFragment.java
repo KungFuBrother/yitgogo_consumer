@@ -221,6 +221,7 @@ public class ProductListFragment extends BaseNotifyFragment {
         products.clear();
         productAdapter.notifyDataSetChanged();
         productList.setMode(Mode.BOTH);
+        useCache = false;
         new GetProduct().execute();
     }
 

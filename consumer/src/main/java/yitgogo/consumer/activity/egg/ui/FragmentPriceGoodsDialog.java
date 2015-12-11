@@ -11,8 +11,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -23,7 +23,7 @@ public class FragmentPriceGoodsDialog extends DialogFragment implements OnClickL
 
     private int screenWidth;
     private int screenHeight;
-    FrameLayout imageLayout;
+    private RelativeLayout imageLayout;
     private ImageView imageView;
     private TextView tvNoPlay;
     private TextView tvContinue;
@@ -78,18 +78,20 @@ public class FragmentPriceGoodsDialog extends DialogFragment implements OnClickL
         tvContinue = (TextView) view.findViewById(R.id.continue_play);
         tvTips = (TextView) view.findViewById(R.id.no_price_tips_tv);
 
-        imageLayout = (FrameLayout) view.findViewById(R.id.no_price_tips_iv_layout);
+        imageLayout = (RelativeLayout) view.findViewById(R.id.no_price_tips_iv_layout);
         imageView = (ImageView) view.findViewById(R.id.no_price_tips_iv);
 
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams((int) ((float) screenWidth / 2.0f), (int) ((float) screenWidth / 2.0f));
-        layoutParams.gravity = Gravity.CENTER;
-        imageLayout.setLayoutParams(layoutParams);
-
-        double imageWidth = Math.sqrt(((float) screenWidth / 2.0f) * ((float) screenWidth / 2.0f) / 2.0f);
-
-        FrameLayout.LayoutParams imageLayoutParams = new FrameLayout.LayoutParams((int) imageWidth, (int) imageWidth);
-        layoutParams.gravity = Gravity.CENTER;
-        imageView.setLayoutParams(imageLayoutParams);
+        imageLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                int imageHeight = imageLayout.getHeight();
+                double imageWidth = Math.sqrt((float) imageHeight * (float) imageHeight / 2.0f);
+                int paddingWidth = (int) (((float) imageHeight - (float) imageWidth) / 2.0f);
+                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(imageHeight, imageHeight);
+                imageView.setLayoutParams(layoutParams);
+                imageView.setPadding(paddingWidth, paddingWidth, paddingWidth, paddingWidth);
+            }
+        });
 
         tvNoPlay.setOnClickListener(this);
         tvContinue.setOnClickListener(this);
@@ -111,7 +113,7 @@ public class FragmentPriceGoodsDialog extends DialogFragment implements OnClickL
             return;
         }
 
-        getDialog().getWindow().setLayout(screenWidth * 5 / 7, screenHeight / 2);
+        getDialog().getWindow().setLayout(screenWidth * 4 / 5, screenWidth);
         getDialog().getWindow().setGravity(Gravity.CENTER);
     }
 

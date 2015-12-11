@@ -1,64 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/no_price_bg"
-    android:orientation="vertical">
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="20dp"
-        android:layout_weight="2"
-        android:src="@drawable/big_money" />
-
-    <TextView
-        android:id="@+id/no_price_tips_tv"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:textColor="#ffffff"
-        android:textSize="16sp" />
+    android:background="@drawable/egg_award_back">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:src="@drawable/big_money" />
 
         <TextView
-            android:id="@+id/no_play"
+            android:id="@+id/no_price_tips_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/shape_no_btn_bg"
-            android:padding="7dp"
-            android:text="我不想玩了"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="13sp" />
+            android:layout_margin="8dp"
+            android:textColor="@color/white"
+            android:textSize="16dp" />
 
-        <TextView
-            android:id="@+id/continue_play"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/shape_go_on_btn_bg"
-            android:paddingBottom="9dp"
-            android:paddingLeft="18dp"
-            android:paddingRight="18dp"
-            android:paddingTop="9dp"
-            android:text="继续砸金蛋"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="16sp" />
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="4dp">
+
+            <TextView
+                android:id="@+id/no_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:background="@drawable/shape_no_btn_bg"
+                android:padding="8dp"
+                android:text="我不想玩了"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="12dp" />
+
+            <TextView
+                android:id="@+id/continue_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:background="@drawable/shape_go_on_btn_bg"
+                android:padding="8dp"
+                android:text="继续砸金蛋"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="16dp" />
+        </LinearLayout>
+
     </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-</LinearLayout>
+</FrameLayout>

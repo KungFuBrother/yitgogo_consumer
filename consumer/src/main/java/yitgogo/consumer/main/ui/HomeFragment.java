@@ -1,6 +1,9 @@
 package yitgogo.consumer.main.ui;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
@@ -170,7 +173,6 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
             }
         }
 
-        ;
     };
     boolean isAlive = false;
 
@@ -191,6 +193,8 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
             }
         }).start();
     }
+
+    BroadcastReceiver broadcastReceiver;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -226,6 +230,7 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
     @Override
     public void onDestroy() {
         isAlive = false;
+        getActivity().unregisterReceiver(broadcastReceiver);
         super.onDestroy();
     }
 
@@ -234,7 +239,24 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
         products = new ArrayList<>();
         priceMap = new HashMap<>();
         productAdapter = new ProductAdapter();
+        initReceiver();
         getStoreAreas();
+    }
+
+    private void initReceiver() {
+        broadcastReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals(Intent.ACTION_TIME_TICK)) {
+                    if (System.currentTimeMillis() > (long) 1449935999 * 1000) {
+                        bannerEggImageView.setVisibility(View.GONE);
+                    }
+                }
+            }
+        };
+        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_TIME_TICK);
+        getActivity().registerReceiver(broadcastReceiver, intentFilter);
     }
 
     protected void findViews() {
@@ -299,6 +321,10 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
                 .replace(R.id.home_part_brand_layout,
                         PartBrandFragment.getBrandFragment()).commit();
         handler.sendEmptyMessageDelayed(0x13, 5000);
+
+        if (System.currentTimeMillis() > (long) 1449935999 * 1000) {
+            bannerEggImageView.setVisibility(View.GONE);
+        }
     }
 
     @Override

@@ -42,7 +42,7 @@ import yitgogo.consumer.suning.model.ModelProductPool;
 import yitgogo.consumer.suning.model.ModelProductPrice;
 import yitgogo.consumer.suning.model.SuningManager;
 import yitgogo.consumer.suning.ui.ProductDetailFragment;
-import yitgogo.consumer.suning.ui.SuningAreaSelectFragment;
+import yitgogo.consumer.suning.ui.SuningAreaFragment;
 import yitgogo.consumer.suning.ui.SuningClassesFragment;
 import yitgogo.consumer.tools.API;
 import yitgogo.consumer.tools.Parameters;
@@ -196,7 +196,7 @@ public class HomeSuningFragment extends BaseNotifyFragment {
 
             @Override
             public void onClick(View v) {
-                jump(SuningAreaSelectFragment.class.getName(), "设置云商城收货区域");
+                jump(SuningAreaFragment.class.getName(), "设置云商城收货区域");
             }
         });
     }

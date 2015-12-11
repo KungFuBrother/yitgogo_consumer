@@ -40,7 +40,7 @@ public class SuningOrderWuliuFragment extends BaseNotifyFragment {
     List<ModelSuningWuliu> wulius;
     WuliuAdapter wuliuAdapter;
     InnerListView wuliuList;
-    String orderId = "6021394830", skuId = "128410606";
+    String orderId = "", skuId = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,14 +70,14 @@ public class SuningOrderWuliuFragment extends BaseNotifyFragment {
 
     private void init() {
         Bundle bundle = getArguments();
-//        if (bundle != null) {
-//            if (bundle.containsKey("orderId")) {
-//                orderId = bundle.getString("orderId");
-//            }
-//            if (bundle.containsKey("skuId")) {
-//                skuId = bundle.getString("skuId");
-//            }
-//        }
+        if (bundle != null) {
+            if (bundle.containsKey("orderId")) {
+                orderId = bundle.getString("orderId");
+            }
+            if (bundle.containsKey("skuId")) {
+                skuId = bundle.getString("skuId");
+            }
+        }
         wulius = new ArrayList<>();
         wuliuAdapter = new WuliuAdapter();
     }

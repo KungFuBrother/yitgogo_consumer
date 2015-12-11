@@ -1,59 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/egg_award_back"
-    android:orientation="vertical"
-    android:padding="8dp">
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp">
-
-        <FrameLayout
-            android:id="@+id/no_price_tips_iv_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/shape_price_good_bg"></FrameLayout>
-
-        <ImageView
-            android:id="@+id/no_price_tips_iv"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:scaleType="fitCenter"
-            android:src="@drawable/loading_default" />
-
-    </FrameLayout>
+    android:background="@drawable/egg_award_back">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:padding="4dp">
+        android:padding="24dp">
+
+        <RelativeLayout
+            android:id="@+id/no_price_tips_iv_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/no_price_tips_iv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_price_good_bg"
+                android:scaleType="fitCenter"
+                android:src="@drawable/loading_default" />
+
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/no_price_tips_tv"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_margin="4dp"
+            android:layout_margin="8dp"
             android:textColor="@color/white"
             android:textSize="16dp" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="horizontal"
-            android:padding="2dp">
+            android:padding="4dp">
 
             <TextView
                 android:id="@+id/no_play"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="2dp"
+                android:layout_margin="4dp"
                 android:background="@drawable/shape_no_btn_bg"
                 android:padding="8dp"
                 android:text="我不想玩了"
@@ -64,7 +59,7 @@
                 android:id="@+id/continue_play"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="2dp"
+                android:layout_margin="4dp"
                 android:background="@drawable/shape_go_on_btn_bg"
                 android:padding="8dp"
                 android:text="继续砸金蛋"
@@ -73,5 +68,4 @@
         </LinearLayout>
 
     </LinearLayout>
-
-</LinearLayout>
+</FrameLayout>

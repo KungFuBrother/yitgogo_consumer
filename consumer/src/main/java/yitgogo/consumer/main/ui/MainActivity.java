@@ -19,7 +19,7 @@ import java.util.List;
 
 import yitgogo.consumer.BaseActivity;
 import yitgogo.consumer.suning.model.SuningManager;
-import yitgogo.consumer.suning.ui.SuningAreaSelectFragment;
+import yitgogo.consumer.suning.ui.SuningAreaFragment;
 import yitgogo.consumer.view.FragmentTabHost;
 import yitgogo.consumer.view.NormalAskDialog;
 
@@ -108,7 +108,7 @@ public class MainActivity extends BaseActivity {
             public void onTabChanged(String s) {
                 if (s.equals(HomeSuningFragment.class.getName())) {
                     if (TextUtils.isEmpty(SuningManager.getSuningAreas().getTown().getCode())) {
-                        jump(SuningAreaSelectFragment.class.getName(), "设置云商城收货区域");
+                        jump(SuningAreaFragment.class.getName(), "设置云商城收货区域");
                     }
                 }
             }

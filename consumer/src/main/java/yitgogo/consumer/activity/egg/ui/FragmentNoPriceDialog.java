@@ -101,8 +101,7 @@ public class FragmentNoPriceDialog extends DialogFragment implements OnClickList
             return;
         }
 
-        getDialog().getWindow()
-                .setLayout(screenWidth * 5 / 7, screenHeight / 2);
+        getDialog().getWindow().setLayout(screenWidth * 4 / 5, screenWidth);
         getDialog().getWindow().setGravity(Gravity.CENTER);
     }
 

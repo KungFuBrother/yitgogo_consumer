@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import yitgogo.consumer.main.ui.MainActivity;
-import yitgogo.consumer.store.SelectStoreFragment;
+import yitgogo.consumer.store.SelectStoreByAreaFragment;
 import yitgogo.consumer.store.model.Store;
 import yitgogo.consumer.tools.API;
 import yitgogo.consumer.tools.Content;
@@ -65,10 +65,6 @@ public class EntranceActivity extends BaseActivity {
         MobclickAgent.onPageEnd(EntranceActivity.class.getName());
     }
 
-    private void test() {
-        updateStore(true);
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -97,6 +93,11 @@ public class EntranceActivity extends BaseActivity {
         }
     }
 
+    private void jumpToHome() {
+        startActivity(new Intent(EntranceActivity.this, MainActivity.class));
+        finish();
+    }
+
     /**
      * 检查网络连通性
      */
@@ -117,7 +118,11 @@ public class EntranceActivity extends BaseActivity {
         if (Store.getStore() == null) {
             updateStore(true);
         } else {
-            updateStore(false);
+            if (Content.getIntContent(Parameters.CACHE_KEY_STORE_TYPE, Parameters.CACHE_VALUE_STORE_TYPE_LOCATED) == Parameters.CACHE_VALUE_STORE_TYPE_LOCATED) {
+                updateStore(false);
+            } else {
+                jumpToHome();
+            }
         }
     }
 
@@ -139,13 +144,13 @@ public class EntranceActivity extends BaseActivity {
             if (must) {
                 selectJmd();
             } else {
-                getLocalBusinessState();
+                jumpToHome();
             }
         }
     }
 
     private void selectJmd() {
-        jump(SelectStoreFragment.class.getName(), "选择服务中心");
+        jump(SelectStoreByAreaFragment.class.getName(), "选择服务中心");
         finish();
     }
 
@@ -219,7 +224,7 @@ public class EntranceActivity extends BaseActivity {
                                         Content.saveStringContent(Parameters.CACHE_KEY_STORE_JSONSTRING, array.getString(0));
                                         Store.init(getApplicationContext());
                                         // 自动定位到到最近加盟店，跳转到主页
-                                        getLocalBusinessState();
+                                        jumpToHome();
                                         return;
                                     }
                                 } catch (JSONException e) {
@@ -231,7 +236,7 @@ public class EntranceActivity extends BaseActivity {
                         if (mustGetStore) {
                             selectJmd();
                         } else {
-                            getLocalBusinessState();
+                            jumpToHome();
                         }
                     }
                 });
@@ -301,20 +306,6 @@ public class EntranceActivity extends BaseActivity {
         protected void onPostExecute(String result) {
             // {"message":"ok","state":"SUCCESS","cacheKey":null,"dataList":[],"totalCount":1,"dataMap":{},"object":{"id":29,"member_account":"13032889558","store_id":1069,"location":"四川省成都市金牛区解放路2段-95号","coordinate":"104.086343,30.68379","record_time":"2015-06-26 09:44:29"}}
         }
-    }
-
-    private void getLocalBusinessState() {
-        GetLocalBusinessState localBusinessState = new GetLocalBusinessState() {
-
-            @Override
-            protected void onPostExecute(Boolean showLocalBusiness) {
-                Intent intent = new Intent(EntranceActivity.this, MainActivity.class);
-                intent.putExtra("showLocalBusiness", showLocalBusiness);
-                startActivity(intent);
-                finish();
-            }
-        };
-        localBusinessState.execute();
     }
 
 }

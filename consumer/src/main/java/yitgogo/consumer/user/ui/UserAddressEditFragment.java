@@ -123,9 +123,7 @@ public class UserAddressEditFragment extends BaseNotifyFragment {
 
             @Override
             public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putInt("type", SelectAreaFragment.TYPE_GET_AREA);
-                jumpForResult(SelectAreaFragment.class.getName(), "选择区域", bundle, 22);
+                jumpForResult(SelectAreaFragment.class.getName(), "选择区域", 22);
             }
         });
         addButton.setOnClickListener(new OnClickListener() {

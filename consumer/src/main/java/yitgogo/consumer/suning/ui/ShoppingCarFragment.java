@@ -52,7 +52,6 @@ public class ShoppingCarFragment extends BaseNotifyFragment {
 
     double goodsMoney = 0;
 
-    String priceResult = "";
     HashMap<String, String> states = new HashMap<>();
 
     @Override
@@ -155,9 +154,7 @@ public class ShoppingCarFragment extends BaseNotifyFragment {
         if (User.getUser().isLogin()) {
             if (!SuningCarController.getSelectedCars().isEmpty()) {
                 if (goodsMoney > 0) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("price", priceResult);
-                    jump(ShoppingCarBuyFragment.class.getName(), "确认订单", bundle);
+                    jump(ShoppingCarBuyFragment.class.getName(), "确认订单");
                 } else {
                     Notify.show("有商品信息有误，暂不能购买，请取消勾选后再试");
                 }
@@ -405,7 +402,6 @@ public class ShoppingCarFragment extends BaseNotifyFragment {
                 return;
             }
             if (!TextUtils.isEmpty(result)) {
-                priceResult = result;
                 try {
                     JSONObject object = new JSONObject(result);
                     if (object.optBoolean("isSuccess")) {

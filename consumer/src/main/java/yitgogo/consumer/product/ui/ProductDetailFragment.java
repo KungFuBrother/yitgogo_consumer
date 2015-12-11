@@ -239,9 +239,7 @@ public class ProductDetailFragment extends BaseNotifyFragment {
         areaLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                Bundle bundle = new Bundle();
-                bundle.putInt("type", SelectAreaFragment.TYPE_GET_AREA);
-                jumpForResult(SelectAreaFragment.class.getName(), "选择区域", bundle, 22);
+                jumpForResult(SelectAreaFragment.class.getName(), "选择区域", 22);
             }
         });
         htmlLayout.setOnClickListener(new OnClickListener() {
@@ -749,7 +747,7 @@ public class ProductDetailFragment extends BaseNotifyFragment {
                         if (jsonArray != null) {
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 ModelFreight modelFreight = new ModelFreight(jsonArray.optJSONObject(i));
-                                if(!TextUtils.isEmpty(modelFreight.getAgencyId())){
+                                if (!TextUtils.isEmpty(modelFreight.getAgencyId())) {
                                     freightMap.put(modelFreight.getAgencyId(), modelFreight);
                                 }
                             }

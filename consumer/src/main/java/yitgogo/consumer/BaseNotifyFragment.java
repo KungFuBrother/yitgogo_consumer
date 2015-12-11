@@ -291,12 +291,11 @@ public class BaseNotifyFragment extends Fragment {
         startActivity(intent);
     }
 
-    protected void jumpForResult(String fragmentName, String fragmentTitle, Bundle parameters, int requestCode) {
+    protected void jumpForResult(String fragmentName, String fragmentTitle, int requestCode) {
         Intent intent = new Intent(getActivity(), ContainerActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString("fragmentName", fragmentName);
         bundle.putString("fragmentTitle", fragmentTitle);
-        bundle.putBundle("parameters", parameters);
         intent.putExtras(bundle);
         startActivityForResult(intent, requestCode);
     }

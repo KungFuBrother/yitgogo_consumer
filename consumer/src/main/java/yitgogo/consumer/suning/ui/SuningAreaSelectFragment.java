@@ -254,7 +254,7 @@ public class SuningAreaSelectFragment extends BaseNotifyFragment {
                         if (array != null) {
                             List<ModelSuningArea> provinceAreas = new ArrayList<>();
                             for (int i = 0; i < array.length(); i++) {
-                                provinceAreas.add(new ModelSuningArea(array.optJSONObject(i)));
+                                provinceAreas.add(new ModelSuningArea(array.optJSONObject(i), 1));
                             }
                             suningAreaHashMap.put("province", provinceAreas);
                             areaGridView.setAdapter(new AreaAdapter(provinceAreas, 0));
@@ -323,7 +323,7 @@ public class SuningAreaSelectFragment extends BaseNotifyFragment {
                         if (array != null) {
                             List<ModelSuningArea> cityAreas = new ArrayList<>();
                             for (int i = 0; i < array.length(); i++) {
-                                cityAreas.add(new ModelSuningArea(array.optJSONObject(i)));
+                                cityAreas.add(new ModelSuningArea(array.optJSONObject(i), 2));
                             }
                             suningAreaHashMap.put(province.getCode(), cityAreas);
                             areaGridView.setAdapter(new AreaAdapter(cityAreas, 1));
@@ -393,7 +393,7 @@ public class SuningAreaSelectFragment extends BaseNotifyFragment {
                         if (array != null) {
                             List<ModelSuningArea> districtAreas = new ArrayList<>();
                             for (int i = 0; i < array.length(); i++) {
-                                districtAreas.add(new ModelSuningArea(array.optJSONObject(i)));
+                                districtAreas.add(new ModelSuningArea(array.optJSONObject(i), 3));
                             }
                             suningAreaHashMap.put(city.getCode(), districtAreas);
                             areaGridView.setAdapter(new AreaAdapter(districtAreas, 2));
@@ -464,7 +464,7 @@ public class SuningAreaSelectFragment extends BaseNotifyFragment {
                         if (array != null) {
                             List<ModelSuningArea> townAreas = new ArrayList<>();
                             for (int i = 0; i < array.length(); i++) {
-                                townAreas.add(new ModelSuningArea(array.optJSONObject(i)));
+                                townAreas.add(new ModelSuningArea(array.optJSONObject(i), 4));
                             }
                             suningAreaHashMap.put(district.getCode(), townAreas);
                             areaGridView.setAdapter(new AreaAdapter(townAreas, 3));

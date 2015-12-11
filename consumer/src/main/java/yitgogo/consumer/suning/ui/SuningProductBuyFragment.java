@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,12 +25,12 @@ import java.util.List;
 
 import yitgogo.consumer.BaseNotifyFragment;
 import yitgogo.consumer.money.ui.PayFragment;
-import yitgogo.consumer.order.ui.OrderConfirmPartAddressFragment;
 import yitgogo.consumer.order.ui.OrderConfirmPartPaymentFragment;
 import yitgogo.consumer.store.model.Store;
 import yitgogo.consumer.suning.model.GetNewSignature;
 import yitgogo.consumer.suning.model.ModelProductDetail;
 import yitgogo.consumer.suning.model.ModelProductPrice;
+import yitgogo.consumer.suning.model.ModelSuningAreas;
 import yitgogo.consumer.suning.model.ModelSuningOrderResult;
 import yitgogo.consumer.suning.model.SuningManager;
 import yitgogo.consumer.tools.API;
@@ -43,13 +44,15 @@ public class SuningProductBuyFragment extends BaseNotifyFragment {
     TextView nameTextView, priceTextView, countTextView, countAddButton,
             countDeleteButton, additionTextView;
 
-    FrameLayout addressLayout, paymentLayout;
+    FrameLayout paymentLayout;
     TextView totalPriceTextView, confirmButton;
+
+    EditText consumerNameEditText, consumerPhoneEditText, detailAddressEditText;
+    TextView areaTextView;
 
     ModelProductDetail productDetail = new ModelProductDetail();
     ModelProductPrice productPrice = new ModelProductPrice();
 
-    OrderConfirmPartAddressFragment addressFragment;
     OrderConfirmPartPaymentFragment paymentFragment;
 
     int buyCount = 1;
@@ -73,6 +76,32 @@ public class SuningProductBuyFragment extends BaseNotifyFragment {
     public void onResume() {
         super.onResume();
         MobclickAgent.onPageStart(SuningProductBuyFragment.class.getName());
+        showSuningAreas();
+    }
+
+    private void showSuningAreas() {
+        StringBuilder builder = new StringBuilder();
+        if (!TextUtils.isEmpty(SuningManager.getSuningAreas().getProvince().getName())) {
+            builder.append(SuningManager.getSuningAreas().getProvince().getName());
+            if (!TextUtils.isEmpty(SuningManager.getSuningAreas().getCity().getName())) {
+                builder.append(">");
+                builder.append(SuningManager.getSuningAreas().getCity().getName());
+                if (!TextUtils.isEmpty(SuningManager.getSuningAreas().getDistrict().getName())) {
+                    builder.append(">");
+                    builder.append(SuningManager.getSuningAreas().getDistrict().getName());
+                    if (!TextUtils.isEmpty(SuningManager.getSuningAreas().getTown().getName())) {
+                        builder.append(">");
+                        builder.append(SuningManager.getSuningAreas().getTown().getName());
+                    }
+                }
+            }
+        }
+        areaTextView.setText(builder.toString());
+        consumerNameEditText.setText(SuningManager.getSuningAreas().getConsumerName());
+        consumerPhoneEditText.setText(SuningManager.getSuningAreas().getConsumerPhone());
+        detailAddressEditText.setText(SuningManager.getSuningAreas().getConsumerAddress());
+        new GetSuningProductPrice().execute();
+        new GetProductStock().execute();
     }
 
     @Override
@@ -81,23 +110,13 @@ public class SuningProductBuyFragment extends BaseNotifyFragment {
         MobclickAgent.onPageEnd(SuningProductBuyFragment.class.getName());
     }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        new GetProductStock().execute();
-    }
-
     private void init() throws JSONException {
         Bundle bundle = getArguments();
         if (bundle != null) {
             if (bundle.containsKey("product")) {
                 productDetail = new ModelProductDetail(new JSONObject(bundle.getString("product")));
             }
-            if (bundle.containsKey("price")) {
-                productPrice = new ModelProductPrice(new JSONObject(bundle.getString("price")));
-            }
         }
-        addressFragment = new OrderConfirmPartAddressFragment();
         paymentFragment = new OrderConfirmPartPaymentFragment(true, true, false);
     }
 
@@ -116,14 +135,18 @@ public class SuningProductBuyFragment extends BaseNotifyFragment {
                 .findViewById(R.id.order_confirm_sale_count_add);
         additionTextView = (TextView) contentView
                 .findViewById(R.id.order_confirm_sale_addition);
-        addressLayout = (FrameLayout) contentView
-                .findViewById(R.id.order_confirm_sale_address);
         paymentLayout = (FrameLayout) contentView
                 .findViewById(R.id.order_confirm_sale_payment);
         totalPriceTextView = (TextView) contentView
                 .findViewById(R.id.order_confirm_sale_total_money);
         confirmButton = (TextView) contentView
                 .findViewById(R.id.order_confirm_sale_confirm);
+
+        consumerNameEditText = (EditText) contentView.findViewById(R.id.address_consumer_name);
+        consumerPhoneEditText = (EditText) contentView.findViewById(R.id.address_consumer_phone);
+        detailAddressEditText = (EditText) contentView.findViewById(R.id.address_area_detail);
+        areaTextView = (TextView) contentView.findViewById(R.id.address_area);
+
         initViews();
         registerViews();
     }
@@ -132,7 +155,6 @@ public class SuningProductBuyFragment extends BaseNotifyFragment {
     protected void initViews() {
         showProductInfo();
         getFragmentManager().beginTransaction()
-                .replace(R.id.order_confirm_sale_address, addressFragment)
                 .replace(R.id.order_confirm_sale_payment, paymentFragment)
                 .commit();
     }
@@ -160,13 +182,18 @@ public class SuningProductBuyFragment extends BaseNotifyFragment {
                 addCount();
             }
         });
+        areaTextView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                jump(SuningAreaFragment.class.getName(), "设置云商城收货区域");
+            }
+        });
     }
 
     private void showProductInfo() {
         ImageLoader.getInstance().displayImage(productDetail.getImage(), imageView);
         nameTextView.setText(productDetail.getName());
-        priceTextView.setText(Parameters.CONSTANT_RMB
-                + decimalFormat.format(productPrice.getPrice()));
+        priceTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format(productPrice.getPrice()));
         countTextView.setText(buyCount + "");
         countTotalPrice();
     }
@@ -198,8 +225,14 @@ public class SuningProductBuyFragment extends BaseNotifyFragment {
     }
 
     private void buy() {
-        if (addressFragment.getAddress() == null) {
-            Notify.show("收货人信息有误");
+        if (TextUtils.isEmpty(consumerNameEditText.getText().toString())) {
+            Notify.show("请输入收货人姓名");
+        } else if (TextUtils.isEmpty(consumerPhoneEditText.getText().toString())) {
+            Notify.show("请输入收货人联系电话");
+        } else if (TextUtils.isEmpty(areaTextView.getText().toString())) {
+            Notify.show("请选择收货区域");
+        } else if (TextUtils.isEmpty(detailAddressEditText.getText().toString())) {
+            Notify.show("请输入详细收货地址");
         } else {
             if (state.equals("00")) {
                 if (goodsMoney > 0) {
@@ -224,17 +257,22 @@ public class SuningProductBuyFragment extends BaseNotifyFragment {
         @Override
         protected void onPreExecute() {
             showLoading();
+            ModelSuningAreas suningAreas = SuningManager.getSuningAreas();
+            suningAreas.setConsumerName(consumerNameEditText.getText().toString());
+            suningAreas.setConsumerPhone(consumerPhoneEditText.getText().toString());
+            suningAreas.setConsumerAddress(detailAddressEditText.getText().toString());
+            suningAreas.save();
         }
 
         @Override
         protected String doInBackground(Void... voids) {
             List<NameValuePair> nameValuePairs = new ArrayList<>();
             nameValuePairs.add(new BasicNameValuePair("menberAccount", User.getUser().getUseraccount()));
-            nameValuePairs.add(new BasicNameValuePair("name", addressFragment.getAddress().getPersonName()));
-            nameValuePairs.add(new BasicNameValuePair("mobile", addressFragment.getAddress().getPhone()));
-            nameValuePairs.add(new BasicNameValuePair("address", addressFragment.getAddress().getDetailedAddress()));
+            nameValuePairs.add(new BasicNameValuePair("name", SuningManager.getSuningAreas().getConsumerName()));
+            nameValuePairs.add(new BasicNameValuePair("mobile", SuningManager.getSuningAreas().getConsumerPhone()));
+            nameValuePairs.add(new BasicNameValuePair("address", SuningManager.getSuningAreas().getConsumerAddress()));
             nameValuePairs.add(new BasicNameValuePair("spId", Store.getStore().getStoreId()));
-            nameValuePairs.add(new BasicNameValuePair("amount", goodsMoney + ""));
+            nameValuePairs.add(new BasicNameValuePair("amount", decimalFormat.format(goodsMoney)));
             nameValuePairs.add(new BasicNameValuePair("provinceId", SuningManager.getSuningAreas().getProvince().getCode()));
             nameValuePairs.add(new BasicNameValuePair("cityId", SuningManager.getSuningAreas().getCity().getCode()));
             nameValuePairs.add(new BasicNameValuePair("countyId", SuningManager.getSuningAreas().getDistrict().getCode()));
@@ -356,4 +394,73 @@ public class SuningProductBuyFragment extends BaseNotifyFragment {
         }
     }
 
+    class GetSuningProductPrice extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            showLoading();
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            JSONArray dataArray = new JSONArray();
+            dataArray.put(productDetail.getSku());
+            JSONObject data = new JSONObject();
+            try {
+                data.put("accessToken", SuningManager.getSignature().getToken());
+                data.put("appKey", SuningManager.appKey);
+                data.put("v", SuningManager.version);
+                data.put("cityId", SuningManager.getSuningAreas().getCity().getCode());
+                data.put("sku", dataArray);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            List<NameValuePair> nameValuePairs = new ArrayList<>();
+            nameValuePairs.add(new BasicNameValuePair("data", data.toString()));
+            return netUtil.postWithoutCookie(API.API_SUNING_PRODUCT_PRICE, nameValuePairs, false, false);
+        }
+
+        /**
+         * {"result":[{"skuId":"108246148","price":15000.00}],"isSuccess":true,"returnMsg":"查询成功。"}
+         */
+        @Override
+        protected void onPostExecute(String result) {
+            hideLoading();
+            if (SuningManager.isSignatureOutOfDate(result)) {
+                GetNewSignature getNewSignature = new GetNewSignature() {
+                    @Override
+                    protected void onPreExecute() {
+                        showLoading();
+                    }
+
+                    @Override
+                    protected void onPostExecute(Boolean isSuccess) {
+                        hideLoading();
+                        if (isSuccess) {
+                            new GetSuningProductPrice().execute();
+                        }
+                    }
+                };
+                getNewSignature.execute();
+                return;
+            }
+            if (!TextUtils.isEmpty(result)) {
+                try {
+                    JSONObject object = new JSONObject(result);
+                    if (object.optBoolean("isSuccess")) {
+                        JSONArray array = object.optJSONArray("result");
+                        if (array != null) {
+                            for (int j = 0; j < array.length(); j++) {
+                                productPrice = new ModelProductPrice(array.optJSONObject(j));
+                                priceTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format(productPrice.getPrice()));
+                            }
+                            countTotalPrice();
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 }
