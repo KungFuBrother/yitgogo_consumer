@@ -1,24 +1,5 @@
 package yitgogo.consumer.activity.shake.ui;
 
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Random;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import yitgogo.consumer.BaseNotifyFragment;
-import yitgogo.consumer.activity.shake.model.ModelActivity;
-import yitgogo.consumer.tools.API;
-import yitgogo.consumer.tools.Parameters;
-import yitgogo.consumer.user.model.User;
-import yitgogo.consumer.view.NormalAskDialog;
-import yitgogo.consumer.view.Notify;
-
 import android.app.Dialog;
 import android.app.Service;
 import android.content.DialogInterface;
@@ -48,6 +29,25 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Random;
+
+import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.activity.shake.model.ModelActivity;
+import yitgogo.consumer.tools.API;
+import yitgogo.consumer.tools.Parameters;
+import yitgogo.consumer.user.model.User;
+import yitgogo.consumer.view.NormalAskDialog;
+import yitgogo.consumer.view.Notify;
+
 public class ShakeFragment extends BaseNotifyFragment implements
         SensorEventListener {
 
@@ -61,12 +61,12 @@ public class ShakeFragment extends BaseNotifyFragment implements
     TextView timeDayTextView, timeHourTextView, timeMinuteTextView,
             timeSecondsTextView, timeStringTextView;
 
+    boolean isAlive = false;
+
     Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             showDownTime();
         }
-
-        ;
     };
 
     @Override
@@ -127,9 +127,7 @@ public class ShakeFragment extends BaseNotifyFragment implements
                 themeImageView);
         if (!isStarted()) {
             timeLayout.setVisibility(View.VISIBLE);
-            timeStringTextView.setText("活动开始时间："
-                    + activity.getActivityStartTime());
-            showDownTime();
+            timeStringTextView.setText("活动开始时间：" + activity.getActivityStartTime());
         } else {
             timeLayout.setVisibility(View.GONE);
             sensorManager.registerListener(this,
@@ -143,17 +141,21 @@ public class ShakeFragment extends BaseNotifyFragment implements
         super.onPause();
         MobclickAgent.onPageEnd(ShakeFragment.class.getName());
         sensorManager.unregisterListener(this);
+        isAlive = false;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        isAlive = true;
         MobclickAgent.onPageStart(ShakeFragment.class.getName());
         if (isStarted()) {
             timeLayout.setVisibility(View.GONE);
             sensorManager.registerListener(this,
                     sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                     SensorManager.SENSOR_DELAY_NORMAL);
+        } else {
+            showDownTime();
         }
     }
 
@@ -209,10 +211,8 @@ public class ShakeFragment extends BaseNotifyFragment implements
         @Override
         protected String doInBackground(Void... params) {
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair("memberAccount", User
-                    .getUser().getUseraccount()));
-            nameValuePairs.add(new BasicNameValuePair("activityId", activity
-                    .getId()));
+            nameValuePairs.add(new BasicNameValuePair("memberAccount", User.getUser().getUseraccount()));
+            nameValuePairs.add(new BasicNameValuePair("activityId", activity.getId()));
             return netUtil.postWithCookie(API.API_ACTIVITY_WIN, nameValuePairs);
         }
 
@@ -225,12 +225,28 @@ public class ShakeFragment extends BaseNotifyFragment implements
                     if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
                         JSONObject dataMap = object.optJSONObject("dataMap");
                         if (dataMap != null) {
-                            if (dataMap.optString("state").equalsIgnoreCase(
-                                    "success")) {
-                                double winMoney = dataMap.optDouble("winMoney");
-                                if (winMoney > 0) {
-                                    new WinDialog(winMoney).show(
-                                            getFragmentManager(), null);
+                            if (dataMap.optString("state").equalsIgnoreCase("success")) {
+                                String s = dataMap.optString("winMoney");
+                                try {
+                                    double winMoney = Double.parseDouble(s);
+                                    if (winMoney > 0) {
+                                        WinDialog winDialog = new WinDialog();
+                                        Bundle bundle = new Bundle();
+                                        bundle.putString("winMoney", decimalFormat.format(winMoney));
+                                        winDialog.setArguments(bundle);
+                                        if (getFragmentManager() != null) {
+                                            winDialog.show(getFragmentManager(), null);
+                                        }
+                                    }
+                                } catch (NumberFormatException e) {
+                                    WinDialog winDialog = new WinDialog();
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString("winMoney", s);
+                                    winDialog.setArguments(bundle);
+                                    if (getFragmentManager() != null) {
+                                        winDialog.show(getFragmentManager(), null);
+                                    }
+                                    e.printStackTrace();
                                 }
                             } else {
                                 NormalAskDialog askDialog = new NormalAskDialog(
@@ -245,7 +261,9 @@ public class ShakeFragment extends BaseNotifyFragment implements
                                         }
                                     }
                                 };
-                                askDialog.show(getFragmentManager(), null);
+                                if (getFragmentManager() != null) {
+                                    askDialog.show(getFragmentManager(), null);
+                                }
                             }
                         }
                         return;
@@ -263,11 +281,7 @@ public class ShakeFragment extends BaseNotifyFragment implements
         View dialogView;
         TextView moneyTextView;
         ImageView closeButton;
-        double winMoney = 0;
-
-        public WinDialog(double winMoney) {
-            this.winMoney = winMoney;
-        }
+        String winMoney = "";
 
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -278,6 +292,12 @@ public class ShakeFragment extends BaseNotifyFragment implements
 
         private void init() {
             setCancelable(false);
+            Bundle bundle = getArguments();
+            if (bundle != null) {
+                if (bundle.containsKey("winMoney")) {
+                    winMoney = bundle.getString("winMoney");
+                }
+            }
         }
 
         @Override
@@ -300,8 +320,7 @@ public class ShakeFragment extends BaseNotifyFragment implements
                     .findViewById(R.id.activity_win_money);
             closeButton = (ImageView) dialogView
                     .findViewById(R.id.activity_win_close);
-            moneyTextView.setText(Parameters.CONSTANT_RMB
-                    + decimalFormat.format(winMoney));
+            moneyTextView.setText(Parameters.CONSTANT_RMB + winMoney);
             closeButton.setOnClickListener(new OnClickListener() {
 
                 @Override
@@ -327,6 +346,9 @@ public class ShakeFragment extends BaseNotifyFragment implements
     }
 
     private void showDownTime() {
+        if (!isAlive) {
+            return;
+        }
         try {
             long currentTime = Calendar.getInstance().getTimeInMillis();
             long startTime = simpleDateFormat.parse(
