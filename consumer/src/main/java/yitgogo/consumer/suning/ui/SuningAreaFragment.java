@@ -53,6 +53,8 @@ public class SuningAreaFragment extends BaseNotifyFragment {
      * 当前选择的区域
      */
     ModelSuningArea currentArea = new ModelSuningArea();
+
+    List<ModelSuningArea> suningAreas;
     AreaListAdapter areaListAdapter;
 
     @Override
@@ -83,6 +85,8 @@ public class SuningAreaFragment extends BaseNotifyFragment {
 
     private void init() {
         measureScreen();
+        suningAreas = new ArrayList<>();
+        areaListAdapter = new AreaListAdapter();
     }
 
     @Override
@@ -221,20 +225,14 @@ public class SuningAreaFragment extends BaseNotifyFragment {
 
     class AreaListAdapter extends BaseAdapter {
 
-        List<ModelSuningArea> areas;
-
-        public AreaListAdapter(List<ModelSuningArea> areas) {
-            this.areas = areas;
-        }
-
         @Override
         public int getCount() {
-            return areas.size();
+            return suningAreas.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return areas.get(position);
+            return suningAreas.get(position);
         }
 
         @Override
@@ -256,7 +254,7 @@ public class SuningAreaFragment extends BaseNotifyFragment {
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
-            final ModelSuningArea area = areas.get(position);
+            final ModelSuningArea area = suningAreas.get(position);
             holder.textView.setText(area.getName());
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -277,6 +275,8 @@ public class SuningAreaFragment extends BaseNotifyFragment {
         @Override
         protected void onPreExecute() {
             showLoading();
+            suningAreas.clear();
+            areaListAdapter.notifyDataSetChanged();
         }
 
         @Override
@@ -321,11 +321,10 @@ public class SuningAreaFragment extends BaseNotifyFragment {
                     if (object.optBoolean("isSuccess")) {
                         JSONArray array = object.optJSONArray("province");
                         if (array != null) {
-                            List<ModelSuningArea> provinceAreas = new ArrayList<>();
                             for (int i = 0; i < array.length(); i++) {
-                                provinceAreas.add(new ModelSuningArea(array.optJSONObject(i), 1));
+                                suningAreas.add(new ModelSuningArea(array.optJSONObject(i), 1));
                             }
-                            listView.setAdapter(new AreaListAdapter(provinceAreas));
+                            areaListAdapter.notifyDataSetChanged();
                         }
                         return;
                     }
@@ -343,6 +342,8 @@ public class SuningAreaFragment extends BaseNotifyFragment {
         @Override
         protected void onPreExecute() {
             showLoading();
+            suningAreas.clear();
+            areaListAdapter.notifyDataSetChanged();
         }
 
         @Override
@@ -358,7 +359,7 @@ public class SuningAreaFragment extends BaseNotifyFragment {
                 e.printStackTrace();
             }
             nameValuePairs.add(new BasicNameValuePair("data", data.toString()));
-            return netUtil.postWithoutCookie(API.API_SUNING_AREA_CITY, nameValuePairs, false, false);
+            return netUtil.postWithoutCookie(API.API_SUNING_AREA_CITY, nameValuePairs, true, true);
         }
 
         @Override
@@ -388,11 +389,10 @@ public class SuningAreaFragment extends BaseNotifyFragment {
                     if (object.optBoolean("isSuccess")) {
                         JSONArray array = object.optJSONArray("city");
                         if (array != null) {
-                            List<ModelSuningArea> cityAreas = new ArrayList<>();
                             for (int i = 0; i < array.length(); i++) {
-                                cityAreas.add(new ModelSuningArea(array.optJSONObject(i), 2));
+                                suningAreas.add(new ModelSuningArea(array.optJSONObject(i), 2));
                             }
-                            listView.setAdapter(new AreaListAdapter(cityAreas));
+                            areaListAdapter.notifyDataSetChanged();
                             return;
                         }
                         Notify.show(object.optString("returnMsg"));
@@ -411,6 +411,8 @@ public class SuningAreaFragment extends BaseNotifyFragment {
         @Override
         protected void onPreExecute() {
             showLoading();
+            suningAreas.clear();
+            areaListAdapter.notifyDataSetChanged();
         }
 
         @Override
@@ -426,7 +428,7 @@ public class SuningAreaFragment extends BaseNotifyFragment {
                 e.printStackTrace();
             }
             nameValuePairs.add(new BasicNameValuePair("data", data.toString()));
-            return netUtil.postWithoutCookie(API.API_SUNING_AREA_DISTRICT, nameValuePairs, false, false);
+            return netUtil.postWithoutCookie(API.API_SUNING_AREA_DISTRICT, nameValuePairs, true, true);
         }
 
         @Override
@@ -456,11 +458,10 @@ public class SuningAreaFragment extends BaseNotifyFragment {
                     if (object.optBoolean("isSuccess")) {
                         JSONArray array = object.optJSONArray("district");
                         if (array != null) {
-                            List<ModelSuningArea> districtAreas = new ArrayList<>();
                             for (int i = 0; i < array.length(); i++) {
-                                districtAreas.add(new ModelSuningArea(array.optJSONObject(i), 3));
+                                suningAreas.add(new ModelSuningArea(array.optJSONObject(i), 3));
                             }
-                            listView.setAdapter(new AreaListAdapter(districtAreas));
+                            areaListAdapter.notifyDataSetChanged();
                             return;
                         }
                         Notify.show(object.optString("returnMsg"));
@@ -479,6 +480,8 @@ public class SuningAreaFragment extends BaseNotifyFragment {
         @Override
         protected void onPreExecute() {
             showLoading();
+            suningAreas.clear();
+            areaListAdapter.notifyDataSetChanged();
         }
 
         @Override
@@ -495,7 +498,7 @@ public class SuningAreaFragment extends BaseNotifyFragment {
                 e.printStackTrace();
             }
             nameValuePairs.add(new BasicNameValuePair("data", data.toString()));
-            return netUtil.postWithoutCookie(API.API_SUNING_AREA_TOWN, nameValuePairs, false, false);
+            return netUtil.postWithoutCookie(API.API_SUNING_AREA_TOWN, nameValuePairs, true, true);
         }
 
         @Override
@@ -525,11 +528,10 @@ public class SuningAreaFragment extends BaseNotifyFragment {
                     if (object.optBoolean("isSuccess")) {
                         JSONArray array = object.optJSONArray("town");
                         if (array != null) {
-                            List<ModelSuningArea> townAreas = new ArrayList<>();
                             for (int i = 0; i < array.length(); i++) {
-                                townAreas.add(new ModelSuningArea(array.optJSONObject(i), 4));
+                                suningAreas.add(new ModelSuningArea(array.optJSONObject(i), 4));
                             }
-                            listView.setAdapter(new AreaListAdapter(townAreas));
+                            areaListAdapter.notifyDataSetChanged();
                             return;
                         }
                         Notify.show(object.optString("returnMsg"));

@@ -757,10 +757,13 @@ public class ProductDetailFragment extends BaseNotifyFragment {
                                 if (!TextUtils.isEmpty(freightMap.get(productDetail.getSupplierId()).getPrompt())) {
                                     freightLableTextView.setVisibility(View.VISIBLE);
                                     freightLableTextView.setText(freightMap.get(productDetail.getSupplierId()).getPrompt());
+                                } else {
+                                    freightLableTextView.setVisibility(View.GONE);
+                                    freightLableTextView.setText("");
                                 }
                                 countTotalMoney();
                             } else {
-                                freightTextView.setVisibility(View.GONE);
+                                freightTextView.setText("");
                                 freightLableTextView.setVisibility(View.GONE);
                             }
                         }

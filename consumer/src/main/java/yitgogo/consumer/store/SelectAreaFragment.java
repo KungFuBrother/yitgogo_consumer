@@ -50,7 +50,7 @@ public class SelectAreaFragment extends BaseNotifyFragment {
     /**
      * 所有区域
      */
-    HashMap<String, List<ModelStoreArea>> allAreaHashMap = new HashMap<>();
+    List<ModelStoreArea> areas;
     /**
      * 当前选择的区域
      */
@@ -85,6 +85,8 @@ public class SelectAreaFragment extends BaseNotifyFragment {
 
     private void init() {
         measureScreen();
+        areas = new ArrayList<>();
+        areaListAdapter = new AreaListAdapter();
     }
 
     @Override
@@ -106,8 +108,7 @@ public class SelectAreaFragment extends BaseNotifyFragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                ModelStoreArea area = allAreaHashMap.get(currentArea.getId()).get(i);
-                selectArea(area);
+                selectArea(areas.get(i));
             }
         });
     }
@@ -189,12 +190,6 @@ public class SelectAreaFragment extends BaseNotifyFragment {
 
     class AreaListAdapter extends BaseAdapter {
 
-        List<ModelStoreArea> areas;
-
-        public AreaListAdapter(List<ModelStoreArea> areas) {
-            this.areas = areas;
-        }
-
         @Override
         public int getCount() {
             return areas.size();
@@ -238,6 +233,8 @@ public class SelectAreaFragment extends BaseNotifyFragment {
         @Override
         protected void onPreExecute() {
             showLoading();
+            areas.clear();
+            areaListAdapter.notifyDataSetChanged();
         }
 
         @Override
@@ -259,19 +256,19 @@ public class SelectAreaFragment extends BaseNotifyFragment {
                     if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
                         JSONArray array = object.optJSONArray("dataList");
                         if (array != null) {
-                            List<ModelStoreArea> areas = new ArrayList<>();
                             for (int i = 0; i < array.length(); i++) {
                                 ModelArea area = new ModelArea(array.getJSONObject(i));
                                 areas.add(new ModelStoreArea(area.getId(), area.getValuename(), area.getAreaType().getId()));
                             }
-                            allAreaHashMap.put(currentArea.getId(), areas);
-                            listView.setAdapter(new AreaListAdapter(areas));
-                            if (areas.size() == 1) {
-                                if (areas.get(0).getId().equals("3253")) {
-                                    selectArea(areas.get(0));
+                            if (!areas.isEmpty()) {
+                                areaListAdapter.notifyDataSetChanged();
+                                if (areas.size() == 1) {
+                                    if (areas.get(0).getId().equals("3253")) {
+                                        selectArea(areas.get(0));
+                                    }
                                 }
+                                return;
                             }
-                            return;
                         }
                         Intent intent = new Intent();
                         intent.putExtra("id", currentArea.getId());

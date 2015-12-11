@@ -38,7 +38,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -92,8 +91,6 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
     ImageView classButton, scanButton, nongfuButton;
     TextView searchTextView;
 
-    LinearLayout timeLayout;
-    TextView dayTextView, hourTextView, minuteTextView, secondsTextView;
     ImageView bannerEggImageView;
 
     List<ModelProduct> products;
@@ -119,52 +116,8 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
             switch (msg.what) {
                 case 0x12:
                     PartTejiaFragment.getTejiaFragment().initViews();
-                    break;
-
-                case 1:
-                    if (timeLayout.getVisibility() == View.GONE) {
-                        return;
-                    }
-                    long currentTime = Calendar.getInstance().getTimeInMillis();
-                    long startTime = (long) 1449763200 * 1000;
-                    if (startTime > currentTime) {
-                        timeLayout.setVisibility(View.VISIBLE);
-                        long time = startTime - currentTime;
-                        long day = time / 86400000;
-                        long hour = time % 86400000 / 3600000;
-                        long minute = time % 3600000 / 60000;
-                        long seconds = time % 60000 / 1000;
-                        StringBuilder stringBuilder = new StringBuilder();
-                        if (day < 10) {
-                            stringBuilder.append("0");
-                        }
-                        stringBuilder.append(day);
-                        dayTextView.setText(stringBuilder.toString());
-
-                        stringBuilder = new StringBuilder();
-                        if (hour < 10) {
-                            stringBuilder.append("0");
-                        }
-                        stringBuilder.append(hour);
-                        hourTextView.setText(stringBuilder.toString());
-
-                        stringBuilder = new StringBuilder();
-                        if (minute < 10) {
-                            stringBuilder.append("0");
-                        }
-                        stringBuilder.append(minute);
-                        minuteTextView.setText(stringBuilder.toString());
-
-                        stringBuilder = new StringBuilder();
-                        if (seconds < 10) {
-                            stringBuilder.append("0");
-                        }
-                        stringBuilder.append(seconds);
-                        secondsTextView.setText(stringBuilder.toString());
-
-                        handler.sendEmptyMessageDelayed(1, 1000);
-                    } else {
-                        timeLayout.setVisibility(View.GONE);
+                    if (isAlive) {
+                        handler.sendEmptyMessageDelayed(0x12, 10000);
                     }
                     break;
 
@@ -178,20 +131,7 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
 
     private void runAnimateThread() {
         isAlive = true;
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                while (isAlive) {
-                    try {
-                        Thread.sleep(10000);
-                        handler.sendEmptyMessage(0x12);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
+        handler.sendEmptyMessageDelayed(0x12, 10000);
     }
 
     BroadcastReceiver broadcastReceiver;
@@ -208,6 +148,7 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         showDisconnectMargin();
+        initReceiver();
     }
 
     @Override
@@ -230,7 +171,9 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
     @Override
     public void onDestroy() {
         isAlive = false;
-        getActivity().unregisterReceiver(broadcastReceiver);
+        if (broadcastReceiver != null) {
+            getActivity().unregisterReceiver(broadcastReceiver);
+        }
         super.onDestroy();
     }
 
@@ -239,11 +182,14 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
         products = new ArrayList<>();
         priceMap = new HashMap<>();
         productAdapter = new ProductAdapter();
-        initReceiver();
         getStoreAreas();
     }
 
     private void initReceiver() {
+        if (System.currentTimeMillis() > (long) 1449935999 * 1000) {
+            bannerEggImageView.setVisibility(View.GONE);
+            return;
+        }
         broadcastReceiver = new BroadcastReceiver() {
 
             @Override
@@ -271,12 +217,6 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
                 .findViewById(R.id.home_part_nongfu);
         searchTextView = (TextView) contentView
                 .findViewById(R.id.home_title_edit);
-
-        timeLayout = (LinearLayout) contentView.findViewById(R.id.ll_date_time);
-        dayTextView = (TextView) contentView.findViewById(R.id.tv_timer_day);
-        hourTextView = (TextView) contentView.findViewById(R.id.tv_timer_hour);
-        secondsTextView = (TextView) contentView.findViewById(R.id.tv_timer_second);
-        minuteTextView = (TextView) contentView.findViewById(R.id.tv_timer_minute);
 
         bannerEggImageView = (ImageView) contentView.findViewById(R.id.home_banner_egg);
 

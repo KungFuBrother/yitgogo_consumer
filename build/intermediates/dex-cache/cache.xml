@@ -5,14 +5,14 @@
         jar="E:\Github\yitgogo_consumer\consumer\build\intermediates\exploded-aar\yitgogo_consumer\ViewPagerIndicator\unspecified\jars\classes.jar"
         jumboMode="false"
         revision="23.0.2"
-        sha1="5f5da6142423788d295242d7ba165ff9dd47e43e">
+        sha1="7f7a1a85b4dc0125bff99c992b7b2779f6f3024e">
         <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\debug\classes-c2dc35be7b5dcafe895f0209aca6454102e25bf6.jar" />
     </item>
     <item
         jar="E:\Github\yitgogo_consumer\consumer\build\intermediates\exploded-aar\yitgogo_consumer\pullToRefresh\unspecified\jars\classes.jar"
         jumboMode="false"
         revision="23.0.2"
-        sha1="199798aea7ac2103a1212f64ce17669f8ce77528">
+        sha1="5e39c66f271ca612b020fe9217eb28b9c80e9a1e">
         <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\debug\classes-0aad4f0d29650045cbdb354e31f5b2af74d9ef54.jar" />
     </item>
     <item

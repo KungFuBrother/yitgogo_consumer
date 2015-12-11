@@ -31,6 +31,7 @@ public class FragmentResultDialog extends DialogFragment implements OnClickListe
     private int screenWidth;
     private int screenHeight;
     private TextView tvEnsure;
+    private TextView emptyTextView;
     private ListView mListView;
 
     private String result = "";
@@ -67,8 +68,13 @@ public class FragmentResultDialog extends DialogFragment implements OnClickListe
                         for (int i = 0; i < array.length(); i++) {
                             awardHistories.add(new ModelAwardHistory(array.optJSONObject(i)));
                         }
-                        if (getActivity() != null) {
-                            mListView.setAdapter(new GoldenResultListViewAdapter(getActivity(), awardHistories));
+                        if (awardHistories.isEmpty()) {
+                            emptyTextView.setVisibility(View.VISIBLE);
+                        } else {
+                            emptyTextView.setVisibility(View.GONE);
+                            if (getActivity() != null) {
+                                mListView.setAdapter(new GoldenResultListViewAdapter(getActivity(), awardHistories));
+                            }
                         }
                     }
                     return;
@@ -105,6 +111,7 @@ public class FragmentResultDialog extends DialogFragment implements OnClickListe
 
     private void initView(View view) {
         tvEnsure = (TextView) view.findViewById(R.id.ensure_tv);
+        emptyTextView = (TextView) view.findViewById(R.id.result_empty);
         mListView = (ListView) view.findViewById(R.id.result_tips_listview);
         tvEnsure.setOnClickListener(this);
     }

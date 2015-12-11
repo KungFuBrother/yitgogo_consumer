@@ -213,6 +213,7 @@ public class SuningProductBuyFragment extends BaseNotifyFragment {
     }
 
     private void countTotalPrice() {
+        countTextView.setText(String.valueOf(buyCount));
         if (productPrice.getPrice() > 0) {
             priceTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format(productPrice.getPrice()));
         } else {
@@ -224,9 +225,11 @@ public class SuningProductBuyFragment extends BaseNotifyFragment {
         if (goodsMoney > 0 & goodsMoney < 69) {
             sendMoney = 5;
         }
-        countTextView.setText(buyCount + "");
-        totalPriceTextView.setText(Parameters.CONSTANT_RMB
-                + decimalFormat.format(goodsMoney + sendMoney));
+        if (goodsMoney > 0) {
+            totalPriceTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format(goodsMoney + sendMoney));
+        } else {
+            totalPriceTextView.setText("价格查询失败");
+        }
     }
 
     private void buy() {
