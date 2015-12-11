@@ -229,14 +229,12 @@ public class ShakeFragment extends BaseNotifyFragment implements
                                 String s = dataMap.optString("winMoney");
                                 try {
                                     double winMoney = Double.parseDouble(s);
-                                    if (winMoney > 0) {
-                                        WinDialog winDialog = new WinDialog();
-                                        Bundle bundle = new Bundle();
-                                        bundle.putString("winMoney", decimalFormat.format(winMoney));
-                                        winDialog.setArguments(bundle);
-                                        if (getFragmentManager() != null) {
-                                            winDialog.show(getFragmentManager(), null);
-                                        }
+                                    WinDialog winDialog = new WinDialog();
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString("winMoney", decimalFormat.format(winMoney));
+                                    winDialog.setArguments(bundle);
+                                    if (getFragmentManager() != null) {
+                                        winDialog.show(getFragmentManager(), null);
                                     }
                                 } catch (NumberFormatException e) {
                                     WinDialog winDialog = new WinDialog();

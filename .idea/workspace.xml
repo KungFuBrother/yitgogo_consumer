@@ -19,7 +19,7 @@
     </layouts>
   </component>
   <component name="AndroidLogFilters">
-    <option name="TOOL_WINDOW_CUSTOM_FILTER" value="Req" />
+    <option name="TOOL_WINDOW_LOG_LEVEL" value="ERROR" />
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="No Filters" />
     <option name="TOOL_WINDOW_REGEXP_FILTER" value="false" />
   </component>
@@ -30,16 +30,10 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/fileSnapshots.bin" afterPath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/fileSnapshots.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/outputFileStates.bin" afterPath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/outputFileStates.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/taskArtifacts.bin" afterPath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/taskArtifacts.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/AndroidManifest.xml" afterPath="$PROJECT_DIR$/consumer/src/main/AndroidManifest.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/shake/ui/ShakeFragment.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/shake/ui/ShakeFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/YitgogoApplication.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/YitgogoApplication.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/intermediates/dex-cache/cache.xml" afterPath="$PROJECT_DIR$/build/intermediates/dex-cache/cache.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MOVED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable\welcome_1.png" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable-xhdpi/welcome_1.png" />
-      <change type="MOVED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable\welcome_2.png" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable-xhdpi/welcome_2.png" />
-      <change type="MOVED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable\welcome_3.png" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable-xhdpi/welcome_3.png" />
-      <change type="MOVED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable\welcome_4.png" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable-xhdpi/welcome_4.png" />
-      <change type="MOVED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable\welcome_5.png" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable-xhdpi/welcome_5.png" />
-      <change type="MOVED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable\welcome_default.png" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable-xhdpi/welcome_default.png" />
     </list>
     <ignored path="yitgogo_consumer.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -71,7 +65,7 @@
         <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/tools/API.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="22" column="49" selection-start-line="22" selection-start-column="49" selection-end-line="22" selection-end-column="49" />
+              <caret line="9" column="0" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -121,7 +115,7 @@
         <entry file="file://$PROJECT_DIR$/consumer/src/main/AndroidManifest.xml">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="42" column="49" selection-start-line="42" selection-start-column="49" selection-end-line="42" selection-end-column="49" />
+              <caret line="86" column="38" selection-start-line="86" selection-start-column="38" selection-end-line="86" selection-end-column="38" />
               <folding>
                 <element signature="e#1963#1981#0" expanded="true" />
               </folding>
@@ -139,18 +133,18 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ShakeFragment.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ShakeFragment.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/shake/ui/ShakeFragment.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="2.772152">
-              <caret line="338" column="43" selection-start-line="338" selection-start-column="43" selection-end-line="338" selection-end-column="43" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="121" column="5" selection-start-line="121" selection-start-column="5" selection-end-line="121" selection-end-column="5" />
               <folding>
                 <element signature="e#2132#2251#0" expanded="true" />
                 <element signature="e#2250#2251#0" expanded="true" />
                 <element signature="e#7178#7179#0" expanded="true" />
                 <element signature="e#7215#7216#0" expanded="true" />
-                <element signature="e#12582#12754#0" expanded="true" />
-                <element signature="e#12753#12754#0" expanded="true" />
+                <element signature="e#12460#12632#0" expanded="true" />
+                <element signature="e#12631#12632#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -166,11 +160,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="YitgogoApplication.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="YitgogoApplication.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/YitgogoApplication.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="38" column="39" selection-start-line="38" selection-start-column="39" selection-end-line="38" selection-end-column="39" />
+            <state vertical-scroll-proportion="0.25316456">
+              <caret line="36" column="31" selection-start-line="36" selection-start-column="31" selection-end-line="36" selection-end-column="31" />
               <folding />
             </state>
           </provider>
@@ -3123,13 +3117,13 @@
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/ui/SuningAreaFragment.java" />
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/model/SuningManager.java" />
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/egg/ui/EggMainFragment.java" />
-        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/YitgogoApplication.java" />
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/main/ui/HomeFragment.java" />
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/home/part/PartSaleTimeFragment.java" />
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/home/part/PartThemeFragment.java" />
-        <option value="$PROJECT_DIR$/consumer/src/main/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/shake/ui/ShakeFragment.java" />
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/tools/API.java" />
+        <option value="$PROJECT_DIR$/consumer/src/main/AndroidManifest.xml" />
+        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/YitgogoApplication.java" />
       </list>
     </option>
   </component>
@@ -3900,14 +3894,6 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/YitgogoApplication.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="38" column="39" selection-start-line="38" selection-start-column="39" selection-end-line="38" selection-end-column="39" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/home/part/PartAdsFragment.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -3932,14 +3918,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/main/ui/HomeFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="99" column="31" selection-start-line="99" selection-start-column="31" selection-end-line="99" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/WelcomeActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.29113925">
@@ -3951,13 +3929,19 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/AndroidManifest.xml">
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/tools/API.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="42" column="49" selection-start-line="42" selection-start-column="49" selection-end-line="42" selection-end-column="49" />
-          <folding>
-            <element signature="e#1963#1981#0" expanded="true" />
-          </folding>
+          <caret line="9" column="0" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/main/ui/HomeFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="99" column="31" selection-start-line="99" selection-start-column="31" selection-end-line="99" selection-end-column="31" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -3969,26 +3953,36 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/tools/API.java">
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/AndroidManifest.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="22" column="49" selection-start-line="22" selection-start-column="49" selection-end-line="22" selection-end-column="49" />
-          <folding />
+          <caret line="86" column="38" selection-start-line="86" selection-start-column="38" selection-end-line="86" selection-end-column="38" />
+          <folding>
+            <element signature="e#1963#1981#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/activity/shake/ui/ShakeFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="2.772152">
-          <caret line="338" column="43" selection-start-line="338" selection-start-column="43" selection-end-line="338" selection-end-column="43" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="121" column="5" selection-start-line="121" selection-start-column="5" selection-end-line="121" selection-end-column="5" />
           <folding>
             <element signature="e#2132#2251#0" expanded="true" />
             <element signature="e#2250#2251#0" expanded="true" />
             <element signature="e#7178#7179#0" expanded="true" />
             <element signature="e#7215#7216#0" expanded="true" />
-            <element signature="e#12582#12754#0" expanded="true" />
-            <element signature="e#12753#12754#0" expanded="true" />
+            <element signature="e#12460#12632#0" expanded="true" />
+            <element signature="e#12631#12632#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/YitgogoApplication.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.25316456">
+          <caret line="36" column="31" selection-start-line="36" selection-start-column="31" selection-end-line="36" selection-end-column="31" />
+          <folding />
         </state>
       </provider>
     </entry>

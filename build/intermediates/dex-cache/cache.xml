@@ -5,99 +5,99 @@
         jar="E:\Github\yitgogo_consumer\consumer\build\intermediates\exploded-aar\yitgogo_consumer\ViewPagerIndicator\unspecified\jars\classes.jar"
         jumboMode="false"
         revision="23.0.2"
-        sha1="d58d47b7118ca784fe10ac71e5f4b90e7c435d80">
-        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\debug\classes-c2dc35be7b5dcafe895f0209aca6454102e25bf6.jar" />
+        sha1="a882830482677ecf7e41964575fd7ebd22858df7">
+        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\release\classes-c2dc35be7b5dcafe895f0209aca6454102e25bf6.jar" />
     </item>
     <item
         jar="E:\Github\yitgogo_consumer\consumer\build\intermediates\exploded-aar\yitgogo_consumer\pullToRefresh\unspecified\jars\classes.jar"
         jumboMode="false"
         revision="23.0.2"
-        sha1="69fed4e577141b32ad09aeb7e7ad2f7f928b580a">
-        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\debug\classes-0aad4f0d29650045cbdb354e31f5b2af74d9ef54.jar" />
+        sha1="b711fcb651a92ad9f0da8b4d53f5c47f4da6d9e2">
+        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\release\classes-0aad4f0d29650045cbdb354e31f5b2af74d9ef54.jar" />
     </item>
     <item
         jar="E:\Github\yitgogo_consumer\consumer\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.1\jars\classes.jar"
         jumboMode="false"
         revision="23.0.2"
         sha1="f8efd0096475e0daf054267b61544e10dc776503">
-        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\debug\classes-58c2cc737fd2ef8cbced13512da35b688e1dd953.jar" />
+        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\release\classes-58c2cc737fd2ef8cbced13512da35b688e1dd953.jar" />
     </item>
     <item
         jar="C:\Users\Tiger\.gradle\caches\modules-2\files-2.1\com.nostra13.universalimageloader\universal-image-loader\1.9.4\dd9eeb557650c4ad7394df23f0f5cf27a7cfc697\universal-image-loader-1.9.4.jar"
         jumboMode="false"
         revision="23.0.2"
         sha1="dd9eeb557650c4ad7394df23f0f5cf27a7cfc697">
-        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\debug\universal-image-loader-1.9.4-c1ec8b576d2c335242b2443833060b37d16e8711.jar" />
+        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\release\universal-image-loader-1.9.4-c1ec8b576d2c335242b2443833060b37d16e8711.jar" />
     </item>
     <item
         jar="D:\DevelopeTools\ADT\sdk\extras\android\m2repository\com\android\support\support-annotations\22.2.1\support-annotations-22.2.1.jar"
         jumboMode="false"
         revision="23.0.2"
         sha1="61a0ff5c29295ec56d7e0bd3d25d95dbf71b4b2b">
-        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\debug\support-annotations-22.2.1-d2085f87634137d8ec7f8730a106f8472496e572.jar" />
+        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\release\support-annotations-22.2.1-d2085f87634137d8ec7f8730a106f8472496e572.jar" />
     </item>
     <item
         jar="E:\Github\yitgogo_consumer\consumer\libs\bugly_1.1.7_release.jar"
         jumboMode="false"
         revision="23.0.2"
         sha1="60ac74d66d757d457e0f5ce8c342e8f95d4a0240">
-        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\debug\bugly_1.1.7_release-b215f94ceddeb1a5682332490ea06c6093cb115d.jar" />
+        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\release\bugly_1.1.7_release-b215f94ceddeb1a5682332490ea06c6093cb115d.jar" />
     </item>
     <item
         jar="E:\Github\yitgogo_consumer\consumer\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.1\jars\libs\internal_impl-22.2.1.jar"
         jumboMode="false"
         revision="23.0.2"
         sha1="c471eaaba13ff64f6e0383d1c30a9cdc9a97efeb">
-        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\debug\internal_impl-22.2.1-bbef183c8ca732e3618a732f535d083d14e396f2.jar" />
+        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\release\internal_impl-22.2.1-bbef183c8ca732e3618a732f535d083d14e396f2.jar" />
     </item>
     <item
         jar="E:\Github\yitgogo_consumer\consumer\build\intermediates\exploded-aar\com.android.support\appcompat-v7\22.2.1\jars\classes.jar"
         jumboMode="false"
         revision="23.0.2"
         sha1="4486e953d1f35f8ccab098b1dd67146366d5f731">
-        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\debug\classes-28a5eee17d09393318a16e3d3f5c97bb39a7eb73.jar" />
+        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\release\classes-28a5eee17d09393318a16e3d3f5c97bb39a7eb73.jar" />
     </item>
     <item
         jar="E:\Github\yitgogo_consumer\consumer\libs\BaiduLBS_Android.jar"
         jumboMode="false"
         revision="23.0.2"
         sha1="346de86885606677e2efe8e6dd5db616e23f049a">
-        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\debug\BaiduLBS_Android-51332941db77358bda5a418fb4dcdc013c94a559.jar" />
+        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\release\BaiduLBS_Android-51332941db77358bda5a418fb4dcdc013c94a559.jar" />
     </item>
     <item
         jar="E:\Github\yitgogo_consumer\consumer\libs\zxing.jar"
         jumboMode="false"
         revision="23.0.2"
         sha1="6fe22c135f19470d05b0816d5996c442ef67da3f">
-        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\debug\zxing-68c7d4cfbfde81baab8e95575feac3abdb3f24db.jar" />
+        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\release\zxing-68c7d4cfbfde81baab8e95575feac3abdb3f24db.jar" />
     </item>
     <item
         jar="E:\Github\yitgogo_consumer\consumer\libs\android-async-http-1.4.7.jar"
         jumboMode="false"
         revision="23.0.2"
         sha1="cd78109020f9ec803ef4e652c17ee4615b03e20a">
-        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\debug\android-async-http-1.4.7-e02feec7ed0860ebb1520de7392d6decd9e10b5d.jar" />
+        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\release\android-async-http-1.4.7-e02feec7ed0860ebb1520de7392d6decd9e10b5d.jar" />
     </item>
     <item
         jar="C:\Users\Tiger\.gradle\caches\modules-2\files-2.1\com.umeng.analytics\analytics\5.6.1\b2705cbb19f52bb4d242458163a98d9e889c1292\analytics-5.6.1.jar"
         jumboMode="false"
         revision="23.0.2"
         sha1="b2705cbb19f52bb4d242458163a98d9e889c1292">
-        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\debug\analytics-5.6.1-6030efd1bfd553dbd835b296eade4a1d2c83acb9.jar" />
+        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\release\analytics-5.6.1-6030efd1bfd553dbd835b296eade4a1d2c83acb9.jar" />
     </item>
     <item
         jar="E:\Github\yitgogo_consumer\consumer\build\intermediates\exploded-aar\com.android.support\cardview-v7\22.2.1\jars\classes.jar"
         jumboMode="false"
         revision="23.0.2"
         sha1="e1fa5e1123997a55e3ed65b44892993ff4b58cfe">
-        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\debug\classes-a0ab39b739153dcb4bc9af377600bb3e2983541b.jar" />
+        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\release\classes-a0ab39b739153dcb4bc9af377600bb3e2983541b.jar" />
     </item>
     <item
         jar="E:\Github\yitgogo_consumer\consumer\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\22.2.1\jars\classes.jar"
         jumboMode="false"
         revision="23.0.2"
         sha1="3abb4b88f5a8a0584a9b01d3170d7165f12f8588">
-        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\debug\classes-b2e34dbc3dbbe9ab2bc62d414ab220b3bfdd26a1.jar" />
+        <dex dex="E:\Github\yitgogo_consumer\consumer\build\intermediates\pre-dexed\release\classes-b2e34dbc3dbbe9ab2bc62d414ab220b3bfdd26a1.jar" />
     </item>
 
 </items>
