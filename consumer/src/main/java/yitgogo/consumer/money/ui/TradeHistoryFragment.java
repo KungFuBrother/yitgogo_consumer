@@ -1,5 +1,6 @@
 package yitgogo.consumer.money.ui;
 
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -263,8 +264,13 @@ public class TradeHistoryFragment extends BaseNotifyFragment {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
             ModelTrade trade = trades.get(position);
-            viewHolder.amountTextView.setText(Parameters.CONSTANT_RMB
-                    + decimalFormat.format(trade.getAmount()));
+            if (trade.isAmountFlow()) {
+                viewHolder.amountTextView.setTextColor(Color.rgb(69, 183, 69));
+                viewHolder.amountTextView.setText("+" + Parameters.CONSTANT_RMB + decimalFormat.format(trade.getAmount()));
+            } else {
+                viewHolder.amountTextView.setTextColor(Color.rgb(218, 72, 68));
+                viewHolder.amountTextView.setText("-" + Parameters.CONSTANT_RMB + decimalFormat.format(trade.getAmount()));
+            }
             viewHolder.detailTextView.setText(trade.getDescription());
             viewHolder.dateTextView.setText(trade.getDatatime());
             return convertView;
