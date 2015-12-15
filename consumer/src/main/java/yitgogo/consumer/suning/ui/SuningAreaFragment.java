@@ -405,7 +405,6 @@ public class SuningAreaFragment extends BaseNotifyFragment {
         }
     }
 
-
     class GetSuningDistrict extends AsyncTask<Void, Void, String> {
 
         @Override

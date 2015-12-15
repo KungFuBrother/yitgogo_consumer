@@ -35,7 +35,7 @@ public class YitgogoApplication extends Application {
     private void init() {
         DataBaseHelper.init(this);
         PackageTool.init(this);
-        LogUtil.setLogEnable(false);
+        LogUtil.setLogEnable(true);
         SuningCarController.init(this);
         Notify.init(this);
         NetUtil.init(this);

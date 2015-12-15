@@ -28,7 +28,7 @@ import yitgogo.consumer.money.ui.PayFragment;
 import yitgogo.consumer.order.ui.OrderConfirmPartPaymentFragment;
 import yitgogo.consumer.store.model.Store;
 import yitgogo.consumer.suning.model.GetNewSignature;
-import yitgogo.consumer.suning.model.ModelProductDetail;
+import yitgogo.consumer.suning.model.ModelProduct;
 import yitgogo.consumer.suning.model.ModelProductPrice;
 import yitgogo.consumer.suning.model.ModelSuningAreas;
 import yitgogo.consumer.suning.model.ModelSuningOrderResult;
@@ -50,7 +50,7 @@ public class SuningProductBuyFragment extends BaseNotifyFragment {
     EditText consumerNameEditText, consumerPhoneEditText, detailAddressEditText;
     TextView areaTextView;
 
-    ModelProductDetail productDetail = new ModelProductDetail();
+    ModelProduct product = new ModelProduct();
     ModelProductPrice productPrice = new ModelProductPrice();
 
     OrderConfirmPartPaymentFragment paymentFragment;
@@ -114,7 +114,7 @@ public class SuningProductBuyFragment extends BaseNotifyFragment {
         Bundle bundle = getArguments();
         if (bundle != null) {
             if (bundle.containsKey("product")) {
-                productDetail = new ModelProductDetail(new JSONObject(bundle.getString("product")));
+                product = new ModelProduct(new JSONObject(bundle.getString("product")));
             }
         }
         paymentFragment = new OrderConfirmPartPaymentFragment(true, true, false);
@@ -191,8 +191,8 @@ public class SuningProductBuyFragment extends BaseNotifyFragment {
     }
 
     private void showProductInfo() {
-        ImageLoader.getInstance().displayImage(productDetail.getImage(), imageView);
-        nameTextView.setText(productDetail.getName());
+        ImageLoader.getInstance().displayImage(product.getImage(), imageView);
+        nameTextView.setText(product.getName());
         priceTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format(productPrice.getPrice()));
         countTextView.setText(buyCount + "");
         countTotalPrice();
@@ -235,8 +235,8 @@ public class SuningProductBuyFragment extends BaseNotifyFragment {
     private void buy() {
         if (TextUtils.isEmpty(consumerNameEditText.getText().toString())) {
             Notify.show("请输入收货人姓名");
-        } else if (TextUtils.isEmpty(consumerPhoneEditText.getText().toString())) {
-            Notify.show("请输入收货人联系电话");
+        } else if (!isPhoneNumber(consumerPhoneEditText.getText().toString())) {
+            Notify.show("请输入正确的收货人联系电话");
         } else if (TextUtils.isEmpty(areaTextView.getText().toString())) {
             Notify.show("请选择收货区域");
         } else if (TextUtils.isEmpty(detailAddressEditText.getText().toString())) {
@@ -288,11 +288,11 @@ public class SuningProductBuyFragment extends BaseNotifyFragment {
             JSONArray skuArray = new JSONArray();
             try {
                 JSONObject skuObject = new JSONObject();
-                skuObject.put("number", productDetail.getSku());
+                skuObject.put("number", product.getSku());
                 skuObject.put("num", buyCount);
                 skuObject.put("price", productPrice.getPrice());
-                skuObject.put("name", productDetail.getName());
-                skuObject.put("attr", productDetail.getModel());
+                skuObject.put("name", product.getName());
+                skuObject.put("attr", product.getModel());
                 skuArray.put(skuObject);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -347,7 +347,7 @@ public class SuningProductBuyFragment extends BaseNotifyFragment {
                 data.put("v", SuningManager.version);
                 data.put("cityId", SuningManager.getSuningAreas().getCity().getCode());
                 data.put("countyId", SuningManager.getSuningAreas().getDistrict().getCode());
-                data.put("sku", productDetail.getSku());
+                data.put("sku", product.getSku());
                 data.put("num", buyCount);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -415,7 +415,7 @@ public class SuningProductBuyFragment extends BaseNotifyFragment {
         @Override
         protected String doInBackground(Void... params) {
             JSONArray dataArray = new JSONArray();
-            dataArray.put(productDetail.getSku());
+            dataArray.put(product.getSku());
             JSONObject data = new JSONObject();
             try {
                 data.put("accessToken", SuningManager.getSignature().getToken());

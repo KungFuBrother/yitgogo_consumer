@@ -1,6 +1,5 @@
 package yitgogo.consumer.main.ui;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.DrawerLayout;
@@ -21,11 +20,14 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,10 +37,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.product.ui.ProductSearchFragment;
 import yitgogo.consumer.suning.model.GetNewSignature;
+import yitgogo.consumer.suning.model.ModelProduct;
 import yitgogo.consumer.suning.model.ModelProductClass;
-import yitgogo.consumer.suning.model.ModelProductDetail;
-import yitgogo.consumer.suning.model.ModelProductPool;
 import yitgogo.consumer.suning.model.ModelProductPrice;
 import yitgogo.consumer.suning.model.SuningManager;
 import yitgogo.consumer.suning.ui.ProductDetailFragment;
@@ -52,6 +54,7 @@ import yitgogo.consumer.view.Notify;
 public class HomeSuningFragment extends BaseNotifyFragment {
 
     ImageView classButton;
+    LinearLayout searchButton;
     TextView cityTextView;
     LinearLayout cityButton;
     FrameLayout classLayout;
@@ -61,8 +64,7 @@ public class HomeSuningFragment extends BaseNotifyFragment {
 
     ModelProductClass productClass = new ModelProductClass();
 
-    List<ModelProductPool> productPools = new ArrayList<>();
-    List<ModelProductDetail> productDetails = new ArrayList<>();
+    List<ModelProduct> products = new ArrayList<>();
     HashMap<String, ModelProductPrice> priceHashMap = new HashMap<>();
 
     ProductAdapter productAdapter;
@@ -74,16 +76,10 @@ public class HomeSuningFragment extends BaseNotifyFragment {
             if (productClass == selectedProductClass) return;
             productClass = selectedProductClass;
             drawerLayout.closeDrawers();
-            new GetSuningProducts().execute();
+            refresh();
         }
 
     };
-
-    int pageSize = 12, pageNo = 0;
-    int totalPage = 0;
-
-    public HomeSuningFragment() {
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -119,20 +115,14 @@ public class HomeSuningFragment extends BaseNotifyFragment {
 
     @Override
     protected void findViews() {
-        classButton = (ImageView) contentView
-                .findViewById(R.id.home_suning_class);
-        cityTextView = (TextView) contentView
-                .findViewById(R.id.home_suning_city);
-        cityButton = (LinearLayout) contentView
-                .findViewById(R.id.home_suning_city_select);
-        classLayout = (FrameLayout) contentView
-                .findViewById(R.id.home_suning_product_class);
-        drawerLayout = (DrawerLayout) contentView
-                .findViewById(R.id.home_suning_drawer);
-        refreshScrollView = (PullToRefreshScrollView) contentView
-                .findViewById(R.id.home_suning_refresh);
-        productGridView = (InnerGridView) contentView
-                .findViewById(R.id.home_suning_product_list);
+        classButton = (ImageView) contentView.findViewById(R.id.home_suning_class);
+        searchButton = (LinearLayout) contentView.findViewById(R.id.home_suning_search);
+        cityTextView = (TextView) contentView.findViewById(R.id.home_suning_city);
+        cityButton = (LinearLayout) contentView.findViewById(R.id.home_suning_city_select);
+        classLayout = (FrameLayout) contentView.findViewById(R.id.home_suning_product_class);
+        drawerLayout = (DrawerLayout) contentView.findViewById(R.id.home_suning_drawer);
+        refreshScrollView = (PullToRefreshScrollView) contentView.findViewById(R.id.home_suning_refresh);
+        productGridView = (InnerGridView) contentView.findViewById(R.id.home_suning_product_list);
         initViews();
         registerViews();
     }
@@ -149,17 +139,12 @@ public class HomeSuningFragment extends BaseNotifyFragment {
         refreshScrollView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ScrollView>() {
             @Override
             public void onPullDownToRefresh(PullToRefreshBase<ScrollView> refreshView) {
-                new GetSuningProducts().execute();
+                refresh();
             }
 
             @Override
             public void onPullUpToRefresh(PullToRefreshBase<ScrollView> refreshView) {
-                if (pageNo >= totalPage) {
-                    refreshScrollView.setMode(Mode.PULL_FROM_START);
-                    refreshScrollView.onRefreshComplete();
-                    return;
-                }
-                new GetSuningProductDetail().execute();
+                getSuningProducts();
             }
         });
         productGridView.setOnItemClickListener(new OnItemClickListener() {
@@ -167,12 +152,13 @@ public class HomeSuningFragment extends BaseNotifyFragment {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                                     long arg3) {
-                if (priceHashMap.containsKey(productDetails.get(arg2).getSku())) {
-                    if (priceHashMap.get(productDetails.get(arg2).getSku()).getPrice() > 0) {
+                ModelProduct product = products.get(arg2);
+                if (priceHashMap.containsKey(product.getSku())) {
+                    if (priceHashMap.get(product.getSku()).getPrice() > 0) {
                         Bundle bundle = new Bundle();
-                        bundle.putString("product", productDetails.get(arg2).getJsonObject().toString());
-                        bundle.putString("price", priceHashMap.get(productDetails.get(arg2).getSku()).getJsonObject().toString());
-                        jump(ProductDetailFragment.class.getName(), productDetails.get(arg2).getName(), bundle);
+                        bundle.putString("product", product.getJsonObject().toString());
+                        bundle.putString("price", priceHashMap.get(product.getSku()).getJsonObject().toString());
+                        jump(ProductDetailFragment.class.getName(), product.getName(), bundle);
                     } else {
                         Notify.show("此商品暂未设置价格");
                     }
@@ -192,6 +178,14 @@ public class HomeSuningFragment extends BaseNotifyFragment {
                 }
             }
         });
+        searchButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle bundle = new Bundle();
+                bundle.putInt("type", ProductSearchFragment.SEARCH_TYPE_SUNING);
+                jump(ProductSearchFragment.class.getName(), "商品搜索", bundle, true);
+            }
+        });
         cityButton.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -201,165 +195,107 @@ public class HomeSuningFragment extends BaseNotifyFragment {
         });
     }
 
-    class GetSuningProducts extends AsyncTask<Void, Void, String> {
+    private void refresh() {
+        pagenum = 0;
+        products.clear();
+        priceHashMap.clear();
+        productAdapter.notifyDataSetChanged();
+        getSuningProducts();
+    }
 
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-            refreshScrollView.setMode(Mode.BOTH);
-            productPools.clear();
-            priceHashMap.clear();
-            productDetails.clear();
-            productAdapter.notifyDataSetChanged();
-            pageNo = 0;
-            totalPage = 0;
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            JSONObject data = new JSONObject();
-            try {
-                data.put("accessToken", SuningManager.getSignature().getToken());
-                data.put("appKey", SuningManager.appKey);
-                data.put("v", SuningManager.version);
-                data.put("categoryId", productClass.getCategoryId());
-            } catch (JSONException e) {
-                e.printStackTrace();
+    private void getSuningProducts() {
+        pagenum++;
+        Request request = new Request();
+        request.setUrl(API.API_SUNING_PRODUCT_LIST);
+        request.addRequestParam("classId", productClass.getId());
+        request.addRequestParam("pagenum", String.valueOf(pagenum));
+        request.addRequestParam("pagesize", String.valueOf(pagesize));
+        MissionController.startNetworkMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
             }
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("data", data.toString()));
-            return netUtil.postWithoutCookie(API.API_SUNING_PRODUCT_LIST, nameValuePairs, false, false);
-        }
 
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            refreshScrollView.onRefreshComplete();
-            if (SuningManager.isSignatureOutOfDate(result)) {
-                GetNewSignature getNewSignature = new GetNewSignature() {
-                    @Override
-                    protected void onPreExecute() {
-                        showLoading();
-                    }
-
-                    @Override
-                    protected void onPostExecute(Boolean isSuccess) {
-                        hideLoading();
-                        if (isSuccess) {
-                            new GetSuningProducts().execute();
-                        }
-                    }
-                };
-                getNewSignature.execute();
-                return;
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+                loadingEmpty("获取商品数据失败");
             }
-            if (!TextUtils.isEmpty(result)) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optBoolean("isSuccess")) {
-                        JSONArray array = object.optJSONArray("prods");
-                        if (array != null) {
-                            for (int i = 0; i < array.length(); i++) {
-                                productPools.add(new ModelProductPool(array.optJSONObject(i)));
-                            }
-                            if (productPools.isEmpty()) {
-                                //无商品
-                                loadingEmpty();
-                            } else {
-                                //有商品
-                                if (productPools.size() % pageSize == 0) {
-                                    totalPage = productPools.size() / pageSize;
-                                } else {
-                                    totalPage = productPools.size() / pageSize + 1;
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONArray array = object.optJSONArray("dataList");
+                            if (array != null) {
+                                if (array.length() < pagesize) {
+                                    refreshScrollView.setMode(Mode.PULL_FROM_START);
                                 }
-                                new GetSuningProductDetail().execute();
+                                JSONArray priceJsonArray = new JSONArray();
+                                for (int i = 0; i < array.length(); i++) {
+                                    ModelProduct product = new ModelProduct(array.optJSONObject(i));
+                                    products.add(product);
+                                    priceJsonArray.put(product.getSku());
+                                }
+                                if (products.isEmpty()) {
+                                    loadingEmpty();
+                                } else {
+                                    productAdapter.notifyDataSetChanged();
+                                    if (priceJsonArray.length() > 0) {
+                                        getSuningProductPrice(priceJsonArray);
+                                    }
+                                }
                             }
                             return;
                         }
-                    }
-                    Notify.show(object.optString("returnMsg"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            loadingEmpty("");
-        }
-    }
-
-    class GetSuningProductDetail extends AsyncTask<Void, Void, Integer> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-            pageNo++;
-        }
-
-        @Override
-        protected Integer doInBackground(Void... params) {
-            List<ModelProductPool> pools = new ArrayList<>();
-            if (pageNo < totalPage) {
-                pools = productPools.subList((pageNo - 1) * 12, pageNo * 12);
-            } else {
-                pools = productPools.subList((pageNo - 1) * 12, productPools.size());
-            }
-            for (int i = 0; i < pools.size(); i++) {
-                JSONObject data = new JSONObject();
-                try {
-                    data.put("accessToken", SuningManager.getSignature().getToken());
-                    data.put("appKey", SuningManager.appKey);
-                    data.put("v", SuningManager.version);
-                    data.put("sku", pools.get(i).getSku());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                List<NameValuePair> nameValuePairs = new ArrayList<>();
-                nameValuePairs.add(new BasicNameValuePair("data", data.toString()));
-                String result = netUtil.postWithoutCookie(API.API_SUNING_PRODUCT_DETAIL, nameValuePairs, false, false);
-                //令牌过期
-                if (SuningManager.isSignatureOutOfDate(result)) {
-                    return 2;
-                }
-                if (!TextUtils.isEmpty(result)) {
-                    try {
-                        JSONObject object = new JSONObject(result);
-                        if (object.optBoolean("isSuccess")) {
-                            ModelProductDetail productDetail = new ModelProductDetail(object);
-                            if (productDetail.getState() == 1) {
-                                productDetails.add(productDetail);
-                            }
-                        }
+                        Notify.show(object.optString("message"));
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        return 1;
                     }
                 }
-            }
-            //获取数据成功
-            return 0;
-        }
-
-        @Override
-        protected void onPostExecute(Integer result) {
-            hideLoading();
-            refreshScrollView.onRefreshComplete();
-            switch (result) {
-
-                case 0:
-                    if (productDetails.isEmpty()) {
-                        //无商品
-                        loadingEmpty();
-                    } else {
-                        //有商品
-                        productAdapter.notifyDataSetChanged();
-                        new GetSuningProductPrice().execute();
-                    }
-                    break;
-
-                case 1:
+                if (products.isEmpty()) {
                     loadingEmpty();
-                    break;
+                }
+            }
 
-                case 2:
+            @Override
+            protected void onFinish() {
+                hideLoading();
+                refreshScrollView.onRefreshComplete();
+            }
+        });
+    }
+
+    private void getSuningProductPrice(final JSONArray priceJsonArray) {
+        Request request = new Request();
+        request.setUrl(API.API_SUNING_PRODUCT_PRICE);
+
+        JSONObject data = new JSONObject();
+        try {
+            data.put("accessToken", SuningManager.getSignature().getToken());
+            data.put("appKey", SuningManager.appKey);
+            data.put("v", SuningManager.version);
+            data.put("cityId", SuningManager.getSuningAreas().getCity().getCode());
+            data.put("sku", priceJsonArray);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        request.addRequestParam("data", data.toString());
+
+        MissionController.startNetworkMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (SuningManager.isSignatureOutOfDate(requestMessage.getResult())) {
                     GetNewSignature getNewSignature = new GetNewSignature() {
                         @Override
                         protected void onPreExecute() {
@@ -370,109 +306,50 @@ public class HomeSuningFragment extends BaseNotifyFragment {
                         protected void onPostExecute(Boolean isSuccess) {
                             hideLoading();
                             if (isSuccess) {
-                                new GetSuningProductDetail().execute();
+                                getSuningProductPrice(priceJsonArray);
                             }
                         }
                     };
                     getNewSignature.execute();
-                    break;
-
-                default:
-                    loadingEmpty();
-                    break;
-            }
-        }
-    }
-
-    class GetSuningProductPrice extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            JSONArray dataArray = new JSONArray();
-            List<ModelProductPool> pools = new ArrayList<>();
-            if (pageNo < totalPage) {
-                pools = productPools.subList((pageNo - 1) * 12, pageNo * 12);
-            } else {
-                pools = productPools.subList((pageNo - 1) * 12, productPools.size());
-            }
-            for (int i = 0; i < pools.size(); i++) {
-                dataArray.put(pools.get(i).getSku());
-            }
-            JSONObject data = new JSONObject();
-            try {
-                data.put("accessToken", SuningManager.getSignature().getToken());
-                data.put("appKey", SuningManager.appKey);
-                data.put("v", SuningManager.version);
-                data.put("cityId", SuningManager.getSuningAreas().getCity().getCode());
-                data.put("sku", dataArray);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("data", data.toString()));
-            return netUtil.postWithoutCookie(API.API_SUNING_PRODUCT_PRICE, nameValuePairs, false, false);
-        }
-
-        /**
-         * {"result":[{"skuId":"108246148","price":15000.00}],"isSuccess":true,"returnMsg":"查询成功。"}
-         */
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (SuningManager.isSignatureOutOfDate(result)) {
-                GetNewSignature getNewSignature = new GetNewSignature() {
-                    @Override
-                    protected void onPreExecute() {
-                        showLoading();
-                    }
-
-                    @Override
-                    protected void onPostExecute(Boolean isSuccess) {
-                        hideLoading();
-                        if (isSuccess) {
-                            new GetSuningProductPrice().execute();
-                        }
-                    }
-                };
-                getNewSignature.execute();
-                return;
-            }
-            if (!TextUtils.isEmpty(result)) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optBoolean("isSuccess")) {
-                        JSONArray array = object.optJSONArray("result");
-                        if (array != null) {
-                            for (int j = 0; j < array.length(); j++) {
-                                ModelProductPrice productPrice = new
-                                        ModelProductPrice(array.optJSONObject(j));
-                                priceHashMap.put(productPrice.getSkuId(), productPrice);
+                    return;
+                }
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optBoolean("isSuccess")) {
+                            JSONArray array = object.optJSONArray("result");
+                            if (array != null) {
+                                for (int j = 0; j < array.length(); j++) {
+                                    ModelProductPrice productPrice = new
+                                            ModelProductPrice(array.optJSONObject(j));
+                                    priceHashMap.put(productPrice.getSkuId(), productPrice);
+                                }
+                                productAdapter.notifyDataSetChanged();
                             }
-                            productAdapter.notifyDataSetChanged();
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
             }
-        }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
 
     class ProductAdapter extends BaseAdapter {
 
         @Override
         public int getCount() {
-            return productDetails.size();
+            return products.size();
         }
 
         @Override
         public Object getItem(int i) {
-            return productDetails.get(i);
+            return products.get(i);
         }
 
         @Override
@@ -495,13 +372,13 @@ public class HomeSuningFragment extends BaseNotifyFragment {
             } else {
                 viewHolder = (ViewHolder) view.getTag();
             }
-            ModelProductDetail productDetail = productDetails.get(i);
-            ImageLoader.getInstance().displayImage(productDetail.getImage(), viewHolder.imageView);
-            viewHolder.nameTextView.setText(productDetail.getName());
-            if (priceHashMap.containsKey(productDetail.getSku())) {
-                if (priceHashMap.get(productDetail.getSku()).getPrice() > 0) {
+            ModelProduct product = products.get(i);
+            ImageLoader.getInstance().displayImage(product.getImage(), viewHolder.imageView);
+            viewHolder.nameTextView.setText(product.getName());
+            if (priceHashMap.containsKey(product.getSku())) {
+                if (priceHashMap.get(product.getSku()).getPrice() > 0) {
                     viewHolder.priceTextView.setText(Parameters.CONSTANT_RMB
-                            + decimalFormat.format(priceHashMap.get(productDetail.getSku()).getPrice()));
+                            + decimalFormat.format(priceHashMap.get(product.getSku()).getPrice()));
                 } else {
                     viewHolder.priceTextView.setHint("暂未设置价格");
                 }

@@ -1,7 +1,6 @@
 package yitgogo.consumer.main.ui;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -31,8 +30,6 @@ public class MainActivity extends BaseActivity {
     List<Integer> images = new ArrayList<>();
     List<String> lables = new ArrayList<>();
 
-    boolean showLocalBusiness = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,11 +51,6 @@ public class MainActivity extends BaseActivity {
     }
 
     private void init() {
-
-        Intent intent = getIntent();
-        if (intent.hasExtra("showLocalBusiness")) {
-            showLocalBusiness = intent.getBooleanExtra("showLocalBusiness", false);
-        }
 
         fragments.add(HomeFragment.class);
         images.add(R.drawable.selector_home_tab_main);
@@ -107,8 +99,9 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onTabChanged(String s) {
                 if (s.equals(HomeSuningFragment.class.getName())) {
-                    if (TextUtils.isEmpty(SuningManager.getSuningAreas().getTown().getCode())) {
+                    if (TextUtils.isEmpty(SuningManager.getSuningAreas().getCity().getCode())) {
                         jump(SuningAreaFragment.class.getName(), "设置云商城收货区域");
+                        switchTab(0);
                     }
                 }
             }

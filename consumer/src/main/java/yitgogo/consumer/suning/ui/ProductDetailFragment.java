@@ -7,7 +7,6 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -27,7 +26,6 @@ import com.umeng.analytics.MobclickAgent;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -37,8 +35,7 @@ import java.util.List;
 import yitgogo.consumer.BaseNotifyFragment;
 import yitgogo.consumer.product.ui.WebFragment;
 import yitgogo.consumer.suning.model.GetNewSignature;
-import yitgogo.consumer.suning.model.ModelProductDetail;
-import yitgogo.consumer.suning.model.ModelProductImage;
+import yitgogo.consumer.suning.model.ModelProduct;
 import yitgogo.consumer.suning.model.ModelProductPrice;
 import yitgogo.consumer.suning.model.SuningCarController;
 import yitgogo.consumer.suning.model.SuningManager;
@@ -59,10 +56,8 @@ public class ProductDetailFragment extends BaseNotifyFragment {
 
     ImageAdapter imageAdapter;
 
-    ModelProductDetail productDetail = new ModelProductDetail();
+    ModelProduct product = new ModelProduct();
     ModelProductPrice productPrice = new ModelProductPrice();
-
-    List<ModelProductImage> productImages = new ArrayList<>();
 
     Bundle bundle = new Bundle();
 
@@ -96,7 +91,6 @@ public class ProductDetailFragment extends BaseNotifyFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         new GetProductStock().execute();
-        new GetProductImages().execute();
     }
 
     private void init() throws JSONException {
@@ -104,7 +98,7 @@ public class ProductDetailFragment extends BaseNotifyFragment {
         bundle = getArguments();
         if (bundle != null) {
             if (bundle.containsKey("product")) {
-                productDetail = new ModelProductDetail(new JSONObject(bundle.getString("product")));
+                product = new ModelProduct(new JSONObject(bundle.getString("product")));
             }
             if (bundle.containsKey("price")) {
                 productPrice = new ModelProductPrice(new JSONObject(bundle.getString("price")));
@@ -155,16 +149,15 @@ public class ProductDetailFragment extends BaseNotifyFragment {
     }
 
     protected void initViews() {
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
-                screenWidth, screenWidth);
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(screenWidth, screenWidth);
         imagePager.setLayoutParams(layoutParams);
         imagePager.setAdapter(imageAdapter);
-        nameTextView.setText(productDetail.getName());
-        priceTextView.setText(Parameters.CONSTANT_RMB
-                + decimalFormat.format(productPrice.getPrice()));
-        brandTextView.setText(productDetail.getBrand());
-        modelTextView.setText(productDetail.getModel());
-        serviceTextView.setText(Html.fromHtml(productDetail.getService()));
+        imageIndexText.setText("1/" + imageAdapter.getCount());
+        nameTextView.setText(product.getName());
+        priceTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format(productPrice.getPrice()));
+        brandTextView.setText(product.getBrand());
+        modelTextView.setText(product.getModel());
+//        serviceTextView.setText(Html.fromHtml(productDetail.getService()));
     }
 
     @SuppressWarnings("deprecation")
@@ -174,10 +167,9 @@ public class ProductDetailFragment extends BaseNotifyFragment {
             @Override
             public void onClick(View view) {
                 Bundle bundle = new Bundle();
-                bundle.putString("html", productDetail.getIntroduction());
+                bundle.putString("html", product.getIntroduction());
                 bundle.putInt("type", WebFragment.TYPE_HTML);
-                jump(WebFragment.class.getName(), productDetail.getName(),
-                        bundle);
+                jump(WebFragment.class.getName(), product.getName(), bundle);
             }
         });
         lastImageButton.setOnClickListener(new OnClickListener() {
@@ -225,19 +217,7 @@ public class ProductDetailFragment extends BaseNotifyFragment {
         carButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (state.equals("00")) {
-                    if (productPrice.getPrice() > 0) {
-                        if (SuningCarController.addProduct(productDetail)) {
-                            Notify.show("添加到购物车成功");
-                        } else {
-                            Notify.show("已添加过此商品");
-                        }
-                    } else {
-                        Notify.show("商品信息有误，不能购买");
-                    }
-                } else {
-                    Notify.show("此商品暂不能购买");
-                }
+                addToCar();
             }
         });
         buyButton.setOnClickListener(new OnClickListener() {
@@ -262,14 +242,32 @@ public class ProductDetailFragment extends BaseNotifyFragment {
     }
 
     /**
+     * 添加到购物车
+     */
+    private void addToCar() {
+        if (state.equals("00")) {
+            if (productPrice.getPrice() > 0) {
+                if (SuningCarController.addProduct(product)) {
+                    Notify.show("添加到购物车成功");
+                } else {
+                    Notify.show("已添加过此商品");
+                }
+            } else {
+                Notify.show("商品信息有误，不能购买");
+            }
+        } else {
+            Notify.show("此商品暂不能购买");
+        }
+    }
+
+    /**
      * 点击左右导航按钮切换图片
      *
      * @param imagePosition
      */
     private void setImagePosition(int imagePosition) {
         imagePager.setCurrentItem(imagePosition, true);
-        imageIndexText.setText((imagePosition + 1) + "/"
-                + imageAdapter.getCount());
+        imageIndexText.setText((imagePosition + 1) + "/" + imageAdapter.getCount());
     }
 
     /**
@@ -284,7 +282,7 @@ public class ProductDetailFragment extends BaseNotifyFragment {
 
         @Override
         public int getCount() {
-            return productImages.size();
+            return product.getImages().size();
         }
 
         @Override
@@ -296,7 +294,7 @@ public class ProductDetailFragment extends BaseNotifyFragment {
                     .findViewById(R.id.view_pager_img);
             final ProgressBar spinner = (ProgressBar) imageLayout
                     .findViewById(R.id.view_pager_loading);
-            ImageLoader.getInstance().displayImage(productImages.get(position).getPath(),
+            ImageLoader.getInstance().displayImage(product.getImages().get(position).getImg(),
                     imageView, new SimpleImageLoadingListener() {
                         @Override
                         public void onLoadingStarted(String imageUri, View view) {
@@ -334,77 +332,6 @@ public class ProductDetailFragment extends BaseNotifyFragment {
         }
     }
 
-    class GetProductImages extends AsyncTask<Void, Void, String> {
-        @Override
-        protected String doInBackground(Void... params) {
-            JSONArray dataArray = new JSONArray();
-            dataArray.put(productDetail.getSku());
-            JSONObject data = new JSONObject();
-            try {
-                data.put("accessToken", SuningManager.getSignature().getToken());
-                data.put("appKey", SuningManager.appKey);
-                data.put("v", SuningManager.version);
-                data.put("sku", dataArray);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("data", data.toString()));
-            /**
-             *{"result":[{"skuId":"108246148","price":15000.00}],"isSuccess":true,"returnMsg":"查询成功。"}
-             */
-            return netUtil.postWithoutCookie(API.API_SUNING_PRODUCT_IMAGES, nameValuePairs, false, false);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            if (SuningManager.isSignatureOutOfDate(result)) {
-                GetNewSignature getNewSignature = new GetNewSignature() {
-
-                    @Override
-                    protected void onPreExecute() {
-                        showLoading();
-                    }
-
-                    @Override
-                    protected void onPostExecute(Boolean isSuccess) {
-                        hideLoading();
-                        if (isSuccess) {
-                            new GetProductImages().execute();
-                        }
-                    }
-                };
-                getNewSignature.execute();
-                return;
-            }
-            if (!TextUtils.isEmpty(result)) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optBoolean("isSuccess")) {
-                        JSONArray array = object.optJSONArray("result");
-                        if (array != null) {
-                            if (array.length() > 0) {
-                                JSONObject imageObject = array.optJSONObject(0);
-                                if (imageObject != null) {
-                                    JSONArray imageArray = imageObject.optJSONArray("urls");
-                                    if (imageArray != null) {
-                                        for (int i = 0; i < imageArray.length(); i++) {
-                                            productImages.add(new ModelProductImage(imageArray.optJSONObject(i)));
-                                        }
-                                        imageAdapter.notifyDataSetChanged();
-                                        imageIndexText.setText("1/" + imageAdapter.getCount());
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
     class GetProductStock extends AsyncTask<Void, Void, String> {
 
         @Override
@@ -421,7 +348,7 @@ public class ProductDetailFragment extends BaseNotifyFragment {
                 data.put("v", SuningManager.version);
                 data.put("cityId", SuningManager.getSuningAreas().getCity().getCode());
                 data.put("countyId", SuningManager.getSuningAreas().getDistrict().getCode());
-                data.put("sku", productDetail.getSku());
+                data.put("sku", product.getSku());
                 data.put("num", 1);
             } catch (JSONException e) {
                 e.printStackTrace();

@@ -1,6 +1,5 @@
 package yitgogo.consumer.suning.ui;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
@@ -11,11 +10,14 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,8 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import yitgogo.consumer.BaseNotifyFragment;
-import yitgogo.consumer.main.ui.MainActivity;
-import yitgogo.consumer.suning.model.GetNewSignature;
 import yitgogo.consumer.suning.model.ModelProductClass;
 import yitgogo.consumer.suning.model.SuningManager;
 import yitgogo.consumer.tools.API;
@@ -63,9 +63,7 @@ public abstract class SuningClassesFragment extends BaseNotifyFragment {
         MobclickAgent.onPageStart(SuningClassesFragment.class.getName());
         if (productClasses.isEmpty()) {
             if (!TextUtils.isEmpty(SuningManager.getSuningAreas().getTown().getCode())) {
-                new GetClasses().execute();
-            } else {
-                MainActivity.switchTab(0);
+                getSuningClasses();
             }
         }
     }
@@ -99,7 +97,7 @@ public abstract class SuningClassesFragment extends BaseNotifyFragment {
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                new GetClasses().execute();
+                getSuningClasses();
             }
         });
     }
@@ -112,73 +110,51 @@ public abstract class SuningClassesFragment extends BaseNotifyFragment {
 
     public abstract void onClassSelected(ModelProductClass selectedProductClass);
 
-    class GetClasses extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-            productClasses.clear();
-            productClassAdapter.notifyDataSetChanged();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            JSONObject data = new JSONObject();
-            try {
-                data.put("accessToken", SuningManager.getSignature().getToken());
-                data.put("appKey", SuningManager.appKey);
-                data.put("v", SuningManager.version);
-            } catch (JSONException e) {
-                e.printStackTrace();
+    private void getSuningClasses() {
+        productClasses.clear();
+        productClassAdapter.notifyDataSetChanged();
+        Request request = new Request();
+        request.setUrl(API.API_SUNING_PRODUCT_CALSSES);
+        MissionController.startNetworkMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                refreshLayout.setRefreshing(true);
             }
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("data", data.toString()));
-            return netUtil.postWithoutCookie(API.API_SUNING_PRODUCT_CALSSES, nameValuePairs, true, true);
-        }
 
-        @Override
-        protected void onPostExecute(String s) {
-            hideLoading();
-            refreshLayout.setRefreshing(false);
-            if (SuningManager.isSignatureOutOfDate(s)) {
-                GetNewSignature getNewSignature = new GetNewSignature() {
-                    @Override
-                    protected void onPreExecute() {
-                        showLoading();
-                    }
-
-                    @Override
-                    protected void onPostExecute(Boolean isSuccess) {
-                        hideLoading();
-                        if (isSuccess) {
-                            new GetClasses().execute();
-                        }
-                    }
-                };
-                getNewSignature.execute();
-                return;
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+                loadingEmpty("获取分类数据失败");
             }
-            if (!TextUtils.isEmpty(s)) {
-                try {
-                    JSONObject object = new JSONObject(s);
-                    if (object.optBoolean("isSuccess")) {
-                        JSONArray array = object.optJSONArray("result");
-                        if (array != null) {
-                            for (int i = 0; i < array.length(); i++) {
-                                productClasses.add(new ModelProductClass(array.optJSONObject(i)));
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONArray array = object.optJSONArray("dataList");
+                            if (array != null) {
+                                for (int i = 0; i < array.length(); i++) {
+                                    productClasses.add(new ModelProductClass(array.optJSONObject(i)));
+                                }
+                                if (!productClasses.isEmpty()) {
+                                    select(productClasses.get(0));
+                                }
                             }
-                            if (!productClasses.isEmpty()) {
-                                select(productClasses.get(0));
-                            }
+                            return;
                         }
-                        return;
+                        Notify.show(object.optString("message"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                    Notify.show(object.optString("returnMsg"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
             }
-        }
+
+            @Override
+            protected void onFinish() {
+                refreshLayout.setRefreshing(false);
+            }
+        });
     }
 
     class ProductClassAdapter extends BaseAdapter {
@@ -214,15 +190,12 @@ public abstract class SuningClassesFragment extends BaseNotifyFragment {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
             viewHolder.className.setText(productClasses.get(position).getName());
-            if (productClasses.get(position).getCategoryId().equals(selectedProductClass.getCategoryId())) {
-                viewHolder.selector
-                        .setBackgroundResource(R.color.textColorCompany);
-                viewHolder.className.setTextColor(getResources()
-                        .getColor(R.color.textColorCompany));
+            if (productClasses.get(position).getId().equals(selectedProductClass.getId())) {
+                viewHolder.selector.setBackgroundResource(R.color.textColorCompany);
+                viewHolder.className.setTextColor(getResources().getColor(R.color.textColorCompany));
             } else {
                 viewHolder.selector.setBackgroundResource(android.R.color.transparent);
-                viewHolder.className.setTextColor(getResources()
-                        .getColor(R.color.textColorSecond));
+                viewHolder.className.setTextColor(getResources().getColor(R.color.textColorSecond));
             }
             return convertView;
         }

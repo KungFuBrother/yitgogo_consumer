@@ -32,6 +32,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.dtr.zxing.activity.CaptureActivity;
+import com.smartown.controller.mission.MissionController;
 import com.smartown.yitian.gogo.R;
 
 import org.apache.http.NameValuePair;
@@ -118,6 +119,7 @@ public class BaseNotifyFragment extends Fragment {
     @Override
     public void onDestroy() {
         getActivity().unregisterReceiver(broadcastReceiver);
+        MissionController.cancelMissions(getActivity());
         super.onDestroy();
     }
 

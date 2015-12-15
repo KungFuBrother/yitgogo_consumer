@@ -32,11 +32,11 @@ public class SuningCarController {
         return dataManager.containData(sku);
     }
 
-    public static boolean addProduct(ModelProductDetail productDetail) {
-        if (!containProduct(productDetail.getSku())) {
+    public static boolean addProduct(ModelProduct product) {
+        if (!containProduct(product.getSku())) {
             ContentValues values = new ContentValues();
-            values.put(SuningCarDataManager.column_sku, productDetail.getSku());
-            values.put(SuningCarDataManager.column_object, productDetail.getJsonObject().toString());
+            values.put(SuningCarDataManager.column_sku, product.getSku());
+            values.put(SuningCarDataManager.column_object, product.getJsonObject().toString());
             values.put(SuningCarDataManager.column_count, 1);
             values.put(SuningCarDataManager.column_selection, 1);
             dataManager.insertData(values);

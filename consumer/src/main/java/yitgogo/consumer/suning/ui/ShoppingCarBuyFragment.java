@@ -148,8 +148,8 @@ public class ShoppingCarBuyFragment extends BaseNotifyFragment {
     private void addOrder() {
         if (TextUtils.isEmpty(consumerNameEditText.getText().toString())) {
             Notify.show("请输入收货人姓名");
-        } else if (TextUtils.isEmpty(consumerPhoneEditText.getText().toString())) {
-            Notify.show("请输入收货人联系电话");
+        } else if (!isPhoneNumber(consumerPhoneEditText.getText().toString())) {
+            Notify.show("请输入正确的收货人联系电话");
         } else if (TextUtils.isEmpty(areaTextView.getText().toString())) {
             Notify.show("请选择收货区域");
         } else if (TextUtils.isEmpty(detailAddressEditText.getText().toString())) {
