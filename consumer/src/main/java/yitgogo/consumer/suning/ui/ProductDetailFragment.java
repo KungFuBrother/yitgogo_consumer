@@ -79,6 +79,11 @@ public class ProductDetailFragment extends BaseNotifyFragment {
     public void onResume() {
         super.onResume();
         MobclickAgent.onPageStart(ProductDetailFragment.class.getName());
+        if (SuningCarController.containProduct(product.getSku())) {
+            carButton.setBackgroundResource(android.R.color.darker_gray);
+        } else {
+            carButton.setBackgroundResource(R.drawable.button_rec_blue);
+        }
     }
 
     @Override
@@ -249,6 +254,7 @@ public class ProductDetailFragment extends BaseNotifyFragment {
             if (productPrice.getPrice() > 0) {
                 if (SuningCarController.addProduct(product)) {
                     Notify.show("添加到购物车成功");
+                    carButton.setBackgroundResource(android.R.color.darker_gray);
                 } else {
                     Notify.show("已添加过此商品");
                 }

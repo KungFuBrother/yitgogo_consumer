@@ -21,51 +21,28 @@
   <component name="AndroidLogFilters">
     <option name="TOOL_WINDOW_CUSTOM_FILTER" value="Req" />
     <option name="TOOL_WINDOW_LOG_LEVEL" value="INFO" />
-    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="No Filters" />
+    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
     <option name="TOOL_WINDOW_REGEXP_FILTER" value="false" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8d8ef22a-e981-4a74-b969-3c7236b5a24d" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/java/com/smartown/controller/mission/CookieController.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/java/com/smartown/controller/mission/Mission.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/java/com/smartown/controller/mission/MissionController.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/java/com/smartown/controller/mission/MissionListener.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/java/com/smartown/controller/mission/MissionMessage.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/java/com/smartown/controller/mission/Request.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/java/com/smartown/controller/mission/RequestListener.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/java/com/smartown/controller/mission/RequestMessage.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/java/com/smartown/controller/mission/RequestMission.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/java/com/smartown/controller/mission/RequestParam.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/ui/SuningSearchFragment.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/layout/fragment_suning_search.xml" />
-      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\java\yitgogo\consumer\suning\model\ModelProductDetail.java" afterPath="" />
-      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\java\yitgogo\consumer\suning\model\ModelProductImage.java" afterPath="" />
-      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\java\yitgogo\consumer\suning\model\ModelProductPool.java" afterPath="" />
-      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable-xhdpi\welcome_default.png" afterPath="" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/analytics_5_6_4.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/consumer/src/main/res/drawable/button_add_car_disable.xml" />
+      <change type="DELETED" beforePath="E:\Github\yitgogo_consumer\.idea\libraries\analytics_5_6_1.xml" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/cache.properties.lock" afterPath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/cache.properties.lock" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/fileHashes.bin" afterPath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/fileHashes.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/fileSnapshots.bin" afterPath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/fileSnapshots.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/outputFileStates.bin" afterPath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/outputFileStates.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/taskArtifacts.bin" afterPath="$PROJECT_DIR$/.gradle/2.8/taskArtifacts/taskArtifacts.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/tools/API.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/tools/API.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/BaseNotifyFragment.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/BaseNotifyFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/main/ui/HomeSuningFragment.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/main/ui/HomeSuningFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/main/ui/MainActivity.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/main/ui/MainActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/model/ModelProduct.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/model/ModelProduct.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/model/ModelProductClass.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/model/ModelProductClass.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/model/ModelSuningCar.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/model/ModelSuningCar.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/local/model/LocalCarController.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/local/model/LocalCarController.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/local/ui/LocalGoodsDetailFragment.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/local/ui/LocalGoodsDetailFragment.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/product/ui/ProductDetailFragment.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/product/ui/ProductDetailFragment.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/ui/ProductDetailFragment.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/ui/ProductDetailFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/product/ui/ProductSearchFragment.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/product/ui/ProductSearchFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/ui/ShoppingCarBuyFragment.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/ui/ShoppingCarBuyFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/ui/SuningAreaFragment.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/ui/SuningAreaFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/model/SuningCarController.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/model/SuningCarController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/ui/SuningClassesFragment.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/ui/SuningClassesFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/ui/SuningProductBuyFragment.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/ui/SuningProductBuyFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/YitgogoApplication.java" afterPath="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/YitgogoApplication.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/appcompat_v7_22_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/appcompat_v7_22_2_1.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/intermediates/dex-cache/cache.xml" afterPath="$PROJECT_DIR$/build/intermediates/dex-cache/cache.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/res/layout/fragment_home_suning.xml" afterPath="$PROJECT_DIR$/consumer/src/main/res/layout/fragment_home_suning.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/src/main/res/layout/fragment_product_search.xml" afterPath="$PROJECT_DIR$/consumer/src/main/res/layout/fragment_product_search.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/consumer/consumer.iml" afterPath="$PROJECT_DIR$/consumer/consumer.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/support_v4_22_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/support_v4_22_2_1.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="yitgogo_consumer.iws" />
@@ -94,107 +71,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="API.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/tools/API.java">
+      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/consumer/build.gradle">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="10" column="58" selection-start-line="10" selection-start-column="58" selection-end-line="10" selection-end-column="58" />
+              <caret line="29" column="38" selection-start-line="29" selection-start-column="38" selection-end-line="29" selection-end-column="38" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="HomeSuningFragment.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/main/ui/HomeSuningFragment.java">
+      <file leaf-file-name="YitgogoApplication.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/YitgogoApplication.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="66" column="52" selection-start-line="66" selection-start-column="52" selection-end-line="66" selection-end-column="52" />
-              <folding>
-                <element signature="e#2631#2949#0" expanded="true" />
-                <element signature="e#2948#2949#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SuningSearchFragment.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/ui/SuningSearchFragment.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="46" column="43" selection-start-line="46" selection-start-column="43" selection-end-line="46" selection-end-column="43" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SuningManager.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/model/SuningManager.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="11" column="3" selection-start-line="11" selection-start-column="3" selection-end-line="11" selection-end-column="3" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SuningProductBuyFragment.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/ui/SuningProductBuyFragment.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="238" column="41" selection-start-line="238" selection-start-column="41" selection-end-line="238" selection-end-column="41" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ShoppingCarBuyFragment.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/ui/ShoppingCarBuyFragment.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="150" column="27" selection-start-line="150" selection-start-column="27" selection-end-line="150" selection-end-column="27" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="BaseNotifyFragment.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/BaseNotifyFragment.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="2.5857308">
-              <caret line="409" column="71" selection-start-line="409" selection-start-column="71" selection-end-line="409" selection-end-column="71" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SuningClassesFragment.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/ui/SuningClassesFragment.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="53" column="13" selection-start-line="53" selection-start-column="13" selection-end-line="53" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/main/ui/MainActivity.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="99" column="48" selection-start-line="99" selection-start-column="48" selection-end-line="99" selection-end-column="48" />
-              <folding>
-                <element signature="e#2914#3366#0" expanded="true" />
-                <element signature="e#3365#3366#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ProductSearchFragment.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/product/ui/ProductSearchFragment.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="335" column="9" selection-start-line="335" selection-start-column="9" selection-end-line="335" selection-end-column="9" />
+            <state vertical-scroll-proportion="0.43037975">
+              <caret line="45" column="62" selection-start-line="45" selection-start-column="62" selection-end-line="45" selection-end-column="62" />
               <folding />
             </state>
           </provider>
@@ -2509,7 +2400,7 @@
     </option>
     <option name="modificationStamps">
       <map>
-        <entry key="E:\Github\yitgogo_consumer" value="7238724426570" />
+        <entry key="E:\Github\yitgogo_consumer" value="7240100493430" />
       </map>
     </option>
     <option name="projectBuildClasspath">
@@ -2779,7 +2670,7 @@
                             <option value="D:/DevelopeTools/ADT/sdk/extras/android/m2repository/com/android/support/recyclerview-v7/22.2.1/recyclerview-v7-22.2.1.aar" />
                             <option value="D:/DevelopeTools/ADT/sdk/extras/android/m2repository/com/android/support/support-v4/22.2.1/support-v4-22.2.1.aar" />
                             <option value="D:/DevelopeTools/ADT/sdk/extras/android/m2repository/com/android/support/appcompat-v7/22.2.1/appcompat-v7-22.2.1.aar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.umeng.analytics/analytics/5.6.1/b2705cbb19f52bb4d242458163a98d9e889c1292/analytics-5.6.1.jar" />
+                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.umeng.analytics/analytics/5.6.4/76fed6d2233b958f0c1d589aa366785e0ab5c8f1/analytics-5.6.4.jar" />
                             <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.nostra13.universalimageloader/universal-image-loader/1.9.4/dd9eeb557650c4ad7394df23f0f5cf27a7cfc697/universal-image-loader-1.9.4.jar" />
                             <option value="D:/DevelopeTools/ADT/sdk/extras/android/m2repository/com/android/support/support-annotations/22.2.1/support-annotations-22.2.1.jar" />
                             <option value="$MODULE_DIR$/libs/android-async-http-1.4.7.jar" />
@@ -3103,9 +2994,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/consumer/src/main/res/drawable/switch_select_right.xml" />
-        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/EntranceActivity.java" />
-        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/main/ui/HomeUserFragment.java" />
         <option value="$PROJECT_DIR$/consumer/src/main/res/layout/list_store_selected.xml" />
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/store/SelectStoreByAreaFragment.java" />
         <option value="$PROJECT_DIR$/consumer/src/main/res/layout/fragment_select_store_by_locate.xml" />
@@ -3117,7 +3005,6 @@
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/ui/SuningOrderListFragment.java" />
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/store/SelectStoreByLocateFragment.java" />
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/product/ui/ProductListFragment.java" />
-        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/product/ui/ProductDetailFragment.java" />
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/store/SelectAreaFragment.java" />
         <option value="$PROJECT_DIR$/consumer/src/main/res/layout/fragment_home_main.xml" />
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/local/ui/LocalGoodsFragment.java" />
@@ -3138,7 +3025,6 @@
         <option value="$PROJECT_DIR$/consumer/src/main/java/com/smartown/controller/mission/RequestMission.java" />
         <option value="$PROJECT_DIR$/consumer/src/main/java/com/smartown/controller/shoppingcart/DataBaseHelper.java" />
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/model/SuningCarController.java" />
-        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/ui/ProductDetailFragment.java" />
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/ui/ShoppingCarFragment.java" />
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/model/ModelSuningCar.java" />
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/main/ui/HomeSuningFragment.java" />
@@ -3154,7 +3040,19 @@
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/model/SuningManager.java" />
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/ui/SuningProductBuyFragment.java" />
         <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/ui/ShoppingCarBuyFragment.java" />
+        <option value="$PROJECT_DIR$/consumer/src/main/res/drawable/button_add_car_disable.xml" />
+        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/ui/ProductDetailFragment.java" />
+        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/product/ui/ProductDetailFragment.java" />
+        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/local/model/LocalCarController.java" />
+        <option value="$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/local/ui/LocalGoodsDetailFragment.java" />
       </list>
+    </option>
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="Bundled (Maven 3)" />
+      </MavenGeneralSettings>
     </option>
   </component>
   <component name="NamedScopeManager">
@@ -3163,7 +3061,7 @@
   <component name="ProjectFrameBounds">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
-    <option name="width" value="1936" />
+    <option name="width" value="1924" />
     <option name="height" value="1056" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
@@ -3196,15 +3094,9 @@
               <option name="myItemId" value="yitgogo_consumer" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
-          </PATH>
-          <PATH>
             <PATH_ELEMENT>
-              <option name="myItemId" value="yitgogo_consumer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="yitgogo_consumer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -3214,24 +3106,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="yitgogo_consumer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ViewPagerIndicator" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="yitgogo_consumer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="yitgogo_consumer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="pullToRefresh" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -3266,10 +3140,87 @@
               <option name="myItemId" value="src" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="yitgogo_consumer" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="yitgogo_consumer" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="consumer" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="consumer" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="yitgogo_consumer" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="yitgogo_consumer" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="consumer" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="yitgogo_consumer" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="yitgogo_consumer" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="consumer" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="libs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
       <pane id="AndroidView">
         <subPane>
           <PATH>
@@ -3281,6 +3232,7 @@
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="Scratches" />
     </panes>
   </component>
@@ -3321,10 +3273,10 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable" />
       <recent name="E:\Github\yitgogo_consumer\consumer\src\main\res\layout" />
       <recent name="E:\Github\yitgogo_consumer\consumer\src\main\java\yitgogo\consumer\view" />
       <recent name="E:\Github\yitgogo_consumer\consumer\src\main\java\com\smartown\controller\shoppingcart" />
-      <recent name="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable" />
       <recent name="E:\Github\yitgogo_consumer\consumer\src\main\res\drawable-xxhdpi" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -3392,6 +3344,15 @@
       <option name="PASS_PARENT_ENVS" value="true" />
       <module name="" />
       <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="GroovyScriptRunConfiguration" factoryName="Groovy">
+      <module name="" />
+      <setting name="path" value="" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="" />
+      <setting name="workDir" value="file://$PROJECT_DIR$" />
+      <setting name="debug" value="false" />
       <method />
     </configuration>
     <configuration default="true" type="JUnit" factoryName="JUnit">
@@ -3517,7 +3478,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="-8" y="-8" width="1924" height="1056" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962137" sideWeight="0.4978678" order="6" side_tool="false" content_ui="tabs" />
@@ -3529,7 +3490,6 @@
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32942432" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.63697106" sideWeight="0.48507464" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Preview" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29424307" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6336303" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32850778" sideWeight="0.4936034" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962137" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
@@ -3537,11 +3497,11 @@
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962137" sideWeight="0.5" order="12" side_tool="true" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="true" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4216418" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="true" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.42167383" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32959402" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32995737" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32995737" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3299356" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6247216" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -3549,8 +3509,41 @@
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29399142" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962137" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
+    <layout-to-restore>
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962137" sideWeight="0.5063966" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32942432" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.63697106" sideWeight="0.48507464" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32995737" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6247216" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962137" sideWeight="0.4978678" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="true" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.3496659" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" x="22" y="372" width="1876" height="296" />
+      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29399142" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6336303" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32850778" sideWeight="0.4936034" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962137" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32959402" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962137" sideWeight="0.5" order="12" side_tool="true" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="true" internal_type="SLIDING" type="SLIDING" visible="true" weight="0.42167383" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962137" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32959402" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3299356" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
+    </layout-to-restore>
   </component>
   <component name="Vcs.Log.UiProperties">
     <option name="RECENTLY_FILTERED_USER_GROUPS">
@@ -3572,18 +3565,11 @@
           <properties />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="32" />
+      <option name="time" value="34" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/local/ui/LocalServiceFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="156" column="34" selection-start-line="156" selection-start-column="34" selection-end-line="156" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/consumer/src/main/res/drawable/image_home_banner_egg.png">
       <provider selected="true" editor-type-id="images">
         <state />
@@ -3593,7 +3579,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="36" column="62" selection-start-line="36" selection-start-column="62" selection-end-line="36" selection-end-column="62" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -3606,15 +3591,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="43" column="5" selection-start-line="43" selection-start-column="5" selection-end-line="43" selection-end-column="5" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#3320#3321#0" expanded="false" />
-            <element signature="e#3346#3347#0" expanded="false" />
-            <element signature="e#5199#5200#0" expanded="false" />
-            <element signature="e#5234#5235#0" expanded="false" />
-            <element signature="e#5365#5366#0" expanded="false" />
-            <element signature="e#5385#5386#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -3622,15 +3598,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="60" column="34" selection-start-line="60" selection-start-column="34" selection-end-line="60" selection-end-column="34" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#1739#1740#0" expanded="false" />
-            <element signature="e#1797#1798#0" expanded="false" />
-            <element signature="e#3192#3308#0" expanded="false" />
-            <element signature="e#3307#3308#0" expanded="false" />
-            <element signature="e#3341#3456#0" expanded="false" />
-            <element signature="e#3455#3456#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -3645,24 +3612,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="11" column="69" selection-start-line="11" selection-start-column="69" selection-end-line="11" selection-end-column="69" />
-          <folding>
-            <element signature="e#1740#1741#0" expanded="false" />
-            <element signature="e#1761#1762#0" expanded="false" />
-            <element signature="e#1793#1794#0" expanded="false" />
-            <element signature="e#1815#1816#0" expanded="false" />
-            <element signature="e#1850#1851#0" expanded="false" />
-            <element signature="e#1875#1876#0" expanded="false" />
-            <element signature="e#1901#1902#0" expanded="false" />
-            <element signature="e#1917#1918#0" expanded="false" />
-            <element signature="e#1949#1950#0" expanded="false" />
-            <element signature="e#1971#1972#0" expanded="false" />
-            <element signature="e#2003#2004#0" expanded="false" />
-            <element signature="e#2025#2026#0" expanded="false" />
-            <element signature="e#2055#2056#0" expanded="false" />
-            <element signature="e#2075#2076#0" expanded="false" />
-            <element signature="e#2109#2110#0" expanded="false" />
-            <element signature="e#2133#2134#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -3670,15 +3619,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="36" column="38" selection-start-line="36" selection-start-column="38" selection-end-line="36" selection-end-column="38" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#4004#4005#0" expanded="false" />
-            <element signature="e#4052#4053#0" expanded="false" />
-            <element signature="e#5441#5442#0" expanded="false" />
-            <element signature="e#5491#5492#0" expanded="false" />
-            <element signature="e#5652#5653#0" expanded="false" />
-            <element signature="e#5687#5688#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -3694,9 +3634,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="59" column="0" selection-start-line="59" selection-start-column="0" selection-end-line="59" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -3704,16 +3641,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="121" column="5" selection-start-line="121" selection-start-column="5" selection-end-line="121" selection-end-column="5" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#2132#2251#0" expanded="false" />
-            <element signature="e#2250#2251#0" expanded="false" />
-            <element signature="e#7178#7179#0" expanded="false" />
-            <element signature="e#7215#7216#0" expanded="false" />
-            <element signature="e#7356#7371#0" expanded="false" />
-            <element signature="e#12460#12632#0" expanded="false" />
-            <element signature="e#12631#12632#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -3721,7 +3648,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.3164557">
           <caret line="16" column="29" selection-start-line="16" selection-start-column="23" selection-end-line="16" selection-end-column="29" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -3729,23 +3655,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.5443038">
           <caret line="271" column="123" selection-start-line="271" selection-start-column="123" selection-end-line="271" selection-end-column="123" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/com/smartown/controller/mission/Mission.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.730897">
-          <caret line="10" column="5" selection-start-line="7" selection-start-column="22" selection-end-line="10" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/YitgogoApplication.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="37" column="35" selection-start-line="37" selection-start-column="35" selection-end-line="37" selection-end-column="35" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -3753,7 +3662,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.74415743">
           <caret line="122" column="36" selection-start-line="122" selection-start-column="36" selection-end-line="122" selection-end-column="36" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -3761,31 +3669,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="91" column="46" selection-start-line="91" selection-start-column="46" selection-end-line="91" selection-end-column="46" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/com/smartown/controller/mission/MissionController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="25" column="14" selection-start-line="25" selection-start-column="14" selection-end-line="25" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/product/ui/ProductDetailFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="315" column="20" selection-start-line="315" selection-start-column="20" selection-end-line="315" selection-end-column="20" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/com/smartown/controller/shoppingcart/ShoppingCartController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="70" column="0" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -3793,22 +3676,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="269" column="31" selection-start-line="269" selection-start-column="31" selection-end-line="269" selection-end-column="31" />
-          <folding>
-            <element signature="e#11913#12078#0" expanded="false" />
-            <element signature="e#12077#12078#0" expanded="false" />
-            <element signature="e#12132#12300#0" expanded="false" />
-            <element signature="e#12299#12300#0" expanded="false" />
-            <element signature="e#12354#12517#0" expanded="false" />
-            <element signature="e#12516#12517#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/com/smartown/controller/shoppingcart/DataBaseHelper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="36" column="48" selection-start-line="36" selection-start-column="48" selection-end-line="36" selection-end-column="48" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -3816,7 +3683,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="17" column="60" selection-start-line="17" selection-start-column="60" selection-end-line="17" selection-end-column="60" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -3824,7 +3690,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="2.8607595">
           <caret line="172" column="29" selection-start-line="172" selection-start-column="29" selection-end-line="172" selection-end-column="29" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -3832,7 +3697,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.28843862">
           <caret line="11" column="41" selection-start-line="11" selection-start-column="41" selection-end-line="11" selection-end-column="41" />
-          <folding />
         </state>
       </provider>
       <provider editor-type-id="android-designer">
@@ -3843,7 +3707,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.433832">
           <caret line="337" column="16" selection-start-line="337" selection-start-column="16" selection-end-line="337" selection-end-column="74" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -3851,7 +3714,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.8045292">
           <caret line="58" column="57" selection-start-line="58" selection-start-column="57" selection-end-line="58" selection-end-column="57" />
-          <folding />
         </state>
       </provider>
       <provider editor-type-id="android-designer">
@@ -3862,7 +3724,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.07866508">
           <caret line="3" column="40" selection-start-line="3" selection-start-column="40" selection-end-line="3" selection-end-column="40" />
-          <folding />
         </state>
       </provider>
       <provider editor-type-id="android-designer">
@@ -3873,7 +3734,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.5542312">
           <caret line="58" column="67" selection-start-line="58" selection-start-column="67" selection-end-line="58" selection-end-column="67" />
-          <folding />
         </state>
       </provider>
       <provider editor-type-id="android-designer">
@@ -3884,7 +3744,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="26" column="41" selection-start-line="26" selection-start-column="41" selection-end-line="26" selection-end-column="41" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -3892,7 +3751,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.20697674">
           <caret line="171" column="35" selection-start-line="171" selection-start-column="35" selection-end-line="171" selection-end-column="35" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -3900,7 +3758,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.17906977">
           <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -3908,7 +3765,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.4348837">
           <caret line="22" column="17" selection-start-line="22" selection-start-column="17" selection-end-line="22" selection-end-column="17" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -3916,29 +3772,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="1.1255814">
           <caret line="51" column="0" selection-start-line="9" selection-start-column="0" selection-end-line="51" selection-end-column="0" />
-          <folding>
-            <element signature="e#709#710#0" expanded="false" />
-            <element signature="e#745#746#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/com/smartown/controller/mission/RequestMission.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="82" column="65" selection-start-line="82" selection-start-column="65" selection-end-line="82" selection-end-column="65" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/com/smartown/controller/mission/Request.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.9209302">
-          <caret line="53" column="0" selection-start-line="53" selection-start-column="0" selection-end-line="53" selection-end-column="0" />
-          <folding>
-            <element signature="e#401#402#0" expanded="false" />
-            <element signature="e#428#429#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -3946,15 +3779,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.33333334">
           <caret line="61" column="0" selection-start-line="61" selection-start-column="0" selection-end-line="61" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/ui/ProductDetailFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -3962,7 +3786,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.32911393">
           <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -3970,10 +3793,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="328" column="31" selection-start-line="328" selection-start-column="31" selection-end-line="328" selection-end-column="31" />
-          <folding>
-            <element signature="e#3022#3023#0" expanded="true" />
-            <element signature="e#3074#3075#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -3981,18 +3800,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="53" column="13" selection-start-line="53" selection-start-column="13" selection-end-line="53" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/main/ui/HomeSuningFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="66" column="52" selection-start-line="66" selection-start-column="52" selection-end-line="66" selection-end-column="52" />
-          <folding>
-            <element signature="e#2631#2949#0" expanded="true" />
-            <element signature="e#2948#2949#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -4000,10 +3807,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="99" column="48" selection-start-line="99" selection-start-column="48" selection-end-line="99" selection-end-column="48" />
-          <folding>
-            <element signature="e#2914#3366#0" expanded="true" />
-            <element signature="e#3365#3366#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -4011,7 +3814,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="335" column="9" selection-start-line="335" selection-start-column="9" selection-end-line="335" selection-end-column="9" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -4019,7 +3821,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="10" column="58" selection-start-line="10" selection-start-column="58" selection-end-line="10" selection-end-column="58" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -4027,7 +3828,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="46" column="43" selection-start-line="46" selection-start-column="43" selection-end-line="46" selection-end-column="43" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -4035,7 +3835,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="11" column="3" selection-start-line="11" selection-start-column="3" selection-end-line="11" selection-end-column="3" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -4043,7 +3842,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="238" column="41" selection-start-line="238" selection-start-column="41" selection-end-line="238" selection-end-column="41" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -4051,14 +3849,113 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="150" column="27" selection-start-line="150" selection-start-column="27" selection-end-line="150" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.nostra13.universalimageloader/universal-image-loader/1.9.4/dd7efebd848811e5281b9966558329ae7154bbbf/universal-image-loader-1.9.4-sources.jar!/com/nostra13/universalimageloader/core/assist/ImageSize.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.96202534">
+          <caret line="56" column="63" selection-start-line="56" selection-start-column="63" selection-end-line="56" selection-end-column="63" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/main/ui/HomeSuningFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="70" column="0" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/BaseNotifyFragment.java">
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/layout/fragment_product_detail_new.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="2.5857308">
-          <caret line="409" column="71" selection-start-line="409" selection-start-column="71" selection-end-line="409" selection-end-column="71" />
+        <state vertical-scroll-proportion="0.659118">
+          <caret line="418" column="40" selection-start-line="418" selection-start-column="40" selection-end-line="418" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/drawable/button_add_car.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.30379745">
+          <caret line="12" column="24" selection-start-line="12" selection-start-column="24" selection-end-line="12" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/drawable/button_add_car_disable.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.07594936">
+          <caret line="3" column="30" selection-start-line="3" selection-start-column="30" selection-end-line="3" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/res/layout/fragment_product_suning_detail.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="270" column="61" selection-start-line="270" selection-start-column="46" selection-end-line="270" selection-end-column="61" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/product/ui/ProductDetailFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="148" column="35" selection-start-line="148" selection-start-column="35" selection-end-line="148" selection-end-column="35" />
+          <folding>
+            <element signature="e#20599#20600#0" expanded="false" />
+            <element signature="e#20672#20673#0" expanded="false" />
+            <element signature="e#20882#20883#0" expanded="false" />
+            <element signature="e#20921#20922#0" expanded="false" />
+            <element signature="e#30087#30088#0" expanded="false" />
+            <element signature="e#30124#30125#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/suning/ui/ProductDetailFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-2.3544304">
+          <caret line="55" column="0" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/local/ui/LocalGoodsDetailFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="112" column="0" selection-start-line="112" selection-start-column="0" selection-end-line="112" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/local/model/LocalCarController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="30" column="39" selection-start-line="30" selection-start-column="39" selection-end-line="30" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="29" column="38" selection-start-line="29" selection-start-column="38" selection-end-line="29" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/consumer/src/main/java/yitgogo/consumer/YitgogoApplication.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.43037975">
+          <caret line="45" column="62" selection-start-line="45" selection-start-column="62" selection-end-line="45" selection-end-column="62" />
           <folding />
         </state>
       </provider>

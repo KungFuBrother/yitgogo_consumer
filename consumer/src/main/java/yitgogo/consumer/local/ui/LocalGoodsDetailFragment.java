@@ -92,6 +92,11 @@ public class LocalGoodsDetailFragment extends BaseNotifyFragment {
     public void onResume() {
         super.onResume();
         MobclickAgent.onPageStart(LocalGoodsDetailFragment.class.getName());
+        if (LocalCarController.containGoods(goodsId)) {
+            carButton.setBackgroundResource(R.drawable.button_add_car_disable);
+        } else {
+            carButton.setBackgroundResource(R.drawable.button_add_car);
+        }
     }
 
     @Override
@@ -250,7 +255,8 @@ public class LocalGoodsDetailFragment extends BaseNotifyFragment {
     private void addToCar() {
         switch (LocalCarController.addGoods(goodsDetail.getLocalGoods())) {
             case 0:
-                Notify.show("已添加到购物车");
+                Notify.show("添加到购物车成功");
+                carButton.setBackgroundResource(R.drawable.button_add_car_disable);
                 break;
 
             case 1:

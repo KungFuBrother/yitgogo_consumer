@@ -123,6 +123,11 @@ public class ProductDetailFragment extends BaseNotifyFragment {
     public void onResume() {
         super.onResume();
         MobclickAgent.onPageStart(ProductDetailFragment.class.getName());
+        if (ShoppingCartController.getInstance().hasProduct(DataBaseHelper.tableCarPlatform, productId)) {
+            carButton.setBackgroundResource(R.drawable.button_add_car_disable);
+        } else {
+            carButton.setBackgroundResource(R.drawable.button_add_car);
+        }
     }
 
     @Override
@@ -205,7 +210,6 @@ public class ProductDetailFragment extends BaseNotifyFragment {
         totalMoneyTextView = (TextView) contentView.findViewById(R.id.platform_product_detail_total_money);
         buyButton = (Button) contentView.findViewById(R.id.platform_product_detail_buy);
         carButton = (Button) contentView.findViewById(R.id.platform_product_detail_add_car);
-
 
         addImageButton(R.drawable.iconfont_cart, "购物车", new OnClickListener() {
 
@@ -325,13 +329,94 @@ public class ProductDetailFragment extends BaseNotifyFragment {
     private void addToCar() {
         if (productDetail.getNum() > 0) {
             if (ShoppingCartController.getInstance().hasProduct(DataBaseHelper.tableCarPlatform, productDetail.getId())) {
-                Notify.show("购物车已存在此商品");
+                Notify.show("已添加过此商品");
             } else {
                 ShoppingCartController.getInstance().addProduct(DataBaseHelper.tableCarPlatform, true, buyCount, productDetail.getSupplierId(), productDetail.getSupplierName(), productDetail.getId(), productDetail.getJsonObject().toString());
                 Notify.show("添加到购物车成功");
+                carButton.setBackgroundResource(R.drawable.button_add_car_disable);
             }
         } else {
             Notify.show("此商品无货，无法添加到购物车");
+        }
+    }
+
+    private void countTotalMoney() {
+        double price = productDetail.getPrice();
+        if (isSaleEnable) {
+            switch (saleType) {
+
+                case CaptureActivity.SALE_TYPE_TIME:
+                    price = saleDetailTime.getPromotionPrice();
+                    break;
+
+                case CaptureActivity.SALE_TYPE_MIAOSHA:
+                    price = saleDetailMiaosha.getSeckillPrice();
+                    break;
+
+                case CaptureActivity.SALE_TYPE_TEJIA:
+                    price = saleDetailTejia.getSalePrice();
+                    break;
+
+                default:
+                    price = productDetail.getPrice();
+                    break;
+            }
+        }
+        totalMoneyTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format(buyCount * price + freightMap.get(productDetail.getSupplierId()).getFregith()));
+    }
+
+    private void buyProduct() {
+        if (User.getUser().isLogin()) {
+            if (productDetail.getNum() > 0) {
+                int isIntegralMall = 0;
+                double price = productDetail.getPrice();
+                if (isSaleEnable) {
+                    switch (saleType) {
+
+                        case CaptureActivity.SALE_TYPE_TIME:
+                            price = saleDetailTime.getPromotionPrice();
+                            break;
+
+                        case CaptureActivity.SALE_TYPE_MIAOSHA:
+                            isIntegralMall = 2;
+                            price = saleDetailMiaosha.getSeckillPrice();
+                            break;
+
+                        case CaptureActivity.SALE_TYPE_TEJIA:
+                            price = saleDetailTejia.getSalePrice();
+                            break;
+
+                        default:
+                            price = productDetail.getPrice();
+                            break;
+                    }
+                }
+                if (price > 0) {
+                    if (freightMap.containsKey(productDetail.getSupplierId())) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("supplierId", productDetail.getSupplierId());
+                        bundle.putString("supplierName", productDetail.getSupplierName());
+                        bundle.putString("productId", productDetail.getId());
+                        bundle.putString("productNumber", productDetail.getNumber());
+                        bundle.putString("name", productDetail.getProductName());
+                        bundle.putString("productAttr", productDetail.getAttName());
+                        bundle.putString("image", productDetail.getImg());
+                        bundle.putInt("isIntegralMall", isIntegralMall);
+                        bundle.putInt("buyCount", buyCount);
+                        bundle.putDouble("price", price);
+                        jump(PlatformProductBuyFragment.class.getName(), "确认订单", bundle);
+                    } else {
+                        Notify.show("查询运费失败，暂不能购买");
+                    }
+                } else {
+                    Notify.show("查询价格失败，暂不能购买");
+                }
+            } else {
+                Notify.show("此商品无货，暂不能购买");
+            }
+        } else {
+            Notify.show("请先登录");
+            jump(UserLoginFragment.class.getName(), "会员登录");
         }
     }
 
@@ -774,86 +859,6 @@ public class ProductDetailFragment extends BaseNotifyFragment {
                     e.printStackTrace();
                 }
             }
-        }
-    }
-
-    private void countTotalMoney() {
-        double price = productDetail.getPrice();
-        if (isSaleEnable) {
-            switch (saleType) {
-
-                case CaptureActivity.SALE_TYPE_TIME:
-                    price = saleDetailTime.getPromotionPrice();
-                    break;
-
-                case CaptureActivity.SALE_TYPE_MIAOSHA:
-                    price = saleDetailMiaosha.getSeckillPrice();
-                    break;
-
-                case CaptureActivity.SALE_TYPE_TEJIA:
-                    price = saleDetailTejia.getSalePrice();
-                    break;
-
-                default:
-                    price = productDetail.getPrice();
-                    break;
-            }
-        }
-        totalMoneyTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format(buyCount * price + freightMap.get(productDetail.getSupplierId()).getFregith()));
-    }
-
-    private void buyProduct() {
-        if (User.getUser().isLogin()) {
-            if (productDetail.getNum() > 0) {
-                int isIntegralMall = 0;
-                double price = productDetail.getPrice();
-                if (isSaleEnable) {
-                    switch (saleType) {
-
-                        case CaptureActivity.SALE_TYPE_TIME:
-                            price = saleDetailTime.getPromotionPrice();
-                            break;
-
-                        case CaptureActivity.SALE_TYPE_MIAOSHA:
-                            isIntegralMall = 2;
-                            price = saleDetailMiaosha.getSeckillPrice();
-                            break;
-
-                        case CaptureActivity.SALE_TYPE_TEJIA:
-                            price = saleDetailTejia.getSalePrice();
-                            break;
-
-                        default:
-                            price = productDetail.getPrice();
-                            break;
-                    }
-                }
-                if (price > 0) {
-                    if (freightMap.containsKey(productDetail.getSupplierId())) {
-                        Bundle bundle = new Bundle();
-                        bundle.putString("supplierId", productDetail.getSupplierId());
-                        bundle.putString("supplierName", productDetail.getSupplierName());
-                        bundle.putString("productId", productDetail.getId());
-                        bundle.putString("productNumber", productDetail.getNumber());
-                        bundle.putString("name", productDetail.getProductName());
-                        bundle.putString("productAttr", productDetail.getAttName());
-                        bundle.putString("image", productDetail.getImg());
-                        bundle.putInt("isIntegralMall", isIntegralMall);
-                        bundle.putInt("buyCount", buyCount);
-                        bundle.putDouble("price", price);
-                        jump(PlatformProductBuyFragment.class.getName(), "确认订单", bundle);
-                    } else {
-                        Notify.show("查询运费失败，暂不能购买");
-                    }
-                } else {
-                    Notify.show("查询价格失败，暂不能购买");
-                }
-            } else {
-                Notify.show("此商品无货，暂不能购买");
-            }
-        } else {
-            Notify.show("请先登录");
-            jump(UserLoginFragment.class.getName(), "会员登录");
         }
     }
 
