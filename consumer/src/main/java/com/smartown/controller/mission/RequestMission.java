@@ -13,6 +13,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+import yitgogo.consumer.tools.API;
 import yitgogo.consumer.tools.PackageTool;
 
 public class RequestMission extends Mission {
@@ -33,8 +34,8 @@ public class RequestMission extends Mission {
             return;
         }
         try {
-            Log.i("Request", "url:" + request.getHost() + request.getUrl());
-            URL url = new URL(request.getHost() + request.getUrl());
+            Log.i("Request", "url:" + request.getUrl());
+            URL url = new URL(request.getUrl());
             httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setDoOutput(true);// 设置是否向httpUrlConnection输出，因为这个是post请求，参数要放在http正文内，因此需要设为true, 默认情况下是false;
             httpURLConnection.setDoInput(true);// 设置是否从httpUrlConnection读入，默认情况下是true;
@@ -45,7 +46,11 @@ public class RequestMission extends Mission {
             httpURLConnection.setReadTimeout(5000);//读取超时 单位毫秒
             httpURLConnection.setRequestProperty("version", PackageTool.getVersionName());
             if (request.isUseCookie()) {
-                httpURLConnection.setRequestProperty("Cookie", CookieController.getCookie(request.getHost()));
+                if (request.getUrl().startsWith(API.IP_PUBLIC)) {
+                    httpURLConnection.setRequestProperty("Cookie", CookieController.getCookie(API.IP_PUBLIC));
+                } else if (request.getUrl().startsWith(API.IP_MONEY)) {
+                    httpURLConnection.setRequestProperty("Cookie", CookieController.getCookie(API.IP_MONEY));
+                }
             }
             if (!request.getRequestParams().isEmpty()) {
                 StringBuffer stringBuffer = new StringBuffer();
@@ -81,6 +86,11 @@ public class RequestMission extends Mission {
                                 stringBuilder.append(";");
                             }
                             stringBuilder.append(cookies.get(i));
+                        }
+                        if (request.getUrl().startsWith(API.IP_PUBLIC)) {
+                            CookieController.saveCookie(API.IP_PUBLIC, stringBuilder.toString());
+                        } else if (request.getUrl().startsWith(API.IP_MONEY)) {
+                            CookieController.saveCookie(API.IP_MONEY, stringBuilder.toString());
                         }
                     }
                 }

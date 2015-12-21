@@ -8,6 +8,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.utils.L;
+import com.smartown.controller.mission.CookieController;
 import com.smartown.controller.shoppingcart.DataBaseHelper;
 import com.smartown.yitian.gogo.R;
 import com.tencent.bugly.crashreport.CrashReport;
@@ -33,6 +34,7 @@ public class YitgogoApplication extends Application {
     }
 
     private void init() {
+        CookieController.init(this);
         DataBaseHelper.init(this);
         PackageTool.init(this);
         LogUtil.setLogEnable(true);

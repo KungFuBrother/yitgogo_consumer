@@ -10,7 +10,6 @@ public class Request {
     boolean saveCookie = false;
     boolean useCookie = false;
 
-    String host = "";
     String url = "";
 
     List<RequestParam> requestParams = new ArrayList<>();
@@ -19,16 +18,7 @@ public class Request {
         return url;
     }
 
-    public String getHost() {
-        return host;
-    }
-
     public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public void setUrl(String host, String url) {
-        this.host = host;
         this.url = url;
     }
 
