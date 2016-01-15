@@ -2,6 +2,7 @@ package yitgogo.consumer.store;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -12,13 +13,14 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,11 +28,12 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.store.model.ModelStoreLocated;
 import yitgogo.consumer.store.model.Store;
 import yitgogo.consumer.tools.API;
 import yitgogo.consumer.tools.Content;
+import yitgogo.consumer.tools.LogUtil;
 import yitgogo.consumer.tools.Parameters;
 import yitgogo.consumer.view.InnerListView;
 
@@ -189,51 +192,64 @@ public class SelectStoreByLocateFragment extends BaseNotifyFragment {
     }
 
     private void getNearestStore(BDLocation location) {
-        showLoading();
-        RequestParams requestParams = new RequestParams();
-        requestParams.add("ak", Parameters.CONSTANT_LBS_AK);
-        requestParams.add("geotable_id", Parameters.CONSTANT_LBS_TABLE);
-        requestParams.add("sortby", "distance:1");
-        requestParams.add("radius", "30000");
-        requestParams.add("page_index", "0");
-        requestParams.add("page_size", "10");
-        requestParams.add("location", location.getLongitude() + "," + location.getLatitude());
-        AsyncHttpClient httpClient = new AsyncHttpClient();
-        httpClient.get(API.API_LBS_NEARBY, requestParams,
-                new JsonHttpResponseHandler() {
+        Request request = new Request();
+        request.setUrl(API.API_LBS_NEARBY);
+        request.setRequestType(Request.REQUEST_TYPE_GET);
+        request.addRequestParam("ak", Parameters.CONSTANT_LBS_AK);
+        request.addRequestParam("geotable_id", Parameters.CONSTANT_LBS_TABLE);
+        request.addRequestParam("sortby", "distance:1");
+        request.addRequestParam("radius", "30000");
+        request.addRequestParam("page_index", "0");
+        request.addRequestParam("page_size", "10");
+        request.addRequestParam("location", location.getLongitude() + "," + location.getLatitude());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
 
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                        hideLoading();
-                        if (statusCode == 200) {
-                            if (response != null) {
-                                try {
-                                    JSONArray array = response.optJSONArray("contents");
-                                    if (array != null) {
-                                        for (int i = 0; i < array.length(); i++) {
-                                            storeLocateds.add(new ModelStoreLocated(array.optJSONObject(i)));
-                                        }
-                                        if (storeLocateds.isEmpty()) {
-                                            contentView.setVisibility(View.GONE);
-                                            loadingEmpty("自动定位失败，请手动选择服务中心");
-                                        } else {
-                                            if (getActivity() != null) {
-                                                storeAdapter.notifyDataSetChanged();
-                                                Content.saveIntContent(Parameters.CACHE_KEY_STORE_TYPE, Parameters.CACHE_VALUE_STORE_TYPE_LOCATED);
-                                                Content.saveStringContent(Parameters.CACHE_KEY_STORE_JSONSTRING, storeLocateds.get(0).getJsonObject().toString());
-                                                Store.init(getActivity());
-                                                storeNameTextView.setText(Store.getStore().getStoreName());
-                                                storeAddressTextView.setText(Store.getStore().getStoreAddess());
-                                            }
-                                        }
-                                    }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+                contentView.setVisibility(View.GONE);
+                loadingEmpty("自动定位失败，请手动选择服务中心");
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    LogUtil.logInfo("API_LBS_NEARBY", requestMessage.getResult());
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        JSONArray array = object.optJSONArray("contents");
+                        if (array != null) {
+                            for (int i = 0; i < array.length(); i++) {
+                                storeLocateds.add(new ModelStoreLocated(array.optJSONObject(i)));
+                            }
+                            if (!storeLocateds.isEmpty()) {
+                                if (getActivity() != null) {
+                                    storeAdapter.notifyDataSetChanged();
+                                    Content.saveIntContent(Parameters.CACHE_KEY_STORE_TYPE, Parameters.CACHE_VALUE_STORE_TYPE_LOCATED);
+                                    Content.saveStringContent(Parameters.CACHE_KEY_STORE_JSONSTRING, storeLocateds.get(0).getJsonObject().toString());
+                                    Store.init(getActivity());
+                                    storeNameTextView.setText(Store.getStore().getStoreName());
+                                    storeAddressTextView.setText(Store.getStore().getStoreAddess());
                                 }
+                                return;
                             }
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                });
+                }
+                contentView.setVisibility(View.GONE);
+                loadingEmpty("自动定位失败，请手动选择服务中心");
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
 
 }

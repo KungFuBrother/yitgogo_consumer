@@ -1,11 +1,11 @@
 package yitgogo.consumer.order.ui;
 
 import android.app.Dialog;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -19,10 +19,13 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,7 +33,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import yitgogo.consumer.BaseNormalFragment;
+import yitgogo.consumer.base.BaseNormalFragment;
 import yitgogo.consumer.local.model.ModelAddress;
 import yitgogo.consumer.tools.API;
 import yitgogo.consumer.user.model.User;
@@ -74,7 +77,7 @@ public class OrderConfirmPartAddressFragment extends BaseNormalFragment {
     @Override
     public void onResume() {
         super.onResume();
-        new GetAddress().execute();
+        getAddresses();
     }
 
     @Override
@@ -155,44 +158,56 @@ public class OrderConfirmPartAddressFragment extends BaseNormalFragment {
         return address;
     }
 
-    /**
-     * 获取所有地址
-     */
-    class GetAddress extends AsyncTask<Void, Void, String> {
 
-        @Override
-        protected void onPreExecute() {
-            addresses.clear();
-        }
+    private void getAddresses() {
+        addresses.clear();
+        Request request = new Request();
+        request.setUrl(API.API_USER_ADDRESS_LIST);
+        request.addRequestParam("memberAccount", User.getUser().getUseraccount());
+        request.setUseCookie(true);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
 
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
-            valuePairs.add(new BasicNameValuePair("memberAccount", User.getUser().getUseraccount()));
-            return netUtil.postWithCookie(API.API_USER_ADDRESS_LIST, valuePairs);
-        }
+            }
 
-        @Override
-        protected void onPostExecute(String result) {
-            if (result.length() > 0) {
-                JSONObject object;
-                try {
-                    object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONArray array = object.optJSONArray("dataList");
-                        if (array != null) {
-                            for (int i = 0; i < array.length(); i++) {
-                                addresses.add(new ModelAddress(array.getJSONObject(i)));
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONArray array = object.optJSONArray("dataList");
+                            if (array != null) {
+                                for (int i = 0; i < array.length(); i++) {
+                                    addresses.add(new ModelAddress(array.getJSONObject(i)));
+                                }
+                                initDefaultAddress();
+                                showAddressInfo();
                             }
-                            initDefaultAddress();
-                            showAddressInfo();
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
             }
-        }
+
+            @Override
+            protected void onFinish() {
+
+            }
+        });
+    }
+
+    public interface OnSetAddressListener {
+
+        public void onSetAddress();
+
     }
 
     class AddressAdapter extends BaseAdapter {
@@ -308,12 +323,6 @@ public class OrderConfirmPartAddressFragment extends BaseNormalFragment {
                 }
             });
         }
-    }
-
-    public interface OnSetAddressListener {
-
-        public void onSetAddress();
-
     }
 
 }

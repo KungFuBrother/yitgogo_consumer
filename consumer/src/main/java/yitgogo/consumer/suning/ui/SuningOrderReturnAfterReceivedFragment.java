@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.smartown.yitian.gogo.R;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.tools.Parameters;
 
 /**

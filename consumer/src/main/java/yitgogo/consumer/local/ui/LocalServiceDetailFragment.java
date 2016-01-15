@@ -2,11 +2,11 @@ package yitgogo.consumer.local.ui;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -20,24 +20,25 @@ import android.widget.Toast;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.local.model.ModelLocalService;
 import yitgogo.consumer.product.ui.WebFragment;
 import yitgogo.consumer.tools.API;
 import yitgogo.consumer.tools.Parameters;
 import yitgogo.consumer.user.model.User;
 import yitgogo.consumer.user.ui.UserLoginFragment;
+import yitgogo.consumer.view.Notify;
 
 /**
  * @author Tiger
@@ -81,7 +82,7 @@ public class LocalServiceDetailFragment extends BaseNotifyFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        new GetServiceDetail().execute();
+        getServiceDetail();
     }
 
     private void init() {
@@ -294,42 +295,46 @@ public class LocalServiceDetailFragment extends BaseNotifyFragment {
         }
     }
 
-    class GetServiceDetail extends AsyncTask<Void, Void, String> {
 
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
+    private void getServiceDetail() {
+        Request request = new Request();
+        request.setUrl(API.API_LOCAL_BUSINESS_SERVICE_DETAIL);
+        request.addRequestParam("productId", productId);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
 
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
-            valuePairs.add(new BasicNameValuePair("productId", productId));
-            return netUtil.postWithoutCookie(
-                    API.API_LOCAL_BUSINESS_SERVICE_DETAIL, valuePairs, false,
-                    false);
-        }
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+                Notify.show(missionMessage.getMessage());
 
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (result.length() > 0) {
-                JSONObject object;
-                try {
-                    object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONObject object2 = object.optJSONObject("object");
-                        if (object2 != null) {
-                            serviceDetail = new ModelLocalService(object2);
-                            showServiceInfo();
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    JSONObject object;
+                    try {
+                        object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONObject object2 = object.optJSONObject("object");
+                            if (object2 != null) {
+                                serviceDetail = new ModelLocalService(object2);
+                                showServiceInfo();
+                            }
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
             }
-        }
 
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
-
 }

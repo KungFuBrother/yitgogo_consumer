@@ -1,11 +1,6 @@
 package yitgogo.consumer.main.ui;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.AsyncTask;
-import android.os.AsyncTask.Status;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -28,11 +23,14 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
 import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,7 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.activity.egg.ui.EggMainFragment;
 import yitgogo.consumer.home.model.ModelListPrice;
 import yitgogo.consumer.home.model.ModelProduct;
@@ -59,17 +57,6 @@ import yitgogo.consumer.home.part.PartScoreFragment;
 import yitgogo.consumer.home.part.PartStoreFragment;
 import yitgogo.consumer.home.part.PartTejiaFragment;
 import yitgogo.consumer.home.part.PartThemeFragment;
-import yitgogo.consumer.home.task.GetAds;
-import yitgogo.consumer.home.task.GetBrand;
-import yitgogo.consumer.home.task.GetLocalGoods;
-import yitgogo.consumer.home.task.GetLocalService;
-import yitgogo.consumer.home.task.GetLoveFresh;
-import yitgogo.consumer.home.task.GetMiaoshaProduct;
-import yitgogo.consumer.home.task.GetSaleTejia;
-import yitgogo.consumer.home.task.GetSaleTheme;
-import yitgogo.consumer.home.task.GetSaleTimes;
-import yitgogo.consumer.home.task.GetScoreProduct;
-import yitgogo.consumer.home.task.GetStore;
 import yitgogo.consumer.local.ui.NongfuFragment;
 import yitgogo.consumer.product.ui.ClassesFragment;
 import yitgogo.consumer.product.ui.ProductSearchFragment;
@@ -98,19 +85,7 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
     ProductAdapter productAdapter;
 
     String currentStoreId = "";
-
-    GetSaleTheme getSaleTheme;
-    GetMiaoshaProduct getMiaoshaProduct;
-    GetLoveFresh getLoveFresh;
-    GetScoreProduct getScoreProduct;
-    GetSaleTimes getSaleTimes;
-    GetSaleTejia getSaleTejia;
-    GetStore getStore;
-    GetAds getAds;
-    GetLocalGoods getLocalGoods;
-    GetLocalService getLocalService;
-    GetBrand getBrand;
-
+    boolean isAlive = false;
     Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
@@ -127,14 +102,12 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
         }
 
     };
-    boolean isAlive = false;
+//    BroadcastReceiver broadcastReceiver;
 
     private void runAnimateThread() {
         isAlive = true;
         handler.sendEmptyMessageDelayed(0x12, 10000);
     }
-
-    BroadcastReceiver broadcastReceiver;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -147,8 +120,7 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        showDisconnectMargin();
-        initReceiver();
+//        initReceiver();
     }
 
     @Override
@@ -162,7 +134,6 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
         super.onResume();
         MobclickAgent.onPageStart(HomeFragment.class.getName());
         if (!currentStoreId.equals(Store.getStore().getStoreId())) {
-            useCache = true;
             currentStoreId = Store.getStore().getStoreId();
             refresh();
         }
@@ -171,9 +142,9 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
     @Override
     public void onDestroy() {
         isAlive = false;
-        if (broadcastReceiver != null) {
-            getActivity().unregisterReceiver(broadcastReceiver);
-        }
+//        if (broadcastReceiver != null) {
+//            getActivity().unregisterReceiver(broadcastReceiver);
+//        }
         super.onDestroy();
     }
 
@@ -185,25 +156,25 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
         getStoreAreas();
     }
 
-    private void initReceiver() {
-        if (System.currentTimeMillis() > (long) 1449935999 * 1000) {
-            bannerEggImageView.setVisibility(View.GONE);
-            return;
-        }
-        broadcastReceiver = new BroadcastReceiver() {
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equals(Intent.ACTION_TIME_TICK)) {
-                    if (System.currentTimeMillis() > (long) 1449935999 * 1000) {
-                        bannerEggImageView.setVisibility(View.GONE);
-                    }
-                }
-            }
-        };
-        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_TIME_TICK);
-        getActivity().registerReceiver(broadcastReceiver, intentFilter);
-    }
+//    private void initReceiver() {
+//        if (System.currentTimeMillis() > (long) 1449935999 * 1000) {
+//            bannerEggImageView.setVisibility(View.GONE);
+//            return;
+//        }
+//        broadcastReceiver = new BroadcastReceiver() {
+//
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//                if (intent.getAction().equals(Intent.ACTION_TIME_TICK)) {
+//                    if (System.currentTimeMillis() > (long) 1449935999 * 1000) {
+//                        bannerEggImageView.setVisibility(View.GONE);
+//                    }
+//                }
+//            }
+//        };
+//        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_TIME_TICK);
+//        getActivity().registerReceiver(broadcastReceiver, intentFilter);
+//    }
 
     protected void findViews() {
         refreshScrollView = (PullToRefreshScrollView) contentView
@@ -274,16 +245,13 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
                 .setOnRefreshListener(new OnRefreshListener2<ScrollView>() {
 
                     @Override
-                    public void onPullDownToRefresh(
-                            PullToRefreshBase<ScrollView> refreshView) {
-                        useCache = false;
+                    public void onPullDownToRefresh(PullToRefreshBase<ScrollView> refreshView) {
                         refresh();
                     }
 
                     @Override
-                    public void onPullUpToRefresh(
-                            PullToRefreshBase<ScrollView> refreshView) {
-                        new GetProduct().execute();
+                    public void onPullUpToRefresh(PullToRefreshBase<ScrollView> refreshView) {
+                        getProduct();
                     }
                 });
         productGridView.setOnItemClickListener(new OnItemClickListener() {
@@ -291,9 +259,7 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                                     long arg3) {
-                showProductDetail(products.get(arg2).getId(), products
-                                .get(arg2).getProductName(),
-                        CaptureActivity.SALE_TYPE_NONE);
+                showProductDetail(products.get(arg2).getId(), products.get(arg2).getProductName(), CaptureActivity.SALE_TYPE_NONE);
             }
         });
         classButton.setOnClickListener(this);
@@ -320,6 +286,17 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
         products.clear();
         productAdapter.notifyDataSetChanged();
         getSaleTheme();
+        getMiaoshaProduct();
+        getLoveFresh();
+        getScoreProduct();
+        getSaleTimes();
+        getStore();
+        getAds();
+        getBrand();
+        getLocalGoods();
+        getLocalService();
+        getSaleTejia();
+        getProduct();
     }
 
     @Override
@@ -348,182 +325,490 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
     }
 
     private void getSaleTheme() {
-        if (getSaleTheme != null) {
-            if (getSaleTheme.getStatus() == Status.RUNNING) {
-                return;
-            }
-        }
-        getSaleTheme = new GetSaleTheme() {
+        Request request = new Request();
+        request.setUrl(API.API_SALE_ACTIVITY);
+        request.addRequestParam("strno", Store.getStore().getStoreNumber());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
             @Override
-            protected void onPostExecute(String result) {
-                PartThemeFragment.getThemeFragment().refresh(result);
-                getMiaoshaProduct();
+            protected void onStart() {
+
             }
-        };
-        getSaleTheme.execute(useCache);
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                PartThemeFragment.getThemeFragment().refresh(requestMessage.getResult());
+            }
+
+            @Override
+            protected void onFinish() {
+
+            }
+        });
     }
 
     private void getMiaoshaProduct() {
-        if (getMiaoshaProduct != null) {
-            if (getMiaoshaProduct.getStatus() == Status.RUNNING) {
-                return;
-            }
-        }
-        getMiaoshaProduct = new GetMiaoshaProduct() {
+        Request request = new Request();
+        request.setUrl(API.API_SALE_MIAOSHA);
+        request.addRequestParam("strno", Store.getStore().getStoreNumber());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
             @Override
-            protected void onPostExecute(String result) {
-                PartMiaoshaFragment.getMiaoshaFragment().refresh(result);
-                getLoveFresh();
+            protected void onStart() {
+
             }
-        };
-        getMiaoshaProduct.execute(useCache);
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                PartMiaoshaFragment.getMiaoshaFragment().refresh(requestMessage.getResult());
+            }
+
+            @Override
+            protected void onFinish() {
+
+            }
+        });
     }
 
     private void getLoveFresh() {
-        if (getLoveFresh != null) {
-            if (getLoveFresh.getStatus() == Status.RUNNING) {
-                return;
-            }
-        }
-        getLoveFresh = new GetLoveFresh() {
+        Request request = new Request();
+        request.setUrl(API.API_LOCAL_BUSINESS_SERVICE_FRESH);
+        request.addRequestParam("pageNo", "1");
+        request.addRequestParam("pageSize", "5");
+        request.addRequestParam("organizationId", Store.getStore().getStoreId());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
             @Override
-            protected void onPostExecute(String result) {
-                PartFreshFragment.getFreshFragment().refresh(result);
-                getScoreProduct();
+            protected void onStart() {
+
             }
-        };
-        getLoveFresh.execute(useCache);
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                PartFreshFragment.getFreshFragment().refresh(requestMessage.getResult());
+            }
+
+            @Override
+            protected void onFinish() {
+
+            }
+        });
     }
 
     private void getScoreProduct() {
-        if (getScoreProduct != null) {
-            if (getScoreProduct.getStatus() == Status.RUNNING) {
-                return;
-            }
-        }
-        getScoreProduct = new GetScoreProduct() {
+        Request request = new Request();
+        request.setUrl(API.API_SCORE_PRODUCT_LIST);
+        request.addRequestParam("jgbh", Store.getStore().getStoreNumber());
+        request.addRequestParam("pagenum", "1");
+        request.addRequestParam("pagesize", "8");
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
             @Override
-            protected void onPostExecute(String result) {
-                PartScoreFragment.getScoreFragment().refresh(result);
-                getSaleTimes();
+            protected void onStart() {
+
             }
-        };
-        getScoreProduct.execute(useCache);
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                PartScoreFragment.getScoreFragment().refresh(requestMessage.getResult());
+            }
+
+            @Override
+            protected void onFinish() {
+
+            }
+        });
     }
 
     private void getSaleTimes() {
-        if (getSaleTimes != null) {
-            if (getSaleTimes.getStatus() == Status.RUNNING) {
-                return;
-            }
-        }
-        getSaleTimes = new GetSaleTimes() {
+        Request request = new Request();
+        request.setUrl(API.API_SALE_CLASS);
+        request.addRequestParam("strno", Store.getStore().getStoreNumber());
+        request.addRequestParam("flag", "1");
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
             @Override
-            protected void onPostExecute(String result) {
-                PartSaleTimeFragment.getSaleTimeFragment().refresh(result);
-                getSaleTejia();
+            protected void onStart() {
+
             }
-        };
-        getSaleTimes.execute(useCache);
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                PartSaleTimeFragment.getSaleTimeFragment().refresh(requestMessage.getResult());
+            }
+
+            @Override
+            protected void onFinish() {
+
+            }
+        });
     }
 
     private void getSaleTejia() {
-        if (getSaleTejia != null) {
-            if (getSaleTejia.getStatus() == Status.RUNNING) {
-                return;
-            }
-        }
-        getSaleTejia = new GetSaleTejia() {
+        Request request = new Request();
+        request.setUrl(API.API_SALE_TEJIA);
+        request.addRequestParam("strno", Store.getStore().getStoreNumber());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
             @Override
-            protected void onPostExecute(String result) {
-                PartTejiaFragment.getTejiaFragment().refresh(result);
-                getStore();
+            protected void onStart() {
+
             }
-        };
-        getSaleTejia.execute(useCache);
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                PartTejiaFragment.getTejiaFragment().refresh(requestMessage.getResult());
+            }
+
+            @Override
+            protected void onFinish() {
+
+            }
+        });
     }
 
     private void getStore() {
-        if (getStore != null) {
-            if (getStore.getStatus() == Status.RUNNING) {
-                return;
-            }
-        }
-        getStore = new GetStore() {
+        Request request = new Request();
+        request.setUrl(API.API_LOCAL_STORE_LIST);
+        request.addRequestParam("storeId", Store.getStore().getStoreId());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
             @Override
-            protected void onPostExecute(String result) {
-                PartStoreFragment.getStoreFragment().refresh(result);
-                getAds();
+            protected void onStart() {
+
             }
-        };
-        getStore.execute(useCache);
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                PartStoreFragment.getStoreFragment().refresh(requestMessage.getResult());
+            }
+
+            @Override
+            protected void onFinish() {
+
+            }
+        });
     }
 
     private void getAds() {
-        if (getAds != null) {
-            if (getAds.getStatus() == Status.RUNNING) {
-                return;
-            }
-        }
-        getAds = new GetAds() {
+        Request request = new Request();
+        request.setUrl(API.API_ADS);
+        request.addRequestParam("number", Store.getStore().getStoreNumber());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
             @Override
-            protected void onPostExecute(String result) {
-                PartAdsFragment.getAdsFragment().refresh(result);
-                runAnimateThread();
-                getLocalGoods();
+            protected void onStart() {
+
             }
-        };
-        getAds.execute(useCache);
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                PartAdsFragment.getAdsFragment().refresh(requestMessage.getResult());
+            }
+
+            @Override
+            protected void onFinish() {
+
+            }
+        });
     }
 
     private void getLocalGoods() {
-        if (getLocalGoods != null) {
-            if (getLocalGoods.getStatus() == Status.RUNNING) {
-                return;
-            }
-        }
-        getLocalGoods = new GetLocalGoods() {
+        Request request = new Request();
+        request.setUrl(API.API_LOCAL_BUSINESS_GOODS);
+        request.addRequestParam("pageNo", "1");
+        request.addRequestParam("pageSize", "3");
+        request.addRequestParam("serviceProviderID", Store.getStore().getStoreId());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
             @Override
-            protected void onPostExecute(String result) {
-                PartLocalBusinessFragment.getLocalBusinessFragment()
-                        .refreshGoods(result);
-                getLocalService();
+            protected void onStart() {
+
             }
-        };
-        getLocalGoods.execute(useCache);
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                PartLocalBusinessFragment.getLocalBusinessFragment().refreshGoods(requestMessage.getResult());
+            }
+
+            @Override
+            protected void onFinish() {
+
+            }
+        });
     }
 
     private void getLocalService() {
-        if (getLocalService != null) {
-            if (getLocalService.getStatus() == Status.RUNNING) {
-                return;
-            }
-        }
-        getLocalService = new GetLocalService() {
+        Request request = new Request();
+        request.setUrl(API.API_LOCAL_BUSINESS_SERVICE);
+        request.addRequestParam("pageNo", "1");
+        request.addRequestParam("pageSize", "3");
+        request.addRequestParam("organizationId", Store.getStore().getStoreId());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
             @Override
-            protected void onPostExecute(String result) {
-                PartLocalBusinessFragment.getLocalBusinessFragment()
-                        .refreshService(result);
-                getBrand();
+            protected void onStart() {
+
             }
-        };
-        getLocalService.execute(useCache);
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                PartLocalBusinessFragment.getLocalBusinessFragment().refreshService(requestMessage.getResult());
+            }
+
+            @Override
+            protected void onFinish() {
+
+            }
+        });
     }
 
     private void getBrand() {
-        if (getBrand != null) {
-            if (getBrand.getStatus() == Status.RUNNING) {
-                return;
-            }
-        }
-        getBrand = new GetBrand() {
+        Request request = new Request();
+        request.setUrl(API.API_HOME_BRAND);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
             @Override
-            protected void onPostExecute(String result) {
-                PartBrandFragment.getBrandFragment().refresh(result);
-                new GetProduct().execute();
+            protected void onStart() {
+
             }
-        };
-        getBrand.execute(useCache);
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                PartBrandFragment.getBrandFragment().refresh(requestMessage.getResult());
+            }
+
+            @Override
+            protected void onFinish() {
+
+            }
+        });
+    }
+
+    private void getProduct() {
+        pagenum++;
+        Request request = new Request();
+        request.setUrl(API.API_PRODUCT_LIST);
+        request.addRequestParam("jmdId", Store.getStore().getStoreId());
+        request.addRequestParam("pageNo", String.valueOf(pagenum));
+        request.addRequestParam("pageSize", String.valueOf(pagesize));
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+                refreshScrollView.onRefreshComplete();
+                pagenum--;
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                refreshScrollView.onRefreshComplete();
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    JSONObject info;
+                    try {
+                        info = new JSONObject(requestMessage.getResult());
+                        if (info.getString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONArray productArray = info.optJSONArray("dataList");
+                            if (productArray != null) {
+                                if (productArray.length() > 0) {
+                                    if (productArray.length() < pagesize) {
+                                        refreshScrollView.setMode(Mode.PULL_FROM_START);
+                                    }
+                                    StringBuilder stringBuilder = new StringBuilder();
+                                    for (int i = 0; i < productArray.length(); i++) {
+                                        ModelProduct product = new ModelProduct(productArray.getJSONObject(i));
+                                        products.add(product);
+                                        if (i > 0) {
+                                            stringBuilder.append(",");
+                                        }
+                                        stringBuilder.append(product.getId());
+                                    }
+                                    productAdapter.notifyDataSetChanged();
+                                    getProductPrice(stringBuilder.toString());
+                                    return;
+                                }
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                refreshScrollView.setMode(Mode.PULL_FROM_START);
+            }
+
+            @Override
+            protected void onFinish() {
+
+            }
+        });
+    }
+
+    private void getProductPrice(String productIds) {
+        Request request = new Request();
+        request.setUrl(API.API_PRICE_LIST);
+        request.addRequestParam("jmdId", Store.getStore().getStoreId());
+        request.addRequestParam("productId", productIds);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    JSONObject object;
+                    try {
+                        object = new JSONObject(requestMessage.getResult());
+                        if (object.getString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONArray priceArray = object.getJSONArray("dataList");
+                            if (priceArray.length() > 0) {
+                                for (int i = 0; i < priceArray.length(); i++) {
+                                    ModelListPrice priceList = new ModelListPrice(priceArray.getJSONObject(i));
+                                    priceMap.put(priceList.getProductId(), priceList);
+                                }
+                                productAdapter.notifyDataSetChanged();
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+            }
+        });
+    }
+
+    private void getStoreAreas() {
+        if (TextUtils.isEmpty(Content.getStringContent("product_detail_area_name", ""))) {
+            Request request = new Request();
+            request.setUrl(API.API_STORE_SELECTED_AREA);
+            request.addRequestParam("spid", Store.getStore().getStoreId());
+            MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+                @Override
+                protected void onStart() {
+
+                }
+
+                @Override
+                protected void onFail(MissionMessage missionMessage) {
+
+                }
+
+                @Override
+                protected void onSuccess(RequestMessage requestMessage) {
+                    if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                        try {
+                            JSONObject object = new JSONObject(requestMessage.getResult());
+                            if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                                JSONArray array = object.optJSONArray("dataList");
+                                if (array != null) {
+                                    HashMap<Integer, ModelStoreArea> areaHashMap = new HashMap<>();
+                                    for (int i = 0; i < array.length(); i++) {
+                                        ModelStoreArea storeArea = new ModelStoreArea(array.optJSONObject(i));
+                                        areaHashMap.put(storeArea.getType(), storeArea);
+                                    }
+                                    Content.saveStringContent("product_detail_area_name", getAreaName(areaHashMap));
+                                    Content.saveStringContent("product_detail_area_id", getAreaId(areaHashMap));
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                @Override
+                protected void onFinish() {
+
+                }
+            });
+        }
+    }
+
+    private String getAreaName(HashMap<Integer, ModelStoreArea> areaHashMap) {
+        StringBuilder builder = new StringBuilder();
+        List<Map.Entry<Integer, ModelStoreArea>> entries = new ArrayList<>(areaHashMap.entrySet());
+        Collections.sort(entries, new Comparator<Map.Entry<Integer, ModelStoreArea>>() {
+            @Override
+            public int compare(Map.Entry<Integer, ModelStoreArea> area1, Map.Entry<Integer, ModelStoreArea> area2) {
+                return area1.getKey().compareTo(area2.getKey());
+            }
+        });
+        for (int i = 0; i < entries.size(); i++) {
+            if (i > 0) {
+                builder.append(">");
+            }
+            builder.append(entries.get(i).getValue().getName());
+        }
+        return builder.toString();
+    }
+
+    private String getAreaId(HashMap<Integer, ModelStoreArea> areaHashMap) {
+        List<Map.Entry<Integer, ModelStoreArea>> entries = new ArrayList<>(areaHashMap.entrySet());
+        Collections.sort(entries, new Comparator<Map.Entry<Integer, ModelStoreArea>>() {
+            @Override
+            public int compare(Map.Entry<Integer, ModelStoreArea> area1, Map.Entry<Integer, ModelStoreArea> area2) {
+                return area1.getKey().compareTo(area2.getKey());
+            }
+        });
+        return entries.get(entries.size() - 1).getValue().getId();
     }
 
     class ProductAdapter extends BaseAdapter {
@@ -579,171 +864,6 @@ public class HomeFragment extends BaseNotifyFragment implements OnClickListener 
             ImageView imageView;
             TextView priceTextView, nameTextView;
         }
-    }
-
-    class GetProduct extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            pagenum++;
-        }
-
-        @Override
-        protected String doInBackground(Void... arg0) {
-            List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("pageNo", pagenum + ""));
-            params.add(new BasicNameValuePair("jmdId", Store.getStore()
-                    .getStoreId()));
-            params.add(new BasicNameValuePair("pageSize", pagesize + ""));
-            return netUtil.postWithoutCookie(API.API_PRODUCT_LIST, params,
-                    useCache, true);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            refreshScrollView.onRefreshComplete();
-            if (result.length() > 0) {
-                JSONObject info;
-                try {
-                    info = new JSONObject(result);
-                    if (info.getString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONArray productArray = info.optJSONArray("dataList");
-                        if (productArray != null) {
-                            if (productArray.length() > 0) {
-                                if (productArray.length() < pagesize) {
-                                    refreshScrollView
-                                            .setMode(Mode.PULL_FROM_START);
-                                }
-                                StringBuilder stringBuilder = new StringBuilder();
-                                for (int i = 0; i < productArray.length(); i++) {
-                                    ModelProduct product = new ModelProduct(
-                                            productArray.getJSONObject(i));
-                                    products.add(product);
-                                    if (i > 0) {
-                                        stringBuilder.append(",");
-                                    }
-                                    stringBuilder.append(product.getId());
-                                }
-                                productAdapter.notifyDataSetChanged();
-                                new GetPriceList().execute(stringBuilder
-                                        .toString());
-                                return;
-                            }
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            refreshScrollView.setMode(Mode.PULL_FROM_START);
-        }
-    }
-
-    class GetPriceList extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... params) {
-            List<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
-            valuePairs.add(new BasicNameValuePair("jmdId", Store.getStore()
-                    .getStoreId()));
-            valuePairs.add(new BasicNameValuePair("productId", params[0]));
-            return netUtil.postWithoutCookie(API.API_PRICE_LIST, valuePairs,
-                    false, false);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            if (result.length() > 0) {
-                JSONObject object;
-                try {
-                    object = new JSONObject(result);
-                    if (object.getString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONArray priceArray = object.getJSONArray("dataList");
-                        if (priceArray.length() > 0) {
-                            for (int i = 0; i < priceArray.length(); i++) {
-                                ModelListPrice priceList = new ModelListPrice(
-                                        priceArray.getJSONObject(i));
-                                priceMap.put(priceList.getProductId(),
-                                        priceList);
-                            }
-                            productAdapter.notifyDataSetChanged();
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    private void getStoreAreas() {
-        if (TextUtils.isEmpty(Content.getStringContent("product_detail_area_name", ""))) {
-            new GetStoreArea().execute();
-        }
-    }
-
-    class GetStoreArea extends AsyncTask<Void, Void, String> {
-
-
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("spid", Store.getStore().getStoreId()));
-            return netUtil.postWithoutCookie(API.API_STORE_SELECTED_AREA, nameValuePairs, false, false);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            if (!TextUtils.isEmpty(result)) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONArray array = object.optJSONArray("dataList");
-                        if (array != null) {
-                            HashMap<Integer, ModelStoreArea> areaHashMap = new HashMap<>();
-                            for (int i = 0; i < array.length(); i++) {
-                                ModelStoreArea storeArea = new ModelStoreArea(array.optJSONObject(i));
-                                areaHashMap.put(storeArea.getType(), storeArea);
-                            }
-                            Content.saveStringContent("product_detail_area_name", getAreaName(areaHashMap));
-                            Content.saveStringContent("product_detail_area_id", getAreaId(areaHashMap));
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-
-    private String getAreaName(HashMap<Integer, ModelStoreArea> areaHashMap) {
-        StringBuilder builder = new StringBuilder();
-        List<Map.Entry<Integer, ModelStoreArea>> entries = new ArrayList<>(areaHashMap.entrySet());
-        Collections.sort(entries, new Comparator<Map.Entry<Integer, ModelStoreArea>>() {
-            @Override
-            public int compare(Map.Entry<Integer, ModelStoreArea> area1, Map.Entry<Integer, ModelStoreArea> area2) {
-                return area1.getKey().compareTo(area2.getKey());
-            }
-        });
-        for (int i = 0; i < entries.size(); i++) {
-            if (i > 0) {
-                builder.append(">");
-            }
-            builder.append(entries.get(i).getValue().getName());
-        }
-        return builder.toString();
-    }
-
-    private String getAreaId(HashMap<Integer, ModelStoreArea> areaHashMap) {
-        List<Map.Entry<Integer, ModelStoreArea>> entries = new ArrayList<>(areaHashMap.entrySet());
-        Collections.sort(entries, new Comparator<Map.Entry<Integer, ModelStoreArea>>() {
-            @Override
-            public int compare(Map.Entry<Integer, ModelStoreArea> area1, Map.Entry<Integer, ModelStoreArea> area2) {
-                return area1.getKey().compareTo(area2.getKey());
-            }
-        });
-        return entries.get(entries.size() - 1).getValue().getId();
     }
 
 }

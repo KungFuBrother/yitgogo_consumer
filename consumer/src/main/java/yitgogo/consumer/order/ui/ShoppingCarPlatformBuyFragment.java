@@ -1,6 +1,5 @@
 package yitgogo.consumer.order.ui;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -13,14 +12,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.controller.shoppingcart.DataBaseHelper;
 import com.smartown.controller.shoppingcart.ModelShoppingCart;
 import com.smartown.controller.shoppingcart.ShoppingCartController;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,7 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.home.model.ModelListPrice;
 import yitgogo.consumer.money.ui.PayFragment;
 import yitgogo.consumer.order.model.ModelOrderResult;
@@ -59,14 +61,11 @@ public class ShoppingCarPlatformBuyFragment extends BaseNotifyFragment {
     HashMap<String, List<ModelShoppingCart>> shoppingCartByProvider;
 
     StringBuilder productNumbers = new StringBuilder();
-
-    private CarAdapter carAdapter;
     double goodsMoney = 0;
-
     List<ModelOrderResult> orderResults;
-
     OrderConfirmPartAddressFragment addressFragment;
     OrderConfirmPartPaymentFragment paymentFragment;
+    private CarAdapter carAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -111,7 +110,7 @@ public class ShoppingCarPlatformBuyFragment extends BaseNotifyFragment {
         addressFragment.setOnSetAddressListener(new OrderConfirmPartAddressFragment.OnSetAddressListener() {
             @Override
             public void onSetAddress() {
-                new GetFreight().execute();
+                getFreight();
             }
         });
     }
@@ -179,7 +178,7 @@ public class ShoppingCarPlatformBuyFragment extends BaseNotifyFragment {
                     e.printStackTrace();
                 }
             }
-            new GetPriceList().execute(productIds.toString());
+            getPriceList(productIds.toString());
         } else {
             Notify.show("请勾选要购买的商品");
         }
@@ -224,7 +223,7 @@ public class ShoppingCarPlatformBuyFragment extends BaseNotifyFragment {
         if (addressFragment.getAddress() == null) {
             Notify.show("收货人信息有误");
         } else {
-            new AddOrder().execute();
+            buy();
         }
     }
 
@@ -235,6 +234,189 @@ public class ShoppingCarPlatformBuyFragment extends BaseNotifyFragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    private void getPriceList(String productId) {
+        Request request = new Request();
+        request.setUrl(API.API_PRICE_LIST);
+        request.addRequestParam("jmdId", Store.getStore().getStoreId());
+        request.addRequestParam("productId", productId);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.getString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONArray priceArray = object.optJSONArray("dataList");
+                            if (priceArray != null) {
+                                for (int i = 0; i < priceArray.length(); i++) {
+                                    ModelListPrice priceList = new ModelListPrice(priceArray.getJSONObject(i));
+                                    priceMap.put(priceList.getProductId(), priceList);
+                                }
+                                carAdapter.notifyDataSetChanged();
+                                countTotalMoney();
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
+    }
+
+    private void buy() {
+        Request request = new Request();
+        request.setUrl(API.API_ORDER_ADD_CENTER);
+        request.addRequestParam("userNumber", User.getUser().getUseraccount());
+        request.addRequestParam("customerName", addressFragment.getAddress().getPersonName());
+        request.addRequestParam("phone", addressFragment.getAddress().getPhone());
+        request.addRequestParam("shippingaddress", addressFragment.getAddress().getAreaAddress() + addressFragment.getAddress().getDetailedAddress());
+        request.addRequestParam("totalMoney", decimalFormat.format(goodsMoney));
+        request.addRequestParam("sex", User.getUser().getSex());
+        request.addRequestParam("age", User.getUser().getAge());
+        request.addRequestParam("address", Store.getStore().getStoreArea());
+        request.addRequestParam("jmdId", Store.getStore().getStoreId());
+        request.addRequestParam("orderType", "0");
+        try {
+            JSONArray dataArray = new JSONArray();
+            for (int i = 0; i < shoppingCarts.size(); i++) {
+                ModelProduct product = new ModelProduct(new JSONObject(shoppingCarts.get(i).getProductObject()));
+                if (priceMap.containsKey(product.getId())) {
+                    JSONObject object = new JSONObject();
+                    object.put("productIds", product.getId());
+                    object.put("shopNum", shoppingCarts.get(i).getBuyCount());
+                    object.put("price", product.getPrice());
+                    object.put("isIntegralMall", 0);
+                    dataArray.put(object);
+                }
+            }
+            request.addRequestParam("data", dataArray.toString());
+
+            JSONArray freightArray = new JSONArray();
+            for (int i = 0; i < providers.size(); i++) {
+                if (freightMap.containsKey(providers.get(i))) {
+                    JSONObject freightObject = new JSONObject();
+                    freightObject.put("supplyId", providers.get(i));
+                    freightObject.put("freight", freightMap.get(providers.get(i)).getFregith());
+                    freightArray.put(freightObject);
+                }
+            }
+            request.addRequestParam("freights", freightArray.toString());
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.getString("state").equalsIgnoreCase("SUCCESS")) {
+                            ShoppingCartController.getInstance().removeSelectedProducts(DataBaseHelper.tableCarPlatform);
+                            Notify.show("下单成功");
+                            if (paymentFragment.getPaymentType() == OrderConfirmPartPaymentFragment.PAY_TYPE_CODE_ONLINE) {
+                                payMoney(object.optJSONArray("object"));
+                                getActivity().finish();
+                                return;
+                            }
+                            showOrder(PayFragment.ORDER_TYPE_YY);
+                            getActivity().finish();
+                            return;
+                        }
+                        Notify.show(object.optString("message"));
+                        return;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Notify.show("下单失败");
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
+    }
+
+    private void getFreight() {
+        freightMap.clear();
+        Request request = new Request();
+        request.setUrl(API.API_PRODUCT_FREIGHT);
+        request.addRequestParam("productNumber", productNumbers.toString());
+        request.addRequestParam("areaid", addressFragment.getAddress().getAreaId());
+        request.addRequestParam("spid", Store.getStore().getStoreId());
+        request.setUseCookie(true);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONArray jsonArray = object.optJSONArray("dataList");
+                            if (jsonArray != null) {
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    ModelFreight modelFreight = new ModelFreight(jsonArray.optJSONObject(i));
+                                    if (!TextUtils.isEmpty(modelFreight.getAgencyId())) {
+                                        freightMap.put(modelFreight.getAgencyId(), modelFreight);
+                                    }
+                                }
+                                carAdapter.notifyDataSetChanged();
+                                countTotalMoney();
+                            }
+                            return;
+                        }
+                        Notify.show(object.optString("message"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
 
     class CarAdapter extends BaseAdapter {
@@ -354,165 +536,6 @@ public class ShoppingCarPlatformBuyFragment extends BaseNotifyFragment {
             TextView goodsNameTextView, goodsAttrTextView, goodsCountTextView, goodsPriceTextView;
         }
 
-    }
-
-    class AddOrder extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
-
-        @Override
-        protected String doInBackground(Void... arg0) {
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair("userNumber", User.getUser().getUseraccount()));
-            nameValuePairs.add(new BasicNameValuePair("customerName", addressFragment.getAddress().getPersonName()));
-            nameValuePairs.add(new BasicNameValuePair("phone", addressFragment.getAddress().getPhone()));
-            nameValuePairs.add(new BasicNameValuePair("shippingaddress", addressFragment.getAddress().getAreaAddress() + addressFragment.getAddress().getDetailedAddress()));
-            nameValuePairs.add(new BasicNameValuePair("totalMoney", decimalFormat.format(goodsMoney)));
-            nameValuePairs.add(new BasicNameValuePair("sex", User.getUser().getSex()));
-            nameValuePairs.add(new BasicNameValuePair("age", User.getUser().getAge()));
-            nameValuePairs.add(new BasicNameValuePair("address", Store.getStore().getStoreArea()));
-            nameValuePairs.add(new BasicNameValuePair("jmdId", Store.getStore().getStoreId()));
-            nameValuePairs.add(new BasicNameValuePair("orderType", "0"));
-            try {
-                JSONArray dataArray = new JSONArray();
-                for (int i = 0; i < shoppingCarts.size(); i++) {
-                    ModelProduct product = new ModelProduct(new JSONObject(shoppingCarts.get(i).getProductObject()));
-                    if (priceMap.containsKey(product.getId())) {
-                        JSONObject object = new JSONObject();
-                        object.put("productIds", product.getId());
-                        object.put("shopNum", shoppingCarts.get(i).getBuyCount());
-                        object.put("price", product.getPrice());
-                        object.put("isIntegralMall", 0);
-                        dataArray.put(object);
-                    }
-                }
-                nameValuePairs.add(new BasicNameValuePair("data", dataArray.toString()));
-
-                JSONArray freightArray = new JSONArray();
-                for (int i = 0; i < providers.size(); i++) {
-                    if (freightMap.containsKey(providers.get(i))) {
-                        JSONObject freightObject = new JSONObject();
-                        freightObject.put("supplyId", providers.get(i));
-                        freightObject.put("freight", freightMap.get(providers.get(i)).getFregith());
-                        freightArray.put(freightObject);
-                    }
-                }
-                nameValuePairs.add(new BasicNameValuePair("freights", freightArray.toString()));
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return netUtil.postWithoutCookie(API.API_ORDER_ADD_CENTER, nameValuePairs, false, false);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (!TextUtils.isEmpty(result)) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.getString("state").equalsIgnoreCase("SUCCESS")) {
-                        ShoppingCartController.getInstance().removeSelectedProducts(DataBaseHelper.tableCarPlatform);
-                        Notify.show("下单成功");
-                        if (paymentFragment.getPaymentType() == OrderConfirmPartPaymentFragment.PAY_TYPE_CODE_ONLINE) {
-                            payMoney(object.optJSONArray("object"));
-                            getActivity().finish();
-                            return;
-                        }
-                        showOrder(PayFragment.ORDER_TYPE_YY);
-                        getActivity().finish();
-                        return;
-                    }
-                    Notify.show(object.optString("message"));
-                    return;
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            Notify.show("下单失败");
-        }
-    }
-
-    class GetPriceList extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... value) {
-            List<NameValuePair> valuePairs = new ArrayList<>();
-            valuePairs.add(new BasicNameValuePair("jmdId", Store.getStore().getStoreId()));
-            valuePairs.add(new BasicNameValuePair("productId", value[0]));
-            return netUtil.postWithoutCookie(API.API_PRICE_LIST, valuePairs, false, false);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            if (result.length() > 0) {
-                JSONObject object;
-                try {
-                    object = new JSONObject(result);
-                    if (object.getString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONArray priceArray = object.optJSONArray("dataList");
-                        if (priceArray != null) {
-                            for (int i = 0; i < priceArray.length(); i++) {
-                                ModelListPrice priceList = new ModelListPrice(priceArray.getJSONObject(i));
-                                priceMap.put(priceList.getProductId(), priceList);
-                            }
-                            carAdapter.notifyDataSetChanged();
-                            countTotalMoney();
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    class GetFreight extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-            freightMap.clear();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> valuePairs = new ArrayList<>();
-            valuePairs.add(new BasicNameValuePair("productNumber", productNumbers.toString()));
-            valuePairs.add(new BasicNameValuePair("areaid", addressFragment.getAddress().getAreaId()));
-            valuePairs.add(new BasicNameValuePair("spid", Store.getStore().getStoreId()));
-            return netUtil.postWithCookie(API.API_PRODUCT_FREIGHT, valuePairs);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (!TextUtils.isEmpty(result)) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONArray jsonArray = object.optJSONArray("dataList");
-                        if (jsonArray != null) {
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                ModelFreight modelFreight = new ModelFreight(jsonArray.optJSONObject(i));
-                                if (!TextUtils.isEmpty(modelFreight.getAgencyId())) {
-                                    freightMap.put(modelFreight.getAgencyId(), modelFreight);
-                                }
-                            }
-                            carAdapter.notifyDataSetChanged();
-                            countTotalMoney();
-                        }
-                        return;
-                    }
-                    Notify.show(object.optString("message"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
     }
 
 }

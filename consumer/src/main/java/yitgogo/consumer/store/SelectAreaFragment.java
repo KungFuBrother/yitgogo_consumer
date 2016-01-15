@@ -1,7 +1,6 @@
 package yitgogo.consumer.store;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -16,11 +15,14 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,7 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.store.model.ModelArea;
 import yitgogo.consumer.store.model.ModelStoreArea;
 import yitgogo.consumer.tools.API;
@@ -80,7 +82,7 @@ public class SelectAreaFragment extends BaseNotifyFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        new GetArea().execute();
+        getArea();
     }
 
     private void init() {
@@ -119,7 +121,7 @@ public class SelectAreaFragment extends BaseNotifyFragment {
             selectedAreaHashMap.put(currentArea.getType(), currentArea);
             refreshSelectedArea();
         }
-        new GetArea().execute();
+        getArea();
     }
 
     private void refreshSelectedArea() {
@@ -228,59 +230,88 @@ public class SelectAreaFragment extends BaseNotifyFragment {
         }
     }
 
-    class GetArea extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-            areas.clear();
-            areaListAdapter.notifyDataSetChanged();
+    private void getArea() {
+        Request request = new Request();
+        request.setUrl(API.API_STORE_AREA);
+        if (!TextUtils.isEmpty(currentArea.getId())) {
+            request.addRequestParam("aid", currentArea.getId());
         }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            if (!TextUtils.isEmpty(currentArea.getId())) {
-                nameValuePairs.add(new BasicNameValuePair("aid", currentArea.getId()));
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+                areas.clear();
+                areaListAdapter.notifyDataSetChanged();
             }
-            return netUtil.postWithoutCookie(API.API_STORE_AREA, nameValuePairs, true, true);
-        }
 
-        @Override
-        protected void onPostExecute(String result) {
-            // {"message":"ok","state":"SUCCESS","cacheKey":null,"dataList":[{"id":3253,"valuename":"中国","valuetype":{"id":1,"typename":"国"},"onid":0,"onname":null,"brevitycode":null}],"totalCount":1,"dataMap":{},"object":null}
-            hideLoading();
-            if (!TextUtils.isEmpty(result)) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONArray array = object.optJSONArray("dataList");
-                        if (array != null) {
-                            for (int i = 0; i < array.length(); i++) {
-                                ModelArea area = new ModelArea(array.getJSONObject(i));
-                                areas.add(new ModelStoreArea(area.getId(), area.getValuename(), area.getAreaType().getId()));
-                            }
-                            if (!areas.isEmpty()) {
-                                areaListAdapter.notifyDataSetChanged();
-                                if (areas.size() == 1) {
-                                    if (areas.get(0).getId().equals("3253")) {
-                                        selectArea(areas.get(0));
-                                    }
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONArray array = object.optJSONArray("dataList");
+                            if (array != null) {
+                                for (int i = 0; i < array.length(); i++) {
+                                    ModelArea area = new ModelArea(array.getJSONObject(i));
+                                    areas.add(new ModelStoreArea(area.getId(), area.getValuename(), area.getAreaType().getId()));
                                 }
-                                return;
+                                if (!areas.isEmpty()) {
+                                    areaListAdapter.notifyDataSetChanged();
+                                    if (areas.size() == 1) {
+                                        if (areas.get(0).getId().equals("3253")) {
+                                            selectArea(areas.get(0));
+                                        }
+                                    }
+                                    return;
+                                }
                             }
+                            Intent intent = new Intent();
+                            intent.putExtra("id", currentArea.getId());
+                            intent.putExtra("name", getSelectedAreaName());
+                            getActivity().setResult(23, intent);
+                            getActivity().finish();
                         }
-                        Intent intent = new Intent();
-                        intent.putExtra("id", currentArea.getId());
-                        intent.putExtra("name", getSelectedAreaName());
-                        getActivity().setResult(23, intent);
-                        getActivity().finish();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
             }
-        }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
+
+//    class GetArea extends AsyncTask<Void, Void, String> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//
+//        }
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            List<NameValuePair> nameValuePairs = new ArrayList<>();
+//            if (!TextUtils.isEmpty(currentArea.getId())) {
+//                nameValuePairs.add(new BasicNameValuePair("aid", currentArea.getId()));
+//            }
+//            return netUtil.postWithoutCookie(API.API_STORE_AREA, nameValuePairs, true, true);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            // {"message":"ok","state":"SUCCESS","cacheKey":null,"dataList":[{"id":3253,"valuename":"中国","valuetype":{"id":1,"typename":"国"},"onid":0,"onname":null,"brevitycode":null}],"totalCount":1,"dataMap":{},"object":null}
+//
+//
+//        }
+//    }
 
 }

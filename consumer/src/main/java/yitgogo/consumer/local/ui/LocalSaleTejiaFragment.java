@@ -1,6 +1,5 @@
 package yitgogo.consumer.local.ui;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -15,11 +14,14 @@ import android.widget.TextView;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,13 +29,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.local.model.ModelLocalSaleTejia;
 import yitgogo.consumer.store.model.Store;
 import yitgogo.consumer.tools.API;
-import yitgogo.consumer.tools.NetUtil;
 import yitgogo.consumer.tools.Parameters;
 import yitgogo.consumer.view.InnerListView;
+import yitgogo.consumer.view.Notify;
 
 /**
  * 本地秒杀
@@ -69,7 +71,7 @@ public class LocalSaleTejiaFragment extends BaseNotifyFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        new GetLocalTejia().execute();
+        getLocalTejia();
     }
 
     private void init() {
@@ -167,50 +169,54 @@ public class LocalSaleTejiaFragment extends BaseNotifyFragment {
         }
     }
 
-    public class GetLocalTejia extends AsyncTask<Void, Void, String> {
+    private void getLocalTejia() {
+        Request request = new Request();
+        request.setUrl(API.API_LOCAL_SALE_TEJIA);
+        request.addRequestParam("jgbh", Store.getStore().getStoreNumber());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+                localSaleTejias.clear();
+                productAdapter.notifyDataSetChanged();
+            }
 
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-            localSaleTejias.clear();
-            productAdapter.notifyDataSetChanged();
-        }
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+                Notify.show(missionMessage.getMessage());
 
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("jgbh", Store.getStore()
-                    .getStoreNumber()));
-            return NetUtil.getInstance().postWithoutCookie(
-                    API.API_LOCAL_SALE_TEJIA, nameValuePairs, false, false);
-        }
+            }
 
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (!TextUtils.isEmpty(result)) {
-                JSONObject object;
-                try {
-                    object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONArray array = object.optJSONArray("dataList");
-                        if (array != null) {
-                            for (int i = 0; i < array.length(); i++) {
-                                localSaleTejias.add(new ModelLocalSaleTejia(array
-                                        .optJSONObject(i)));
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    JSONObject object;
+                    try {
+                        object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONArray array = object.optJSONArray("dataList");
+                            if (array != null) {
+                                for (int i = 0; i < array.length(); i++) {
+                                    localSaleTejias.add(new ModelLocalSaleTejia(array
+                                            .optJSONObject(i)));
+                                }
+                                productAdapter.notifyDataSetChanged();
                             }
-                            productAdapter.notifyDataSetChanged();
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                }
+                if (localSaleTejias.isEmpty()) {
+                    loadingEmpty();
                 }
             }
-            if (localSaleTejias.isEmpty()) {
-                loadingEmpty();
-            }
-        }
 
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
 
 }

@@ -2,26 +2,24 @@ package yitgogo.consumer.suning.ui;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.tools.API;
-import yitgogo.consumer.tools.NetUtil;
 import yitgogo.consumer.tools.Parameters;
 import yitgogo.consumer.view.Notify;
 
@@ -96,7 +94,7 @@ public class SuningOrderReturnBeforeReceivedFragment extends BaseNotifyFragment 
         returnButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new ReturnProduct().execute();
+                returnProduct();
             }
         });
         phoneTextView.setOnClickListener(new View.OnClickListener() {
@@ -116,42 +114,87 @@ public class SuningOrderReturnBeforeReceivedFragment extends BaseNotifyFragment 
         });
     }
 
-    class ReturnProduct extends AsyncTask<Void, Void, String> {
+    private void returnProduct() {
+        Request request = new Request();
+        request.setUrl(API.API_SUNING_ORDER_RECEIVE_RETURN);
+        request.addRequestParam("tradeNo", tradeNo);
+        request.addRequestParam("produNo", produNo);
+        request.addRequestParam("type", String.valueOf(type));
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
 
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
 
-        @Override
-        protected String doInBackground(Void... voids) {
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("tradeNo", tradeNo));
-            nameValuePairs.add(new BasicNameValuePair("produNo", produNo));
-            nameValuePairs.add(new BasicNameValuePair("type", String.valueOf(type)));
-            return NetUtil.getInstance().postWithCookie(API.API_SUNING_ORDER_RECEIVE_RETURN, nameValuePairs);
-        }
+            }
 
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (!TextUtils.isEmpty(result)) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        SuningOrderListFragment.needRefersh = true;
-                        Notify.show("申请退货成功");
-                        getActivity().finish();
-                    } else {
-                        Notify.show(object.optString("message"));
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            SuningOrderListFragment.needRefersh = true;
+                            Notify.show("申请退货成功");
+                            getActivity().finish();
+                        } else {
+                            Notify.show(object.optString("message"));
+                        }
+                        return;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                    return;
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                } else {
+                    Notify.show("申请退货失败");
                 }
             }
-            Notify.show("申请退货失败");
-        }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
+
+//    class ReturnProduct extends AsyncTask<Void, Void, String> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            showLoading();
+//        }
+//
+//        @Override
+//        protected String doInBackground(Void... voids) {
+//            List<NameValuePair> nameValuePairs = new ArrayList<>();
+//            nameValuePairs.add(new BasicNameValuePair("tradeNo", tradeNo));
+//            nameValuePairs.add(new BasicNameValuePair("produNo", produNo));
+//            nameValuePairs.add(new BasicNameValuePair("type", String.valueOf(type)));
+//            return NetUtil.getInstance().postWithCookie(API.API_SUNING_ORDER_RECEIVE_RETURN, nameValuePairs);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            hideLoading();
+//            if (!TextUtils.isEmpty(result)) {
+//                try {
+//                    JSONObject object = new JSONObject(result);
+//                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+//                        SuningOrderListFragment.needRefersh = true;
+//                        Notify.show("申请退货成功");
+//                        getActivity().finish();
+//                    } else {
+//                        Notify.show(object.optString("message"));
+//                    }
+//                    return;
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            Notify.show("申请退货失败");
+//        }
+//    }
 
 }

@@ -1,7 +1,6 @@
 package yitgogo.consumer.store;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -13,11 +12,14 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,7 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.main.ui.MainActivity;
 import yitgogo.consumer.store.model.ModelStoreArea;
 import yitgogo.consumer.store.model.ModelStoreSelected;
@@ -85,7 +87,7 @@ public class SelectStoreByAreaFragment extends BaseNotifyFragment {
             if (resultCode == 23) {
                 areaTextView.setText(data.getStringExtra("name"));
                 String areaId = data.getStringExtra("id");
-                new GetStore().execute(areaId);
+                getStore(areaId);
             }
         }
     }
@@ -97,7 +99,7 @@ public class SelectStoreByAreaFragment extends BaseNotifyFragment {
             firstTime = true;
             jumpForResult(SelectAreaFragment.class.getName(), "选择区域", 22);
         } else {
-            new GetStoreArea().execute();
+            getStoreArea();
         }
     }
 
@@ -221,85 +223,139 @@ public class SelectStoreByAreaFragment extends BaseNotifyFragment {
         return entries.get(entries.size() - 1).getValue().getId();
     }
 
-    class GetStoreArea extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("spid", Store.getStore().getStoreId()));
-            return netUtil.postWithoutCookie(API.API_STORE_SELECTED_AREA, nameValuePairs, false, false);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (!TextUtils.isEmpty(result)) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONArray array = object.optJSONArray("dataList");
-                        if (array != null) {
-                            areaHashMap = new HashMap<>();
-                            for (int i = 0; i < array.length(); i++) {
-                                ModelStoreArea storeArea = new ModelStoreArea(array.optJSONObject(i));
-                                areaHashMap.put(storeArea.getType(), storeArea);
-                            }
-                            areaTextView.setText(getAreaName());
-                            new GetStore().execute(getAreaId());
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+    private void getStoreArea() {
+        Request request = new Request();
+        request.setUrl(API.API_STORE_SELECTED_AREA);
+        request.addRequestParam("spid", Store.getStore().getStoreId());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
             }
-        }
-    }
 
-    class GetStore extends AsyncTask<String, Void, String> {
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
 
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
+            }
 
-        @Override
-        protected String doInBackground(String... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("areaId", params[0]));
-            return netUtil.postWithoutCookie(API.API_STORE_LIST, nameValuePairs, false, false);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (result.length() > 0) {
-                JSONObject object;
-                try {
-                    object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONArray array = object.optJSONArray("dataList");
-                        if (array != null) {
-                            storeSelecteds = new ArrayList<>();
-                            for (int i = 0; i < array.length(); i++) {
-                                storeSelecteds.add(new ModelStoreSelected(array.getJSONObject(i)));
-                            }
-                            if (storeSelecteds.size() > 0) {
-                                storeAdapter.notifyDataSetChanged();
-                            } else {
-                                loadingEmpty("该区域暂无服务中心");
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONArray array = object.optJSONArray("dataList");
+                            if (array != null) {
+                                areaHashMap = new HashMap<>();
+                                for (int i = 0; i < array.length(); i++) {
+                                    ModelStoreArea storeArea = new ModelStoreArea(array.optJSONObject(i));
+                                    areaHashMap.put(storeArea.getType(), storeArea);
+                                }
+                                areaTextView.setText(getAreaName());
+                                getStore(getAreaId());
                             }
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
             }
-        }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
+
+//    class GetStoreArea extends AsyncTask<String, Void, String> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            showLoading();
+//        }
+//
+//        @Override
+//        protected String doInBackground(String... params) {
+//            List<NameValuePair> nameValuePairs = new ArrayList<>();
+//            nameValuePairs.add(new BasicNameValuePair("spid", Store.getStore().getStoreId()));
+//            return netUtil.postWithoutCookie(API.API_STORE_SELECTED_AREA, nameValuePairs, false, false);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            hideLoading();
+//
+//        }
+//    }
+
+    private void getStore(String areaId) {
+        Request request = new Request();
+        request.setUrl(API.API_STORE_LIST);
+        request.addRequestParam("areaId", areaId);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    JSONObject object;
+                    try {
+                        object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONArray array = object.optJSONArray("dataList");
+                            if (array != null) {
+                                storeSelecteds = new ArrayList<>();
+                                for (int i = 0; i < array.length(); i++) {
+                                    storeSelecteds.add(new ModelStoreSelected(array.getJSONObject(i)));
+                                }
+                                if (storeSelecteds.size() > 0) {
+                                    storeAdapter.notifyDataSetChanged();
+                                } else {
+                                    loadingEmpty("该区域暂无服务中心");
+                                }
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
+    }
+
+//    class GetStore extends AsyncTask<String, Void, String> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            showLoading();
+//        }
+//
+//        @Override
+//        protected String doInBackground(String... params) {
+//            List<NameValuePair> nameValuePairs = new ArrayList<>();
+//            nameValuePairs.add(new BasicNameValuePair("areaId", params[0]));
+//            return netUtil.postWithoutCookie(API.API_STORE_LIST, nameValuePairs, false, false);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//
+//
+//        }
+//    }
 
 }

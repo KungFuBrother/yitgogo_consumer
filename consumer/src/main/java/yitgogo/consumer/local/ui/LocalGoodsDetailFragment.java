@@ -2,7 +2,6 @@ package yitgogo.consumer.local.ui;
 
 import android.app.Dialog;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -10,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -28,19 +28,19 @@ import android.widget.Toast;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 import com.viewpagerindicator.CirclePageIndicator;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.local.model.LocalCarController;
 import yitgogo.consumer.local.model.ModelLocalGoodsDetail;
 import yitgogo.consumer.product.ui.WebFragment;
@@ -108,7 +108,7 @@ public class LocalGoodsDetailFragment extends BaseNotifyFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        new GetGoodsDetail().execute();
+        getGoodsDetail();
     }
 
     private void init() {
@@ -272,43 +272,49 @@ public class LocalGoodsDetailFragment extends BaseNotifyFragment {
         }
     }
 
-    class GetGoodsDetail extends AsyncTask<Void, Void, String> {
 
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
+    private void getGoodsDetail() {
+        Request request = new Request();
+        request.setUrl(API.API_LOCAL_BUSINESS_GOODS_DETAIL);
+        request.addRequestParam("retailProductManagerID", goodsId);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
 
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
-            valuePairs.add(new BasicNameValuePair("retailProductManagerID",
-                    goodsId));
-            return netUtil.postWithoutCookie(
-                    API.API_LOCAL_BUSINESS_GOODS_DETAIL, valuePairs, false,
-                    false);
-        }
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+                Notify.show(missionMessage.getMessage());
 
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (result.length() > 0) {
-                JSONObject object;
-                try {
-                    object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONObject object2 = object.optJSONObject("dataMap");
-                        if (object2 != null) {
-                            goodsDetail = new ModelLocalGoodsDetail(object2);
-                            showGoodsInfo();
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    JSONObject object;
+                    try {
+                        object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONObject object2 = object.optJSONObject("dataMap");
+                            if (object2 != null) {
+                                goodsDetail = new ModelLocalGoodsDetail(object2);
+                                showGoodsInfo();
+                            }
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
             }
-        }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
+
 
     class ImageAdapter extends PagerAdapter {
 
@@ -479,7 +485,7 @@ public class LocalGoodsDetailFragment extends BaseNotifyFragment {
                             .equals(goodsDetail.getLocalGoods().getId())) {
                         goodsId = goodsDetail.getProductRelations().get(arg2)
                                 .getId();
-                        new GetGoodsDetail().execute();
+                        getGoodsDetail();
                     }
                     dismiss();
                 }

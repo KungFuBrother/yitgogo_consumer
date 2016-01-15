@@ -33,7 +33,7 @@
         android:name="yitgogo.consumer.YitgogoApplication"
         android:icon="@drawable/icon_consumer"
         android:label="@string/app_name"
-        android:theme="@style/yitgogo.theme">
+        android:theme="@style/AppTheme">
 
         <!-- 自开发 -->
         <activity
@@ -49,7 +49,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="yitgogo.consumer.ContainerActivity"
+            android:name="yitgogo.consumer.base.ContainerActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden"></activity>
         <activity
@@ -57,7 +57,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden"></activity>
         <activity
-            android:name="yitgogo.consumer.ContainerFullActivity"
+            android:name="yitgogo.consumer.base.ContainerFullActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden"></activity>
         <activity
@@ -78,13 +78,13 @@
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="YEZSQXQKS4ChL06KanfIHipP" />
 
-        <meta-data
-            android:name="UMENG_APPKEY"
-            android:value="564143c067e58e7902003900"></meta-data>
-        <!--Tencent 腾讯应用宝 Qihu 360手机助手 Baidu 百度手机助手 Wandoujia 豌豆荚 Update 自动更新-->
-        <meta-data
-            android:name="UMENG_CHANNEL"
-            android:value="Tencent" />
+        <!--友盟更新-->
+        <service
+            android:name="com.umeng.update.net.DownloadingService"
+            android:process=":DownloadingService"></service>
+        <activity
+            android:name="com.umeng.update.UpdateDialogActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
 
     </application>
 

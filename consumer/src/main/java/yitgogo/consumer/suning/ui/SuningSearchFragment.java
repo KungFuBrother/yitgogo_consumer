@@ -32,8 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import yitgogo.consumer.BaseNotifyFragment;
-import yitgogo.consumer.suning.model.GetNewSignature;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.suning.model.ModelProduct;
 import yitgogo.consumer.suning.model.ModelProductPrice;
 import yitgogo.consumer.suning.model.SuningManager;
@@ -164,7 +163,7 @@ public class SuningSearchFragment extends BaseNotifyFragment {
         request.addRequestParam("name", productName);
         request.addRequestParam("pagenum", String.valueOf(pagenum));
         request.addRequestParam("pagesize", String.valueOf(pagesize));
-        MissionController.startNetworkMission(getActivity(), request, new RequestListener() {
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
             @Override
             protected void onStart() {
                 showLoading();
@@ -237,7 +236,7 @@ public class SuningSearchFragment extends BaseNotifyFragment {
         }
         request.addRequestParam("data", data.toString());
 
-        MissionController.startNetworkMission(getActivity(), request, new RequestListener() {
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
             @Override
             protected void onStart() {
                 showLoading();
@@ -249,25 +248,33 @@ public class SuningSearchFragment extends BaseNotifyFragment {
 
             @Override
             protected void onSuccess(RequestMessage requestMessage) {
-                if (SuningManager.isSignatureOutOfDate(requestMessage.getResult())) {
-                    GetNewSignature getNewSignature = new GetNewSignature() {
-                        @Override
-                        protected void onPreExecute() {
-                            showLoading();
-                        }
-
-                        @Override
-                        protected void onPostExecute(Boolean isSuccess) {
-                            hideLoading();
-                            if (isSuccess) {
-                                getSuningProductPrice(priceJsonArray);
-                            }
-                        }
-                    };
-                    getNewSignature.execute();
-                    return;
-                }
                 if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    if (SuningManager.isSignatureOutOfDate(requestMessage.getResult())) {
+                        SuningManager.getNewSignature(getActivity(), new RequestListener() {
+                            @Override
+                            protected void onStart() {
+
+                            }
+
+                            @Override
+                            protected void onFail(MissionMessage missionMessage) {
+
+                            }
+
+                            @Override
+                            protected void onSuccess(RequestMessage requestMessage) {
+                                if (SuningManager.initSignature(requestMessage)) {
+                                    getSuningProductPrice(priceJsonArray);
+                                }
+                            }
+
+                            @Override
+                            protected void onFinish() {
+
+                            }
+                        });
+                        return;
+                    }
                     try {
                         JSONObject object = new JSONObject(requestMessage.getResult());
                         if (object.optBoolean("isSuccess")) {

@@ -1,11 +1,11 @@
 package yitgogo.consumer.product.ui;
 
 import android.app.Dialog;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -23,6 +23,11 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
@@ -33,7 +38,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.local.ui.LocalGoodsSearchFragment;
 import yitgogo.consumer.local.ui.LocalServiceSearchFragment;
 import yitgogo.consumer.suning.ui.SuningSearchFragment;
@@ -86,8 +91,7 @@ public class ProductSearchFragment extends BaseNotifyFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        showDisconnectMargin();
-        new GetHotSearch().execute();
+        getHotSearch();
     }
 
     private void init() {
@@ -161,45 +165,72 @@ public class ProductSearchFragment extends BaseNotifyFragment {
         });
     }
 
-    class GetHotSearch extends AsyncTask<Void, Void, String> {
+    private void getHotSearch(){
+        Request request = new Request();
+        request.setUrl(API.API_PRODUCT_SEARCH_HOT);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                searchWords.clear();
+                hotSearchAdapter.notifyDataSetChanged();
+            }
 
-        @Override
-        protected void onPreExecute() {
-            searchWords.clear();
-            hotSearchAdapter.notifyDataSetChanged();
-        }
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
 
-        @Override
-        protected String doInBackground(Void... params) {
-            return netUtil.postWithoutCookie(API.API_PRODUCT_SEARCH_HOT, null,
-                    true, true);
-        }
+            }
 
-        @Override
-        protected void onPostExecute(String result) {
-            // {"message":"ok","state":"SUCCESS","cacheKey":null,"dataList":[{"searchName":"测试"},{"searchName":"空调"},{"searchName":"冰箱"},{"searchName":"海尔"},{"searchName":"1"},{"searchName":"海"}],"totalCount":1,"dataMap":{},"object":null}
-            if (result.length() > 0) {
-                JSONObject object;
-                try {
-                    object = new JSONObject(result);
-                    JSONArray array = object.optJSONArray("dataList");
-                    if (array != null) {
-                        for (int i = 0; i < array.length(); i++) {
-                            JSONObject object2 = array.optJSONObject(i);
-                            if (object2 != null) {
-                                searchWords
-                                        .add(object2.optString("searchName"));
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if(!TextUtils.isEmpty(requestMessage.getResult())){
+                    JSONObject object;
+                    try {
+                        object = new JSONObject(requestMessage.getResult());
+                        JSONArray array = object.optJSONArray("dataList");
+                        if (array != null) {
+                            for (int i = 0; i < array.length(); i++) {
+                                JSONObject object2 = array.optJSONObject(i);
+                                if (object2 != null) {
+                                    searchWords
+                                            .add(object2.optString("searchName"));
+                                }
                             }
+                            hotSearchAdapter.notifyDataSetChanged();
                         }
-                        hotSearchAdapter.notifyDataSetChanged();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
             }
-        }
 
+            @Override
+            protected void onFinish() {
+
+            }
+        });
     }
+//    class GetHotSearch extends AsyncTask<Void, Void, String> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//
+//        }
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            return netUtil.postWithoutCookie(API.API_PRODUCT_SEARCH_HOT, null,
+//                    true, true);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            // {"message":"ok","state":"SUCCESS","cacheKey":null,"dataList":[{"searchName":"测试"},{"searchName":"空调"},{"searchName":"冰箱"},{"searchName":"海尔"},{"searchName":"1"},{"searchName":"海"}],"totalCount":1,"dataMap":{},"object":null}
+//            if (result.length() > 0) {
+//
+//            }
+//        }
+//
+//    }
 
     private void search(String words) {
         if (words.length() > 0) {

@@ -1,41 +1,37 @@
 package yitgogo.consumer.bianmin.order;
 
 import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.money.ui.PayFragment;
 import yitgogo.consumer.tools.API;
 import yitgogo.consumer.tools.Parameters;
-import yitgogo.consumer.view.InnerListView;
 import yitgogo.consumer.view.NormalAskDialog;
 import yitgogo.consumer.view.Notify;
 
 public class BianminOrderDetailFragment extends BaseNotifyFragment {
 
-    SwipeRefreshLayout refreshLayout;
-    TextView orderNumberText, orderStateText, orderDateText, moneyText,
-            typeTextView, accountTextView, detailTextView;
-    TextView payButton;
-    InnerListView productList;
-    ModelBianminOrder bianminOrder;
+    //    private SwipeRefreshLayout refreshLayout;
+//    private InnerListView productList;
+    private TextView orderNumberText, orderStateText, orderDateText, moneyText, typeTextView, accountTextView, detailTextView;
+    private TextView payButton;
+    private ModelBianminOrder bianminOrder;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,26 +69,16 @@ public class BianminOrderDetailFragment extends BaseNotifyFragment {
 
     @Override
     protected void findViews() {
-        refreshLayout = (SwipeRefreshLayout) contentView
-                .findViewById(R.id.order_detail_refresh);
-        orderNumberText = (TextView) contentView
-                .findViewById(R.id.order_detail_number);
-        orderStateText = (TextView) contentView
-                .findViewById(R.id.order_detail_state);
-        orderDateText = (TextView) contentView
-                .findViewById(R.id.order_detail_date);
-        orderDateText = (TextView) contentView
-                .findViewById(R.id.order_detail_date);
-        moneyText = (TextView) contentView
-                .findViewById(R.id.order_detail_total_money);
-        typeTextView = (TextView) contentView
-                .findViewById(R.id.list_order_type);
-        accountTextView = (TextView) contentView
-                .findViewById(R.id.list_order_account);
-        detailTextView = (TextView) contentView
-                .findViewById(R.id.list_order_detail);
-        payButton = (TextView) contentView
-                .findViewById(R.id.order_detail_action_pay);
+//        refreshLayout = (SwipeRefreshLayout) contentView.findViewById(R.id.order_detail_refresh);
+        orderNumberText = (TextView) contentView.findViewById(R.id.order_detail_number);
+        orderStateText = (TextView) contentView.findViewById(R.id.order_detail_state);
+        orderDateText = (TextView) contentView.findViewById(R.id.order_detail_date);
+        orderDateText = (TextView) contentView.findViewById(R.id.order_detail_date);
+        moneyText = (TextView) contentView.findViewById(R.id.order_detail_total_money);
+        typeTextView = (TextView) contentView.findViewById(R.id.list_order_type);
+        accountTextView = (TextView) contentView.findViewById(R.id.list_order_account);
+        detailTextView = (TextView) contentView.findViewById(R.id.list_order_detail);
+        payButton = (TextView) contentView.findViewById(R.id.order_detail_action_pay);
         initViews();
         registerViews();
     }
@@ -107,8 +93,7 @@ public class BianminOrderDetailFragment extends BaseNotifyFragment {
         orderNumberText.setText("订单号：" + bianminOrder.getOrderNumber());
         orderStateText.setText(bianminOrder.getOrderState());
         orderDateText.setText(bianminOrder.getOrderTime());
-        moneyText.setText(Parameters.CONSTANT_RMB
-                + decimalFormat.format(bianminOrder.getSellprice()));
+        moneyText.setText(Parameters.CONSTANT_RMB + decimalFormat.format(bianminOrder.getSellprice()));
         typeTextView.setText(bianminOrder.getRechargeType());
         accountTextView.setText(bianminOrder.getRechargeAccount());
         if (bianminOrder.getRechargeType().equals("手机")) {
@@ -144,7 +129,7 @@ public class BianminOrderDetailFragment extends BaseNotifyFragment {
                             @Override
                             public void onDismiss(DialogInterface dialog) {
                                 if (makeSure) {
-                                    new DeleteBianminOrder().execute();
+                                    deleteBianminOrder();
                                 }
                                 super.onDismiss(dialog);
                             }
@@ -166,42 +151,45 @@ public class BianminOrderDetailFragment extends BaseNotifyFragment {
         });
     }
 
-    class DeleteBianminOrder extends AsyncTask<Void, Void, String> {
 
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
+    private void deleteBianminOrder() {
+        Request request = new Request();
+        request.setUrl(API.API_BIANMIN_ORDER_DELETE);
+        request.addRequestParam("orderNumber", bianminOrder.getOrderNumber());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
 
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
-            valuePairs.add(new BasicNameValuePair("orderNumber", bianminOrder
-                    .getOrderNumber()));
-            return netUtil.postWithoutCookie(API.API_BIANMIN_ORDER_DELETE,
-                    valuePairs, false, false);
-        }
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+                Notify.show("删除失败");
+            }
 
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (result.length() > 0) {
-                JSONObject object;
-                try {
-                    object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        Notify.show("删除成功");
-                        BianminOrderFragment.removeOrder();
-                        getActivity().finish();
-                        return;
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    JSONObject object;
+                    try {
+                        object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            Notify.show("删除成功");
+                            getActivity().finish();
+                            return;
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
             }
-            Notify.show("删除失败");
-        }
 
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
+
 
 }

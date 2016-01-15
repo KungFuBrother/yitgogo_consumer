@@ -1,10 +1,10 @@
 package yitgogo.consumer.product.ui;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,11 +26,15 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
+import com.smartown.controller.mission.RequestParam;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,8 +43,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import yitgogo.consumer.BaseNormalFragment;
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNormalFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.home.model.ModelListPrice;
 import yitgogo.consumer.home.model.ModelProduct;
 import yitgogo.consumer.product.model.ModelAttrType;
@@ -48,28 +52,24 @@ import yitgogo.consumer.product.model.ModelAttrValue;
 import yitgogo.consumer.product.model.ModelProductFilter;
 import yitgogo.consumer.store.model.Store;
 import yitgogo.consumer.tools.API;
-import yitgogo.consumer.tools.LogUtil;
 import yitgogo.consumer.tools.Parameters;
 import yitgogo.consumer.view.InnerListView;
 
 public class ProductListFragment extends BaseNotifyFragment {
 
-    PullToRefreshListView productList;
-    DrawerLayout drawerLayout;
-    FrameLayout selectorLayout, attrSelectorLayout;
-
-    List<NameValuePair> parameters;
-    List<NameValuePair> selectParameters;
-    List<ModelProduct> products;
-    HashMap<String, ModelListPrice> priceMap;
-    ProductAdapter productAdapter;
-    ModelProductFilter productFilter;
-
-    String value = "";
-    int type = 0;
     public final static int TYPE_CLASS = 0;
     public final static int TYPE_BRAND = 1;
     public final static int TYPE_NAME = 2;
+    PullToRefreshListView productList;
+    DrawerLayout drawerLayout;
+    FrameLayout selectorLayout, attrSelectorLayout;
+    List<RequestParam> parameters;
+    List<RequestParam> selectParameters;
+    List<ModelProduct> products;
+    HashMap<String, ModelListPrice> priceMap;
+    ProductAdapter productAdapter;
+    String value = "";
+    int type = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -100,14 +100,10 @@ public class ProductListFragment extends BaseNotifyFragment {
 
     @Override
     protected void findViews() {
-        productList = (PullToRefreshListView) contentView
-                .findViewById(R.id.product_list);
-        drawerLayout = (DrawerLayout) contentView
-                .findViewById(R.id.product_drawer);
-        selectorLayout = (FrameLayout) contentView
-                .findViewById(R.id.product_selector);
-        attrSelectorLayout = (FrameLayout) contentView
-                .findViewById(R.id.product_selector2);
+        productList = (PullToRefreshListView) contentView.findViewById(R.id.product_list);
+        drawerLayout = (DrawerLayout) contentView.findViewById(R.id.product_drawer);
+        selectorLayout = (FrameLayout) contentView.findViewById(R.id.product_selector);
+        attrSelectorLayout = (FrameLayout) contentView.findViewById(R.id.product_selector2);
         initViews();
         registerViews();
     }
@@ -120,10 +116,10 @@ public class ProductListFragment extends BaseNotifyFragment {
         if (bundle.containsKey("type")) {
             type = bundle.getInt("type");
         }
-        parameters = new ArrayList<NameValuePair>();
-        selectParameters = new ArrayList<NameValuePair>();
-        products = new ArrayList<ModelProduct>();
-        priceMap = new HashMap<String, ModelListPrice>();
+        parameters = new ArrayList<>();
+        selectParameters = new ArrayList<>();
+        products = new ArrayList<>();
+        priceMap = new HashMap<>();
         productAdapter = new ProductAdapter();
     }
 
@@ -135,18 +131,18 @@ public class ProductListFragment extends BaseNotifyFragment {
         switch (type) {
             case TYPE_CLASS:
                 // 分类查询
-                parameters.add(new BasicNameValuePair("classValueId", value));
+                parameters.add(new RequestParam("classValueId", value));
                 setSelector(new AttrFilter());
                 break;
 
             case TYPE_BRAND:
                 // 品牌查询
-                parameters.add(new BasicNameValuePair("brandId", value));
+                parameters.add(new RequestParam("brandId", value));
                 break;
 
             case TYPE_NAME:
                 // 关键字搜索
-                parameters.add(new BasicNameValuePair("productName", value));
+                parameters.add(new RequestParam("productName", value));
                 break;
 
             default:
@@ -171,8 +167,7 @@ public class ProductListFragment extends BaseNotifyFragment {
                         public void onClick(View v) {
                             if (drawerLayout.isDrawerOpen(attrSelectorLayout)) {
                                 drawerLayout.closeDrawer(attrSelectorLayout);
-                            } else if (drawerLayout
-                                    .isDrawerOpen(selectorLayout)) {
+                            } else if (drawerLayout.isDrawerOpen(selectorLayout)) {
                                 drawerLayout.closeDrawer(selectorLayout);
                             } else {
                                 drawerLayout.openDrawer(selectorLayout);
@@ -202,16 +197,13 @@ public class ProductListFragment extends BaseNotifyFragment {
         productList.setOnRefreshListener(new OnRefreshListener2<ListView>() {
 
             @Override
-            public void onPullDownToRefresh(
-                    PullToRefreshBase<ListView> refreshView) {
-                useCache = false;
+            public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
                 refresh();
             }
 
             @Override
-            public void onPullUpToRefresh(
-                    PullToRefreshBase<ListView> refreshView) {
-                new GetProduct().execute();
+            public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
+                getProduct();
             }
         });
     }
@@ -221,182 +213,200 @@ public class ProductListFragment extends BaseNotifyFragment {
         products.clear();
         productAdapter.notifyDataSetChanged();
         productList.setMode(Mode.BOTH);
-        new GetProduct().execute();
+        getProduct();
     }
 
-    class GetProduct extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            if (pagenum == 0) {
-                showLoading();
-            }
-            pagenum++;
+    private void getProduct() {
+        pagenum++;
+        Request request = new Request();
+        request.setUrl(API.API_PRODUCT_LIST);
+        request.addRequestParam("jmdId", Store.getStore().getStoreId());
+        request.addRequestParam("pageNo", String.valueOf(pagenum));
+        request.addRequestParam("pageSize", String.valueOf(pagesize));
+        if (parameters != null) {
+            request.addRequestParam(parameters);
         }
-
-        @Override
-        protected String doInBackground(Void... arg0) {
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair("pageNo", pagenum + ""));
-            nameValuePairs.add(new BasicNameValuePair("jmdId", Store.getStore()
-                    .getStoreId()));
-            nameValuePairs
-                    .add(new BasicNameValuePair("pageSize", pagesize + ""));
-            if (parameters != null) {
-                nameValuePairs.addAll(parameters);
-            }
-            if (selectParameters != null) {
-                nameValuePairs.addAll(selectParameters);
-            }
-            return netUtil.postWithoutCookie(API.API_PRODUCT_LIST, nameValuePairs, useCache, true);
+        if (selectParameters != null) {
+            request.addRequestParam(selectParameters);
         }
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                if (pagenum == 1) {
+                    showLoading();
+                }
+            }
 
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            productList.onRefreshComplete();
-            if (result.length() > 0) {
-                JSONObject info;
-                try {
-                    info = new JSONObject(result);
-                    if (info.getString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONArray productArray = info.optJSONArray("dataList");
-                        if (productArray != null) {
-                            if (productArray.length() > 0) {
-                                if (productArray.length() < pagesize) {
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+                productList.onRefreshComplete();
+                pagenum--;
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                productList.onRefreshComplete();
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    JSONObject info;
+                    try {
+                        info = new JSONObject(requestMessage.getResult());
+                        if (info.getString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONArray productArray = info.optJSONArray("dataList");
+                            if (productArray != null) {
+                                if (productArray.length() > 0) {
+                                    if (productArray.length() < pagesize) {
+                                        productList.setMode(Mode.PULL_FROM_START);
+                                    }
+                                    StringBuilder stringBuilder = new StringBuilder();
+                                    for (int i = 0; i < productArray.length(); i++) {
+                                        ModelProduct product = new ModelProduct(
+                                                productArray.getJSONObject(i));
+                                        products.add(product);
+                                        if (i > 0) {
+                                            stringBuilder.append(",");
+                                        }
+                                        stringBuilder.append(product.getId());
+                                    }
+                                    productAdapter.notifyDataSetChanged();
+                                    getPriceList(stringBuilder
+                                            .toString());
+                                    return;
+                                } else {
                                     productList.setMode(Mode.PULL_FROM_START);
                                 }
-                                StringBuilder stringBuilder = new StringBuilder();
-                                for (int i = 0; i < productArray.length(); i++) {
-                                    ModelProduct product = new ModelProduct(
-                                            productArray.getJSONObject(i));
-                                    products.add(product);
-                                    if (i > 0) {
-                                        stringBuilder.append(",");
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    if (products.size() == 0) {
+                        loadingEmpty();
+                    }
+                } else {
+                    loadingFailed();
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
+
+    }
+
+//    class GetProduct extends AsyncTask<Void, Void, String> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//
+//        }
+//
+//        @Override
+//        protected String doInBackground(Void... arg0) {
+//            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+//////            nameValuePairs.add(new BasicNameValuePair("pageNo",));
+////            nameValuePairs.add(new BasicNameValuePair("jmdId", ));
+////            nameValuePairs
+////                    .add(new BasicNameValuePair("", ));
+//            if (parameters != null) {
+//                nameValuePairs.addAll(parameters);
+//            }
+//            if (selectParameters != null) {
+//                nameValuePairs.addAll(selectParameters);
+//            }
+//            return netUtil.postWithoutCookie(API.API_PRODUCT_LIST, nameValuePairs, useCache, true);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//
+//
+//            if (result.length() > 0) {
+//
+//            } else {
+//
+//            }
+//        }
+//    }
+
+    private void getPriceList(String sb) {
+        Request request = new Request();
+        request.setUrl(API.API_PRICE_LIST);
+        request.addRequestParam("jmdId", Store.getStore().getStoreId());
+        request.addRequestParam("productId", sb);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    JSONObject object;
+                    try {
+                        object = new JSONObject(requestMessage.getResult());
+                        if (object.getString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONArray priceArray = object.optJSONArray("dataList");
+                            if (priceArray != null) {
+                                if (priceArray.length() > 0) {
+                                    for (int i = 0; i < priceArray.length(); i++) {
+                                        ModelListPrice priceList = new ModelListPrice(priceArray.getJSONObject(i));
+                                        priceMap.put(priceList.getProductId(), priceList);
                                     }
-                                    stringBuilder.append(product.getId());
+                                    productAdapter.notifyDataSetChanged();
                                 }
-                                productAdapter.notifyDataSetChanged();
-                                new GetPriceList().execute(stringBuilder
-                                        .toString());
-                                return;
-                            } else {
-                                productList.setMode(Mode.PULL_FROM_START);
                             }
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
-                if (products.size() == 0) {
-                    loadingEmpty();
-                }
-            } else {
-                loadingFailed();
             }
-        }
+
+            @Override
+            protected void onFinish() {
+
+            }
+        });
     }
 
-    class GetPriceList extends AsyncTask<String, Void, String> {
+//    class GetPriceList extends AsyncTask<String, Void, String> {
+//
+//        @Override
+//        protected String doInBackground(String... value) {
+//            // TODO Auto-generated method stub
+//            List<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
+//            valuePairs.add(new BasicNameValuePair("jmdId", Store.getStore().getStoreId()));
+//            valuePairs.add(new BasicNameValuePair("productId", value[0]));
+//            return netUtil.postWithoutCookie(API.API_PRICE_LIST, valuePairs, false, false);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            // TODO Auto-generated method stub
+//            // {"message":"ok","state":"SUCCESS","cacheKey":null,"dataList":[{"productNumber":"YT47327421889","num":100,"price":328.0,"productId":"33409"},{"productNumber":"YT47327337867","num":100,"price":266.0,"productId":"33406"}],"totalCount":1,"dataMap":{},"object":null}
+//            LogUtil.logInfo("URL_PRICE_LIST", result);
+//            if (result.length() > 0) {
+//
+//            }
+//        }
+//    }
 
-        @Override
-        protected String doInBackground(String... value) {
-            // TODO Auto-generated method stub
-            List<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
-            valuePairs.add(new BasicNameValuePair("jmdId", Store.getStore().getStoreId()));
-            valuePairs.add(new BasicNameValuePair("productId", value[0]));
-            return netUtil.postWithoutCookie(API.API_PRICE_LIST, valuePairs, false, false);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            // TODO Auto-generated method stub
-            // {"message":"ok","state":"SUCCESS","cacheKey":null,"dataList":[{"productNumber":"YT47327421889","num":100,"price":328.0,"productId":"33409"},{"productNumber":"YT47327337867","num":100,"price":266.0,"productId":"33406"}],"totalCount":1,"dataMap":{},"object":null}
-            LogUtil.logInfo("URL_PRICE_LIST", result);
-            if (result.length() > 0) {
-                JSONObject object;
-                try {
-                    object = new JSONObject(result);
-                    if (object.getString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONArray priceArray = object.optJSONArray("dataList");
-                        if (priceArray != null) {
-                            if (priceArray.length() > 0) {
-                                for (int i = 0; i < priceArray.length(); i++) {
-                                    ModelListPrice priceList = new ModelListPrice(priceArray.getJSONObject(i));
-                                    priceMap.put(priceList.getProductId(), priceList);
-                                }
-                                productAdapter.notifyDataSetChanged();
-                            }
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    class ProductAdapter extends BaseAdapter {
-
-        @Override
-        public int getCount() {
-            return products.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return products.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder holder;
-            final int index = position;
-            if (convertView == null) {
-                holder = new ViewHolder();
-                convertView = layoutInflater.inflate(R.layout.list_product,
-                        null);
-                holder.image = (ImageView) convertView
-                        .findViewById(R.id.list_product_image);
-                holder.name = (TextView) convertView
-                        .findViewById(R.id.list_product_name);
-                holder.price = (TextView) convertView
-                        .findViewById(R.id.list_product_price);
-                convertView.setTag(holder);
-            } else {
-                holder = (ViewHolder) convertView.getTag();
-            }
-            ModelProduct product = products.get(position);
-            ImageLoader.getInstance().displayImage(
-                    getSmallImageUrl(product.getImg()), holder.image);
-            holder.name.setText(product.getProductName());
-            if (priceMap.containsKey(product.getId())) {
-                holder.price.setText(Parameters.CONSTANT_RMB
-                        + decimalFormat.format(priceMap.get(product.getId())
-                        .getPrice()));
-            }
-            convertView.setOnClickListener(new OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    showProductDetail(products.get(index).getId(), products
-                                    .get(index).getProductName(),
-                            CaptureActivity.SALE_TYPE_NONE);
-                }
-            });
-            return convertView;
-        }
-
-        class ViewHolder {
-            ImageView image;
-            TextView price, name;
-        }
-
+    /**
+     * 设置筛选器，不同的商品列表筛选器也会不同，通过子类设置相应的筛选器
+     *
+     * @param selector
+     */
+    protected void setSelector(Fragment selector) {
+        getFragmentManager().beginTransaction()
+                .replace(R.id.product_selector, selector).commit();
     }
 
     // class GetAttributes extends AsyncTask<String, Void, String> {
@@ -428,6 +438,81 @@ public class ProductListFragment extends BaseNotifyFragment {
     // }
     // }
 
+    /**
+     * 按键事件处理
+     *
+     * @param keyCode
+     * @param event
+     * @return
+     */
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+            if (drawerLayout.isDrawerOpen(attrSelectorLayout)) {
+                drawerLayout.closeDrawer(attrSelectorLayout);
+            } else if (drawerLayout.isDrawerOpen(selectorLayout)) {
+                drawerLayout.closeDrawer(selectorLayout);
+            } else {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    class ProductAdapter extends BaseAdapter {
+
+        @Override
+        public int getCount() {
+            return products.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return products.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder holder;
+            final int index = position;
+            if (convertView == null) {
+                holder = new ViewHolder();
+                convertView = layoutInflater.inflate(R.layout.list_product, null);
+                holder.image = (ImageView) convertView.findViewById(R.id.list_product_image);
+                holder.name = (TextView) convertView.findViewById(R.id.list_product_name);
+                holder.price = (TextView) convertView.findViewById(R.id.list_product_price);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+            ModelProduct product = products.get(position);
+            ImageLoader.getInstance().displayImage(getSmallImageUrl(product.getImg()), holder.image);
+            holder.name.setText(product.getProductName());
+            if (priceMap.containsKey(product.getId())) {
+                holder.price.setText(Parameters.CONSTANT_RMB + decimalFormat.format(priceMap.get(product.getId()).getPrice()));
+            }
+            convertView.setOnClickListener(new OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    showProductDetail(products.get(index).getId(), products.get(index).getProductName(), CaptureActivity.SALE_TYPE_NONE);
+                }
+            });
+            return convertView;
+        }
+
+        class ViewHolder {
+            ImageView image;
+            TextView price, name;
+        }
+
+    }
+
     class AttrFilter extends BaseNormalFragment {
 
         ModelProductFilter productFilter;
@@ -451,7 +536,7 @@ public class ProductListFragment extends BaseNotifyFragment {
         private void init() {
             productFilter = new ModelProductFilter();
             attrAdapter = new AttrAdapter();
-            new GetAttributes().execute();
+            getAttributes();
         }
 
         @Override
@@ -512,8 +597,8 @@ public class ProductListFragment extends BaseNotifyFragment {
 
         /**
          * 分类商品列表会有较为复杂的筛选，需要两个筛选器
-         *
-         * @param selector
+         * <p/>
+         * //         * @param selector
          */
         private void showAttrValueSelector() {
             getFragmentManager().beginTransaction()
@@ -570,19 +655,63 @@ public class ProductListFragment extends BaseNotifyFragment {
                 }
             }
             if (brandSelection.length() > 0) {
-                selectParameters.add(new BasicNameValuePair("brandId",
-                        brandSelection));
+                selectParameters.add(new RequestParam("brandId", brandSelection));
             }
             if (attrSelection.length() > 0) {
-                selectParameters.add(new BasicNameValuePair("avId",
-                        attrSelection));
+                selectParameters.add(new RequestParam("avId", attrSelection));
             }
             if (attrExtendSelection.length() > 0) {
-                selectParameters.add(new BasicNameValuePair("aveIds",
-                        attrExtendSelection));
+                selectParameters.add(new RequestParam("aveIds", attrExtendSelection));
             }
             drawerLayout.closeDrawer(selectorLayout);
             refresh();
+        }
+
+        /**
+         * 通过分类ID获取对应属性数据，用于筛选
+         *
+         * @author Tiger
+         */
+        private void getAttributes() {
+            Request request = new Request();
+            request.setUrl(API.API_PRODUCT_CLASS_ATTR);
+            request.addRequestParam("jmdId", Store.getStore().getStoreId());
+            request.addRequestParam("minClassId", value);
+            MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+                @Override
+                protected void onStart() {
+
+                }
+
+                @Override
+                protected void onFail(MissionMessage missionMessage) {
+
+                }
+
+                @Override
+                protected void onSuccess(RequestMessage requestMessage) {
+                    if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                        JSONObject object;
+                        try {
+                            object = new JSONObject(requestMessage.getResult());
+                            if (object.getString("state").equalsIgnoreCase("SUCCESS")) {
+                                JSONObject attrObject = object.optJSONObject("dataMap");
+                                if (attrObject != null) {
+                                    productFilter = new ModelProductFilter(attrObject);
+                                }
+                                attrAdapter.notifyDataSetChanged();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                @Override
+                protected void onFinish() {
+
+                }
+            });
         }
 
         class AttrSelector extends BaseNormalFragment {
@@ -750,71 +879,21 @@ public class ProductListFragment extends BaseNotifyFragment {
             }
 
         }
-
-        /**
-         * 通过分类ID获取对应属性数据，用于筛选
-         *
-         * @author Tiger
-         */
-        class GetAttributes extends AsyncTask<Void, Void, String> {
-
-            @Override
-            protected String doInBackground(Void... arg0) {
-                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-                nameValuePairs.add(new BasicNameValuePair("jmdId", Store.getStore().getStoreId()));
-                nameValuePairs.add(new BasicNameValuePair("minClassId", value));
-                return netUtil.postWithCookie(API.API_PRODUCT_CLASS_ATTR, nameValuePairs);
-            }
-
-            @Override
-            protected void onPostExecute(String result) {
-                JSONObject object;
-                try {
-                    object = new JSONObject(result);
-                    if (object.getString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONObject attrObject = object.optJSONObject("dataMap");
-                        if (attrObject != null) {
-                            productFilter = new ModelProductFilter(attrObject);
-                        }
-                        attrAdapter.notifyDataSetChanged();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+//        class GetAttributes extends AsyncTask<Void, Void, String> {
+//
+//            @Override
+//            protected String doInBackground(Void... arg0) {
+//                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+//                nameValuePairs.add(new BasicNameValuePair("jmdId", Store.getStore().getStoreId()));
+//                nameValuePairs.add(new BasicNameValuePair("minClassId", value));
+//                return netUtil.postWithCookie(API.API_PRODUCT_CLASS_ATTR, nameValuePairs);
+//            }
+//
+//            @Override
+//            protected void onPostExecute(String result) {
+//
+//            }
+//        }
 
     }
-
-    /**
-     * 设置筛选器，不同的商品列表筛选器也会不同，通过子类设置相应的筛选器
-     *
-     * @param selector
-     */
-    protected void setSelector(Fragment selector) {
-        getFragmentManager().beginTransaction()
-                .replace(R.id.product_selector, selector).commit();
-    }
-
-    /**
-     * 按键事件处理
-     *
-     * @param keyCode
-     * @param event
-     * @return
-     */
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-            if (drawerLayout.isDrawerOpen(attrSelectorLayout)) {
-                drawerLayout.closeDrawer(attrSelectorLayout);
-            } else if (drawerLayout.isDrawerOpen(selectorLayout)) {
-                drawerLayout.closeDrawer(selectorLayout);
-            } else {
-                return false;
-            }
-            return true;
-        }
-        return false;
-    }
-
 }

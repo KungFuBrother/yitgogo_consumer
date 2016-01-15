@@ -55,7 +55,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
-import yitgogo.consumer.ContainerActivity;
+import yitgogo.consumer.base.ContainerActivity;
 import yitgogo.consumer.local.ui.LocalGoodsDetailFragment;
 import yitgogo.consumer.local.ui.LocalSaleMiaoshaDetailFragment;
 import yitgogo.consumer.local.ui.LocalSaleTejiaDetailFragment;

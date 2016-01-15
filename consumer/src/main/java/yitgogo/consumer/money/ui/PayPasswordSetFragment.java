@@ -1,7 +1,6 @@
 package yitgogo.consumer.money.ui;
 
 import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -9,18 +8,18 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.money.model.MoneyAccount;
 import yitgogo.consumer.tools.API;
 import yitgogo.consumer.view.Notify;
@@ -51,10 +50,8 @@ public class PayPasswordSetFragment extends BaseNotifyFragment {
 
     @Override
     protected void findViews() {
-        idCardEditText = (EditText) contentView
-                .findViewById(R.id.set_password_idcard);
-        nameEditText = (EditText) contentView
-                .findViewById(R.id.set_password_name);
+        idCardEditText = (EditText) contentView.findViewById(R.id.set_password_idcard);
+        nameEditText = (EditText) contentView.findViewById(R.id.set_password_name);
         button = (Button) contentView.findViewById(R.id.set_password_ok);
         initViews();
         registerViews();
@@ -82,7 +79,7 @@ public class PayPasswordSetFragment extends BaseNotifyFragment {
                 @Override
                 public void onDismiss(DialogInterface dialog) {
                     if (!TextUtils.isEmpty(payPassword)) {
-                        new SetPayPassword().execute(payPassword);
+                        setPayPassword(payPassword);
                     }
                     super.onDismiss(dialog);
                 }
@@ -91,66 +88,53 @@ public class PayPasswordSetFragment extends BaseNotifyFragment {
         }
     }
 
-    /**
-     * 设置支付密码
-     *
-     * @author Tiger
-     * @Url http://192.168.8.2:8030/member/account/setpaypwd
-     * @Parameters [idcard=513030199311056012, realname=雷小武,
-     * paypwd=5854acf38caa01d136aa12e81164937e,
-     * payaccount=15081711040001,
-     * seckey=ad7c836d487d719c621cd4ce2b5d4b16]
-     * @Put_Cookie JSESSIONID=48EC063AA0847C06A6D20F60D1DE8BC4
-     * @Result {"state":"success","msg":"操作成功","databody":{"setpwd":"ok"}}
-     * @Result {"state":"berror","msg":"不能重复设定支付密码!","databody":{}}
-     */
-    class SetPayPassword extends AsyncTask<String, Void, String> {
+    private void setPayPassword(String paypwd) {
+        Request request = new Request();
+        request.setUrl(API.MONEY_PAY_PASSWORD_SET);
+        request.setUseCookie(true);
+        request.addRequestParam("idcard", idCardEditText.getText().toString());
+        request.addRequestParam("realname", nameEditText.getText().toString());
+        request.addRequestParam("paypwd", paypwd);
+        request.addRequestParam("payaccount", MoneyAccount.getMoneyAccount().getPayaccount());
+        request.addRequestParam("seckey", MoneyAccount.getMoneyAccount().getSeckey());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
 
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
 
-        @Override
-        protected String doInBackground(String... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair("idcard", idCardEditText
-                    .getText().toString().trim()));
-            nameValuePairs.add(new BasicNameValuePair("realname", nameEditText
-                    .getText().toString().trim()));
-            nameValuePairs.add(new BasicNameValuePair("paypwd", params[0]));
-            nameValuePairs.add(new BasicNameValuePair("payaccount",
-                    MoneyAccount.getMoneyAccount().getPayaccount()));
-            nameValuePairs.add(new BasicNameValuePair("seckey", MoneyAccount
-                    .getMoneyAccount().getSeckey()));
-            return netUtil.postWithCookie(API.MONEY_PAY_PASSWORD_SET,
-                    nameValuePairs);
-        }
+            }
 
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (!TextUtils.isEmpty(result)) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("success")) {
-                        JSONObject jsonObject = object
-                                .optJSONObject("databody");
-                        if (jsonObject != null) {
-                            if (jsonObject.optString("setpwd")
-                                    .equalsIgnoreCase("ok")) {
-                                Notify.show("设置支付密码成功");
-                                getActivity().finish();
-                                return;
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("success")) {
+                            JSONObject jsonObject = object.optJSONObject("databody");
+                            if (jsonObject != null) {
+                                if (jsonObject.optString("setpwd").equalsIgnoreCase("ok")) {
+                                    Notify.show("设置支付密码成功");
+                                    getActivity().finish();
+                                    return;
+                                }
                             }
                         }
+                        Notify.show(object.optString("msg"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                    Notify.show(object.optString("msg"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
             }
-        }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
 
 }

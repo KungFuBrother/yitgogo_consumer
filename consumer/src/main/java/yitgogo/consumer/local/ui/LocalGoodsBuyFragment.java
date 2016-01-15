@@ -1,7 +1,6 @@
 package yitgogo.consumer.local.ui;
 
 import android.app.Dialog;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,11 +19,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,7 +34,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.local.model.ModelLocalGoods;
 import yitgogo.consumer.money.ui.PayFragment;
 import yitgogo.consumer.order.model.ModelDiliver;
@@ -74,7 +76,7 @@ public class LocalGoodsBuyFragment extends BaseNotifyFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        new GetStoreInfo().execute();
+        getStoreInfo();
     }
 
     @Override
@@ -229,7 +231,7 @@ public class LocalGoodsBuyFragment extends BaseNotifyFragment {
         } else if (addressFragment.getAddress() == null) {
             Notify.show("收货人地址有误");
         } else {
-            new AddLocalGoodsOrder().execute();
+            getSuningProducts();
         }
     }
 
@@ -242,44 +244,48 @@ public class LocalGoodsBuyFragment extends BaseNotifyFragment {
      * ,"autoPurchase":false,"supportForDelivery":true,"postage":10.0}
      * ,"object":null}
      */
-    class GetStoreInfo extends AsyncTask<Void, Void, String> {
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            showLoading();
-        }
+    private void getStoreInfo() {
+        Request request = new Request();
+        request.setUrl(API.API_STORE_SEND_FEE);
+        request.addRequestParam("no", goods.getProviderBean().getNo());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
 
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair("no", goods
-                    .getProviderBean().getNo()));
-            return netUtil.postWithoutCookie(API.API_STORE_SEND_FEE,
-                    nameValuePairs, false, false);
-        }
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+                Notify.show(missionMessage.getMessage());
 
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (!TextUtils.isEmpty(result)) {
-                JSONObject object;
-                try {
-                    object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        storePostInfo = new ModelStorePostInfo(
-                                object.optJSONObject("dataMap"));
-                        storeInfoTextView
-                                .setText(getStorePostInfoString(storePostInfo));
-                        setStorePostInfo();
-                        countTotalMoney();
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    JSONObject object;
+                    try {
+                        object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            storePostInfo = new ModelStorePostInfo(
+                                    object.optJSONObject("dataMap"));
+                            storeInfoTextView
+                                    .setText(getStorePostInfoString(storePostInfo));
+                            setStorePostInfo();
+                            countTotalMoney();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
             }
-        }
 
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
 
     class DiliverPaymentDialog extends DialogFragment {
@@ -471,119 +477,121 @@ public class LocalGoodsBuyFragment extends BaseNotifyFragment {
      * :"66.0","servicePhone":"13228116626"}],"totalCount":1,
      * "dataMap":{},"object":null}
      */
-    class AddLocalGoodsOrder extends AsyncTask<Void, Void, String> {
 
-        @Override
-        protected void onPreExecute() {
-            showLoading("下单中,请稍候...");
-        }
+    private void getSuningProducts() {
+        Request request = new Request();
+        request.setUrl(API.API_LOCAL_BUSINESS_GOODS_ORDER_ADD);
+        request.addRequestParam("serviceProvidID", Store
+                .getStore().getStoreId());
+        request.addRequestParam("memberAccount", User
+                .getUser().getUseraccount());
+        request.addRequestParam("customerName", addressFragment.getAddress().getPersonName());
+        request.addRequestParam("customerPhone", addressFragment.getAddress().getPhone());
+        request.addRequestParam("retailOrderPrice", totalMoney + "");
 
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
-            valuePairs.add(new BasicNameValuePair("serviceProvidID", Store
-                    .getStore().getStoreId()));
-            valuePairs.add(new BasicNameValuePair("memberAccount", User
-                    .getUser().getUseraccount()));
-            valuePairs.add(new BasicNameValuePair("customerName",
-                    addressFragment.getAddress().getPersonName()));
-            valuePairs.add(new BasicNameValuePair("customerPhone",
-                    addressFragment.getAddress().getPhone()));
-            valuePairs.add(new BasicNameValuePair("retailOrderPrice",
-                    totalMoney + ""));
-
-            JSONArray data = new JSONArray();
-            JSONArray deliveryInfo = new JSONArray();
-            try {
-                JSONObject deliveryInfoObject = new JSONObject();
-                deliveryInfoObject.put("supplyId", goods.getProviderBean()
-                        .getId());
-                deliveryInfoObject.put("deliveryType", diliver.getName());
-                switch (diliver.getType()) {
-                    case ModelDiliver.TYPE_HOME:
-                        deliveryInfoObject
-                                .put("address", addressFragment.getAddress()
-                                        .getAreaAddress()
-                                        + addressFragment.getAddress()
-                                        .getDetailedAddress());
-                        break;
-                    case ModelDiliver.TYPE_SELF:
-                        deliveryInfoObject.put("address", goods.getProviderBean()
-                                .getServiceaddress());
-                        break;
-                    default:
-                        break;
-                }
-                deliveryInfoObject.put("paymentType", payment.getType());
-                deliveryInfo.put(deliveryInfoObject);
-
-                JSONObject dataObject = new JSONObject();
-                dataObject.put("retailProductManagerID", goods.getId());
-                dataObject.put("orderType", "0");
-                dataObject.put("shopNum", buyCount);
-                dataObject.put("productPrice", goods.getRetailPrice());
-                data.put(dataObject);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
+        JSONArray data = new JSONArray();
+        JSONArray deliveryInfo = new JSONArray();
+        try {
+            JSONObject deliveryInfoObject = new JSONObject();
+            deliveryInfoObject.put("supplyId", goods.getProviderBean()
+                    .getId());
+            deliveryInfoObject.put("deliveryType", diliver.getName());
+            switch (diliver.getType()) {
+                case ModelDiliver.TYPE_HOME:
+                    deliveryInfoObject
+                            .put("address", addressFragment.getAddress()
+                                    .getAreaAddress()
+                                    + addressFragment.getAddress()
+                                    .getDetailedAddress());
+                    break;
+                case ModelDiliver.TYPE_SELF:
+                    deliveryInfoObject.put("address", goods.getProviderBean()
+                            .getServiceaddress());
+                    break;
+                default:
+                    break;
             }
-            valuePairs.add(new BasicNameValuePair("data", data.toString()));
-            valuePairs.add(new BasicNameValuePair("deliveryInfo", deliveryInfo
-                    .toString()));
+            deliveryInfoObject.put("paymentType", payment.getType());
+            deliveryInfo.put(deliveryInfoObject);
 
-            return netUtil.postWithoutCookie(
-                    API.API_LOCAL_BUSINESS_GOODS_ORDER_ADD, valuePairs, false,
-                    false);
+            JSONObject dataObject = new JSONObject();
+            dataObject.put("retailProductManagerID", goods.getId());
+            dataObject.put("orderType", "0");
+            dataObject.put("shopNum", buyCount);
+            dataObject.put("productPrice", goods.getRetailPrice());
+            data.put(dataObject);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+        request.addRequestParam("data", data.toString());
+        request.addRequestParam("deliveryInfo", deliveryInfo
+                .toString());
 
-        @Override
-        protected void onPostExecute(String result) {
-            if (result.length() > 0) {
-                JSONObject object;
-                try {
-                    object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        Notify.show("下单成功");
-                        JSONArray orderArray = object.optJSONArray("dataList");
-                        if (orderArray != null) {
-                            double payPrice = 0;
-                            ArrayList<String> orderNumbers = new ArrayList<String>();
-                            for (int i = 0; i < orderArray.length(); i++) {
-                                ModelLocalGoodsOrderResult orderResult = new ModelLocalGoodsOrderResult(
-                                        orderArray.optJSONObject(i));
-                                if (orderResult.getPaymentType() == ModelPayment.TYPE_ONLINE) {
-                                    orderNumbers.add(orderResult
-                                            .getOrdernumber());
-                                    payPrice += orderResult.getOrderPrice();
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading("下单中,请稍候...");
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+                Notify.show("下单失败," + missionMessage.getMessage());
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    JSONObject object;
+                    try {
+                        object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            Notify.show("下单成功");
+                            JSONArray orderArray = object.optJSONArray("dataList");
+                            if (orderArray != null) {
+                                double payPrice = 0;
+                                ArrayList<String> orderNumbers = new ArrayList<String>();
+                                for (int i = 0; i < orderArray.length(); i++) {
+                                    ModelLocalGoodsOrderResult orderResult = new ModelLocalGoodsOrderResult(
+                                            orderArray.optJSONObject(i));
+                                    if (orderResult.getPaymentType() == ModelPayment.TYPE_ONLINE) {
+                                        orderNumbers.add(orderResult
+                                                .getOrdernumber());
+                                        payPrice += orderResult.getOrderPrice();
+                                    }
+                                }
+                                if (orderNumbers.size() > 0) {
+                                    if (payPrice > 0) {
+                                        payMoney(orderNumbers, payPrice,
+                                                PayFragment.ORDER_TYPE_LP);
+                                        getActivity().finish();
+                                        return;
+                                    }
                                 }
                             }
-                            if (orderNumbers.size() > 0) {
-                                if (payPrice > 0) {
-                                    payMoney(orderNumbers, payPrice,
-                                            PayFragment.ORDER_TYPE_LP);
-                                    getActivity().finish();
-                                    return;
-                                }
-                            }
+                            showOrder(PayFragment.ORDER_TYPE_LP);
+                            getActivity().finish();
+                            return;
+                        } else {
+                            hideLoading();
+                            Notify.show(object.optString("message"));
+                            return;
                         }
-                        showOrder(PayFragment.ORDER_TYPE_LP);
-                        getActivity().finish();
-                        return;
-                    } else {
+                    } catch (JSONException e) {
                         hideLoading();
-                        Notify.show(object.optString("message"));
+                        Notify.show("下单失败");
+                        e.printStackTrace();
                         return;
                     }
-                } catch (JSONException e) {
-                    hideLoading();
-                    Notify.show("下单失败");
-                    e.printStackTrace();
-                    return;
                 }
             }
-            hideLoading();
-            Notify.show("下单失败");
-        }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
 
 }

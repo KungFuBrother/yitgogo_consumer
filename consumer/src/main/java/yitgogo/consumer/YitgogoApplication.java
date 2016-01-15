@@ -10,16 +10,16 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.utils.L;
 import com.smartown.controller.mission.CookieController;
 import com.smartown.controller.shoppingcart.DataBaseHelper;
+import com.smartown.jni.YtBox;
 import com.smartown.yitian.gogo.R;
-import com.tencent.bugly.crashreport.CrashReport;
 import com.umeng.analytics.AnalyticsConfig;
 import com.umeng.analytics.MobclickAgent;
+import com.umeng.update.UmengUpdateAgent;
 
 import yitgogo.consumer.store.model.Store;
 import yitgogo.consumer.suning.model.SuningCarController;
 import yitgogo.consumer.tools.Content;
 import yitgogo.consumer.tools.LogUtil;
-import yitgogo.consumer.tools.NetUtil;
 import yitgogo.consumer.tools.PackageTool;
 import yitgogo.consumer.tools.ScreenUtil;
 import yitgogo.consumer.user.model.User;
@@ -40,12 +40,10 @@ public class YitgogoApplication extends Application {
         LogUtil.setLogEnable(true);
         SuningCarController.init(this);
         Notify.init(this);
-        NetUtil.init(this);
         Content.init(this);
         User.init(this);
         Store.init(this);
         ScreenUtil.init(this);
-        CrashReport.initCrashReport(this, "900003445", false);
         initImageLoader();
         initUmeng();
     }
@@ -70,9 +68,9 @@ public class YitgogoApplication extends Application {
 
     private void initUmeng() {
         //Edit in AndroidManifest.xml
-//        AnalyticsConfig.setAppkey(this, "564143c067e58e7902003900");
-        //Tencent 腾讯应用宝 Qihu 360手机助手 Baidu 百度手机助手 Wandoujia 豌豆荚 Update 自动更新
-//        AnalyticsConfig.setChannel("Update");
+        AnalyticsConfig.setAppkey(this, "564143c067e58e7902003900");
+        //Tencent 腾讯应用宝 Qihu 360手机助手 Baidu 百度手机助手 Wandoujia 豌豆荚
+        AnalyticsConfig.setChannel("Tencent");
         //session超时
         MobclickAgent.setSessionContinueMillis(2 * 60 * 1000);
         //账号统计
@@ -94,7 +92,16 @@ public class YitgogoApplication extends Application {
         /** 设置是否对日志信息进行加密, 默认false(不加密). */
         AnalyticsConfig.enableEncrypt(true);
         MobclickAgent.setDebugMode(false);
-    }
 
+        UmengUpdateAgent.setDefault();
+        UmengUpdateAgent.setAppkey("564143c067e58e7902003900");
+        UmengUpdateAgent.setUpdateOnlyWifi(false);
+        UmengUpdateAgent.setUpdateAutoPopup(false);
+
+        String encodedString = YtBox.encode("0000000000000000", "123456789");
+        System.out.println(encodedString.trim());
+        System.out.println(YtBox.decode("0000000000000000", encodedString).trim());
+
+    }
 
 }

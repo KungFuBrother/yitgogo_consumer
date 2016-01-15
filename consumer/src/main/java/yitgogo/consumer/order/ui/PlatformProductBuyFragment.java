@@ -1,6 +1,5 @@
 package yitgogo.consumer.order.ui;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -8,23 +7,23 @@ import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.money.ui.PayFragment;
 import yitgogo.consumer.product.model.ModelFreight;
 import yitgogo.consumer.store.model.Store;
@@ -126,7 +125,7 @@ public class PlatformProductBuyFragment extends BaseNotifyFragment {
         addressFragment.setOnSetAddressListener(new OrderConfirmPartAddressFragment.OnSetAddressListener() {
             @Override
             public void onSetAddress() {
-                new GetFreight().execute();
+                getFreight();
             }
         });
     }
@@ -174,7 +173,7 @@ public class PlatformProductBuyFragment extends BaseNotifyFragment {
                 if (addressFragment.getAddress() == null) {
                     Notify.show("收货人信息有误");
                 } else {
-                    new AddOrder().execute();
+                    buy();
                 }
             } else {
                 Notify.show("查询运费失败，不能购买");
@@ -184,143 +183,135 @@ public class PlatformProductBuyFragment extends BaseNotifyFragment {
         }
     }
 
-    /**
-     * 促销产品下单
-     *
-     * @author Tiger
-     * @Result {"message":"ok","state":"SUCCESS","cacheKey":null,"dataList":[{
-     * "zhekouhou"
-     * :"34.0","zongzhekou":"0.0","fuwuZuoji":"028-2356895623"
-     * ,"zongjine":"34.0","productInfo":
-     * "[{\"spname\":\"韵思家具 法式田园抽屉储物六斗柜 欧式复古白色五斗柜 4斗柜 KSDG01\",\"price\":\"34.0\",\"Amount\":\"34.0\",\"num\":\"1\"}]"
-     * ,"ordernumber":"YT5431669380","totalIntegral":"0","fuwushang":
-     * "测试运营中心一"
-     * ,"shijian":"2015-07-31","fuwuPhone":"15878978945"}],"totalCount"
-     * :1,"dataMap":{},"object":null}
-     */
-    class AddOrder extends AsyncTask<Void, Void, String> {
+    private void buy() {
+        Request request = new Request();
+        request.setUrl(API.API_ORDER_ADD_CENTER);
+        request.addRequestParam("userNumber", User.getUser().getUseraccount());
+        request.addRequestParam("customerName", addressFragment.getAddress().getPersonName());
+        request.addRequestParam("phone", addressFragment.getAddress().getPhone());
+        request.addRequestParam("shippingaddress", addressFragment.getAddress().getAreaAddress() + addressFragment.getAddress().getDetailedAddress());
+        request.addRequestParam("totalMoney", decimalFormat.format(buyCount * price));
+        request.addRequestParam("sex", User.getUser().getSex());
+        request.addRequestParam("age", User.getUser().getAge());
+        request.addRequestParam("address", Store.getStore().getStoreArea());
+        request.addRequestParam("jmdId", Store.getStore().getStoreId());
+        request.addRequestParam("orderType", "0");
+        try {
+            JSONArray dataArray = new JSONArray();
+            JSONObject object = new JSONObject();
+            object.put("productIds", productId);
+            object.put("shopNum", buyCount);
+            object.put("price", price);
+            object.put("isIntegralMall", isIntegralMall);
+            dataArray.put(object);
+            request.addRequestParam("data", dataArray.toString());
 
-        @Override
-        protected void onPreExecute() {
-            showLoading();
+            JSONArray freightArray = new JSONArray();
+            JSONObject freightObject = new JSONObject();
+            freightObject.put("supplyId", supplierId);
+            freightObject.put("freight", freightMap.get(supplierId).getFregith());
+            freightArray.put(freightObject);
+            request.addRequestParam("freights", freightArray.toString());
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-
-        @Override
-        protected String doInBackground(Void... arg0) {
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair("userNumber", User.getUser().getUseraccount()));
-            nameValuePairs.add(new BasicNameValuePair("customerName", addressFragment.getAddress().getPersonName()));
-            nameValuePairs.add(new BasicNameValuePair("phone", addressFragment.getAddress().getPhone()));
-            nameValuePairs.add(new BasicNameValuePair("shippingaddress", addressFragment.getAddress().getAreaAddress() + addressFragment.getAddress().getDetailedAddress()));
-            nameValuePairs.add(new BasicNameValuePair("totalMoney", decimalFormat.format(buyCount * price)));
-            nameValuePairs.add(new BasicNameValuePair("sex", User.getUser().getSex()));
-            nameValuePairs.add(new BasicNameValuePair("age", User.getUser().getAge()));
-            nameValuePairs.add(new BasicNameValuePair("address", Store.getStore().getStoreArea()));
-            nameValuePairs.add(new BasicNameValuePair("jmdId", Store.getStore().getStoreId()));
-            nameValuePairs.add(new BasicNameValuePair("orderType", "0"));
-            try {
-                JSONArray dataArray = new JSONArray();
-                JSONObject object = new JSONObject();
-                object.put("productIds", productId);
-                object.put("shopNum", buyCount);
-                object.put("price", price);
-                object.put("isIntegralMall", isIntegralMall);
-                dataArray.put(object);
-                nameValuePairs.add(new BasicNameValuePair("data", dataArray.toString()));
-
-                JSONArray freightArray = new JSONArray();
-                JSONObject freightObject = new JSONObject();
-                freightObject.put("supplyId", supplierId);
-                freightObject.put("freight", freightMap.get(supplierId).getFregith());
-                freightArray.put(freightObject);
-                nameValuePairs.add(new BasicNameValuePair("freights", freightArray.toString()));
-
-            } catch (JSONException e) {
-                e.printStackTrace();
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
             }
-            return netUtil.postWithoutCookie(API.API_ORDER_ADD_CENTER,
-                    nameValuePairs, false, false);
-        }
 
-        @Override
-        protected void onPostExecute(String result) {
-            if (result.length() > 0) {
-                JSONObject object;
-                try {
-                    object = new JSONObject(result);
-                    if (object.getString("state").equalsIgnoreCase("SUCCESS")) {
-                        Toast.makeText(getActivity(), "下单成功",
-                                Toast.LENGTH_SHORT).show();
-                        if (paymentFragment.getPaymentType() == OrderConfirmPartPaymentFragment.PAY_TYPE_CODE_ONLINE) {
-                            payMoney(object.optJSONArray("object"));
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            Notify.show("下单成功");
+                            if (paymentFragment.getPaymentType() == OrderConfirmPartPaymentFragment.PAY_TYPE_CODE_ONLINE) {
+                                payMoney(object.optJSONArray("object"));
+                                getActivity().finish();
+                                return;
+                            }
+                            showOrder(PayFragment.ORDER_TYPE_YY);
                             getActivity().finish();
                             return;
+                        } else {
+                            Notify.show(object.optString("message"));
+                            return;
                         }
-                        showOrder(PayFragment.ORDER_TYPE_YY);
-                        getActivity().finish();
-                        return;
-                    } else {
-                        hideLoading();
-                        Notify.show(object.optString("message"));
-                        return;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    hideLoading();
-                    Notify.show("下单失败");
-                    e.printStackTrace();
-                    return;
                 }
+                Notify.show("下单失败");
             }
-            hideLoading();
-            Notify.show("下单失败");
-        }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
 
-    class GetFreight extends AsyncTask<Void, Void, String> {
+    private void getFreight() {
+        freightMap.clear();
+        Request request = new Request();
+        request.setUrl(API.API_PRODUCT_FREIGHT);
+        request.addRequestParam("productNumber", productNumber + "-" + buyCount);
+        request.addRequestParam("areaid", addressFragment.getAddress().getAreaId());
+        request.addRequestParam("spid", Store.getStore().getStoreId());
+        request.setUseCookie(true);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
 
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-            freightMap.clear();
-        }
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
 
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> valuePairs = new ArrayList<>();
-            valuePairs.add(new BasicNameValuePair("productNumber", productNumber + "-" + buyCount));
-            valuePairs.add(new BasicNameValuePair("areaid", addressFragment.getAddress().getAreaId()));
-            valuePairs.add(new BasicNameValuePair("spid", Store.getStore().getStoreId()));
-            return netUtil.postWithCookie(API.API_PRODUCT_FREIGHT, valuePairs);
-        }
+            }
 
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (!TextUtils.isEmpty(result)) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONArray jsonArray = object.optJSONArray("dataList");
-                        if (jsonArray != null) {
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                ModelFreight modelFreight = new ModelFreight(jsonArray.optJSONObject(i));
-                                if (!TextUtils.isEmpty(modelFreight.getAgencyId())) {
-                                    freightMap.put(modelFreight.getAgencyId(), modelFreight);
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONArray jsonArray = object.optJSONArray("dataList");
+                            if (jsonArray != null) {
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    ModelFreight modelFreight = new ModelFreight(jsonArray.optJSONObject(i));
+                                    if (!TextUtils.isEmpty(modelFreight.getAgencyId())) {
+                                        freightMap.put(modelFreight.getAgencyId(), modelFreight);
+                                    }
+                                }
+                                if (freightMap.containsKey(supplierId)) {
+                                    freightTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format(freightMap.get(supplierId).getFregith()));
+                                    totalMoneyTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format((buyCount * price) + freightMap.get(supplierId).getFregith()));
                                 }
                             }
-                            if (freightMap.containsKey(supplierId)) {
-                                freightTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format(freightMap.get(supplierId).getFregith()));
-                                totalMoneyTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format((buyCount * price) + freightMap.get(supplierId).getFregith()));
-                            }
+                            return;
                         }
-                        return;
+                        Notify.show(object.optString("message"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                    Notify.show(object.optString("message"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
             }
-        }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
 
 }

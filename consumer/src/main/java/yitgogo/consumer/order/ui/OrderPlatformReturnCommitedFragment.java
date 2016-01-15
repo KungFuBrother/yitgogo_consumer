@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import com.smartown.yitian.gogo.R;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 
 /**
  * Created by Tiger on 2015-11-26.

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/base_fragment_empty"
@@ -9,7 +9,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="gone" >
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/base_fragment_empty_image"
@@ -31,8 +31,7 @@
     <FrameLayout
         android:id="@+id/base_fragment_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-    </FrameLayout>
+        android:layout_height="match_parent"></FrameLayout>
 
     <LinearLayout
         android:id="@+id/base_fragment_fail"
@@ -40,7 +39,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="gone" >
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/base_fragment_fail_text"
@@ -65,38 +64,13 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/base_fragment_disconnect"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="gone" >
-
-        <View
-            android:id="@+id/base_fragment_disconnect_margin"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/base_fragment_disconnect_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/red"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="无法连接网络，请检查网络设置"
-            android:textColor="@color/white"
-            android:textSize="12dp" />
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/base_fragment_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="true"
         android:gravity="center"
         android:orientation="horizontal"
-        android:visibility="gone" >
+        android:visibility="gone">
 
         <ProgressBar
             android:id="@+id/base_fragment_loading_progressbar"

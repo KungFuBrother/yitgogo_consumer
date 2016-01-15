@@ -2,7 +2,6 @@ package yitgogo.consumer.product.ui;
 
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -17,11 +16,14 @@ import android.widget.TextView;
 
 import com.dtr.zxing.activity.CaptureActivity;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,12 +34,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.home.model.ModelKillPrice;
 import yitgogo.consumer.home.model.ModelSaleMiaosha;
 import yitgogo.consumer.store.model.Store;
 import yitgogo.consumer.tools.API;
-import yitgogo.consumer.tools.NetUtil;
 import yitgogo.consumer.tools.Parameters;
 import yitgogo.consumer.view.Notify;
 
@@ -76,7 +77,8 @@ public class SaleMiaoshaFragment extends BaseNotifyFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        new GetMiaoshaProduct().execute();
+
+        getMiaoshaProduct();
     }
 
     private void init() {
@@ -112,8 +114,7 @@ public class SaleMiaoshaFragment extends BaseNotifyFragment {
     }
 
     private void refresh() {
-        useCache = false;
-        new GetMiaoshaProduct().execute();
+        getMiaoshaProduct();
     }
 
     class MiaoshaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -193,99 +194,155 @@ public class SaleMiaoshaFragment extends BaseNotifyFragment {
         }
     }
 
-    public class GetMiaoshaProduct extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            refreshLayout.setRefreshing(true);
-            saleMiaoshas.clear();
-            killPriceHashMap.clear();
-            miaoshaAdapter.notifyDataSetChanged();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
-            valuePairs.add(new BasicNameValuePair("strno", Store.getStore().getStoreNumber()));
-            return NetUtil.getInstance().postWithoutCookie(API.API_SALE_MIAOSHA, valuePairs, useCache, true);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            refreshLayout.setRefreshing(false);
-            if (!TextUtils.isEmpty(result)) {
-                JSONObject object;
-                try {
-                    object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONArray array = object.optJSONArray("dataList");
-                        if (array != null) {
-                            for (int i = 0; i < array.length(); i++) {
-                                saleMiaoshas.add(new ModelSaleMiaosha(array.optJSONObject(i)));
-                            }
-                            miaoshaAdapter.notifyDataSetChanged();
-                            new GetSalePrice().execute();
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+    private void getMiaoshaProduct() {
+        Request request = new Request();
+        request.setUrl(API.API_SALE_MIAOSHA);
+        request.addRequestParam("strno", Store.getStore().getStoreNumber());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                refreshLayout.setRefreshing(true);
+                saleMiaoshas.clear();
+                killPriceHashMap.clear();
+                miaoshaAdapter.notifyDataSetChanged();
             }
-            if (saleMiaoshas.isEmpty()) {
-                loadingEmpty();
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
             }
-        }
 
-    }
-
-
-    class GetSalePrice extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < saleMiaoshas.size(); i++) {
-                if (i > 0) {
-                    builder.append(",");
-                }
-                builder.append(saleMiaoshas.get(i).getProdutId());
-            }
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair("productId", builder.toString()));
-            nameValuePairs.add(new BasicNameValuePair("type", "2"));
-            return netUtil.postWithoutCookie(API.API_SALE_PRICE,
-                    nameValuePairs, false, false);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (!TextUtils.isEmpty(result)) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONArray array = object.optJSONArray("dataList");
-                        if (array != null) {
-                            for (int i = 0; i < array.length(); i++) {
-                                JSONObject jsonObject = array.optJSONObject(i);
-                                if (jsonObject != null) {
-                                    killPriceHashMap.put(jsonObject.optString("id"), new ModelKillPrice(jsonObject));
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    JSONObject object;
+                    try {
+                        object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONArray array = object.optJSONArray("dataList");
+                            if (array != null) {
+                                for (int i = 0; i < array.length(); i++) {
+                                    saleMiaoshas.add(new ModelSaleMiaosha(array.optJSONObject(i)));
                                 }
+                                miaoshaAdapter.notifyDataSetChanged();
+                                getSalePrice();
                             }
-                            miaoshaAdapter.notifyDataSetChanged();
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                }
+                if (saleMiaoshas.isEmpty()) {
+                    loadingEmpty();
                 }
             }
+
+            @Override
+            protected void onFinish() {
+                refreshLayout.setRefreshing(false);
+            }
+        });
+    }
+
+//    public class GetMiaoshaProduct extends AsyncTask<Void, Void, String> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//
+//        }
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            List<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
+//            valuePairs.add(new BasicNameValuePair("strno", Store.getStore().getStoreNumber()));
+//            return NetUtil.getInstance().postWithoutCookie(API.API_SALE_MIAOSHA, valuePairs, useCache, true);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//
+//
+//
+//        }
+//
+//    }
+
+    private void getSalePrice() {
+        Request request = new Request();
+        request.setUrl(API.API_SALE_PRICE);
+        request.addRequestParam("type", String.valueOf(2));
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < saleMiaoshas.size(); i++) {
+            if (i > 0) {
+                builder.append(",");
+            }
+            builder.append(saleMiaoshas.get(i).getProdutId());
         }
+        request.addRequestParam("productId", builder.toString());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONArray array = object.optJSONArray("dataList");
+                            if (array != null) {
+                                for (int i = 0; i < array.length(); i++) {
+                                    JSONObject jsonObject = array.optJSONObject(i);
+                                    if (jsonObject != null) {
+                                        killPriceHashMap.put(jsonObject.optString("id"), new ModelKillPrice(jsonObject));
+                                    }
+                                }
+                                miaoshaAdapter.notifyDataSetChanged();
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
 
     }
+//    class GetSalePrice extends AsyncTask<Void, Void, String> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//
+//        }
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//
+//            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+//            nameValuePairs.add(new BasicNameValuePair("productId", builder.toString()));
+//            nameValuePairs.add(new BasicNameValuePair("type", "2"));
+//            return netUtil.postWithoutCookie(API.API_SALE_PRICE,
+//                    nameValuePairs, false, false);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//
+//
+//        }
+//
+//    }
 
 }

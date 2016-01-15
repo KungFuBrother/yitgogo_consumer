@@ -5,7 +5,6 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.SoundPool;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,10 +20,13 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,12 +35,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.activity.shake.model.ModelActivity;
 import yitgogo.consumer.activity.shake.model.ModelAward;
 import yitgogo.consumer.money.ui.PayMoneyFragment;
 import yitgogo.consumer.tools.API;
-import yitgogo.consumer.tools.NetUtil;
 import yitgogo.consumer.tools.Parameters;
 import yitgogo.consumer.tools.ScreenUtil;
 import yitgogo.consumer.user.model.User;
@@ -49,23 +50,18 @@ import yitgogo.consumer.view.Notify;
  */
 public class EggMainFragment extends BaseNotifyFragment {
 
+    int position = 0;
+    int[] eggImages = {R.drawable.egg_anim_2, R.drawable.egg_anim_3, R.drawable.egg_anim_4, R.drawable.egg_anim_5, R.drawable.egg_anim_6, R.drawable.egg_anim_7, R.drawable.egg_anim_8};
     private ImageView backgroundImageView;
-
     private ImageView animImageView;
-
     private LinearLayout historyButton;
     private Button payButton;
-
     private RecyclerView awardRecyclerView;
-
     private TextView ruleTextView;
-
     private SoundPool soundPool;
     private SparseIntArray soundIds;
     private int eggMusic = 1;
-
     private String activityId = "90";
-
     private ModelActivity activityetail = new ModelActivity();
     private List<ModelAward> awards;
     private AwardAdapter awardAdapter;
@@ -81,7 +77,7 @@ public class EggMainFragment extends BaseNotifyFragment {
     @Override
     public void onResume() {
         super.onResume();
-        new GetEggActivity().execute();
+        getEggActivity();
     }
 
     @Override
@@ -129,9 +125,6 @@ public class EggMainFragment extends BaseNotifyFragment {
         awardRecyclerView.setAdapter(awardAdapter);
     }
 
-    int position = 0;
-    int[] eggImages = {R.drawable.egg_anim_2, R.drawable.egg_anim_3, R.drawable.egg_anim_4, R.drawable.egg_anim_5, R.drawable.egg_anim_6, R.drawable.egg_anim_7, R.drawable.egg_anim_8};
-
     private void animate() {
         animImageView.postDelayed(new Runnable() {
             @Override
@@ -145,7 +138,7 @@ public class EggMainFragment extends BaseNotifyFragment {
                     if (position < eggImages.length) {
                         animate();
                     } else {
-                        new WinEgg().execute();
+                        winEgg();
                     }
                 }
             }
@@ -157,7 +150,7 @@ public class EggMainFragment extends BaseNotifyFragment {
         historyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new GetAwardHistory().execute();
+                getAwardHistory();
             }
         });
         animImageView.setOnClickListener(new View.OnClickListener() {
@@ -276,166 +269,353 @@ public class EggMainFragment extends BaseNotifyFragment {
         soundPool.play(soundIds.get(eggMusic), 1, 1, 1, 0, 1);
     }
 
-    class GetEggActivity extends AsyncTask<Void, Void, String> {
+    private void getEggActivity() {
+        Request request = new Request();
+        request.setUrl(API.API_ACTIVITY_EGG_DETAIL);
+        request.addRequestParam("id", activityId);
+        request.addRequestParam("memberAccount", User.getUser().getUseraccount());
+        request.setUseCookie(true);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+                awards.clear();
+                awardAdapter.notifyDataSetChanged();
+            }
 
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-            awards.clear();
-            awardAdapter.notifyDataSetChanged();
-        }
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
 
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("id", activityId));
-            nameValuePairs.add(new BasicNameValuePair("memberAccount", User.getUser().getUseraccount()));
-            return netUtil.postWithCookie(API.API_ACTIVITY_EGG_DETAIL, nameValuePairs);
-        }
+            }
 
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (!TextUtils.isEmpty(result)) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONArray awardArray = object.optJSONArray("dataList");
-                        if (awardArray != null) {
-                            for (int i = 0; i < awardArray.length(); i++) {
-                                awards.add(new ModelAward(awardArray.optJSONObject(i)));
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONArray awardArray = object.optJSONArray("dataList");
+                            if (awardArray != null) {
+                                for (int i = 0; i < awardArray.length(); i++) {
+                                    awards.add(new ModelAward(awardArray.optJSONObject(i)));
+                                }
                             }
+                            activityetail = new ModelActivity(object.optJSONObject("object"));
+                            showActivityDetail();
+                            return;
                         }
-                        activityetail = new ModelActivity(object.optJSONObject("object"));
-                        showActivityDetail();
-                        return;
+                        Notify.show(object.optString("message"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                    Notify.show(object.optString("message"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                } else {
+                    Notify.show("参与人数太多，请稍后再试。");
                 }
-            } else {
-                Notify.show("参与人数太多，请稍后再试。");
             }
-        }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
 
-    class Retry extends AsyncTask<Void, Void, String> {
+//    class GetEggActivity extends AsyncTask<Void, Void, String> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//
+//        }
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            List<NameValuePair> nameValuePairs = new ArrayList<>();
+//            nameValuePairs.add(new BasicNameValuePair("id", activityId));
+//            nameValuePairs.add(new BasicNameValuePair("memberAccount", User.getUser().getUseraccount()));
+//            return netUtil.postWithCookie(API.API_ACTIVITY_EGG_DETAIL, nameValuePairs);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//
+//            if (!TextUtils.isEmpty(result)) {
+//                try {
+//                    JSONObject object = new JSONObject(result);
+//                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+//                        JSONArray awardArray = object.optJSONArray("dataList");
+//                        if (awardArray != null) {
+//                            for (int i = 0; i < awardArray.length(); i++) {
+//                                awards.add(new ModelAward(awardArray.optJSONObject(i)));
+//                            }
+//                        }
+//                        activityetail = new ModelActivity(object.optJSONObject("object"));
+//                        showActivityDetail();
+//                        return;
+//                    }
+//                    Notify.show(object.optString("message"));
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            } else {
+//                Notify.show("参与人数太多，请稍后再试。");
+//            }
+//        }
+//    }
 
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
+    private void reTry() {
+        Request request = new Request();
+        request.setUrl(API.API_ACTIVITY_EGG_DETAIL);
+        request.addRequestParam("id", activityId);
+        request.addRequestParam("memberAccount", User.getUser().getUseraccount());
+        request.setUseCookie(true);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
 
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("id", activityId));
-            nameValuePairs.add(new BasicNameValuePair("memberAccount", User.getUser().getUseraccount()));
-            return netUtil.postWithCookie(API.API_ACTIVITY_EGG_DETAIL, nameValuePairs);
-        }
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
 
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (!TextUtils.isEmpty(result)) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONArray awardArray = object.optJSONArray("dataList");
-                        if (awardArray != null) {
-                            for (int i = 0; i < awardArray.length(); i++) {
-                                awards.add(new ModelAward(awardArray.optJSONObject(i)));
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONArray awardArray = object.optJSONArray("dataList");
+                            if (awardArray != null) {
+                                for (int i = 0; i < awardArray.length(); i++) {
+                                    awards.add(new ModelAward(awardArray.optJSONObject(i)));
+                                }
                             }
-                        }
-                        activityetail = new ModelActivity(object.optJSONObject("object"));
-                        showActivityDetail();
-                        if (activityetail.getJoinMoney() > 0) {
-                            if (activityetail.getJoinState() == 1) {
-                                payMoney();
+                            activityetail = new ModelActivity(object.optJSONObject("object"));
+                            showActivityDetail();
+                            if (activityetail.getJoinMoney() > 0) {
+                                if (activityetail.getJoinState() == 1) {
+                                    payMoney();
+                                }
                             }
+                            return;
                         }
-                        return;
+                        Notify.show(object.optString("message"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                    Notify.show(object.optString("message"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                } else {
+                    Notify.show("参与人数太多，请稍后再试。");
                 }
-            } else {
-                Notify.show("参与人数太多，请稍后再试。");
             }
-        }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
 
-    class GetAwardHistory extends AsyncTask<Void, Void, String> {
+//    class Retry extends AsyncTask<Void, Void, String> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            showLoading();
+//        }
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            List<NameValuePair> nameValuePairs = new ArrayList<>();
+//            nameValuePairs.add(new BasicNameValuePair("id", activityId));
+//            nameValuePairs.add(new BasicNameValuePair("memberAccount", User.getUser().getUseraccount()));
+//            return netUtil.postWithCookie(API.API_ACTIVITY_EGG_DETAIL, nameValuePairs);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            hideLoading();
+//            if (!TextUtils.isEmpty(result)) {
+//                try {
+//                    JSONObject object = new JSONObject(result);
+//                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+//                        JSONArray awardArray = object.optJSONArray("dataList");
+//                        if (awardArray != null) {
+//                            for (int i = 0; i < awardArray.length(); i++) {
+//                                awards.add(new ModelAward(awardArray.optJSONObject(i)));
+//                            }
+//                        }
+//                        activityetail = new ModelActivity(object.optJSONObject("object"));
+//                        showActivityDetail();
+//                        if (activityetail.getJoinMoney() > 0) {
+//                            if (activityetail.getJoinState() == 1) {
+//                                payMoney();
+//                            }
+//                        }
+//                        return;
+//                    }
+//                    Notify.show(object.optString("message"));
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            } else {
+//                Notify.show("参与人数太多，请稍后再试。");
+//            }
+//        }
+//    }
 
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("activityId", activityId));
-            nameValuePairs.add(new BasicNameValuePair("memberAccount", User.getUser().getUseraccount()));
-            return NetUtil.getInstance().postWithCookie(API.API_ACTIVITY_AWARD_HISTORY, nameValuePairs);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (!TextUtils.isEmpty(result)) {
-                FragmentResultDialog dialog = FragmentResultDialog.newInstance(result);
-                dialog.show(getFragmentManager(), FragmentResultDialog.class.getName());
+    private void getAwardHistory() {
+        Request request = new Request();
+        request.setUrl(API.API_ACTIVITY_AWARD_HISTORY);
+        request.addRequestParam("activityId", activityId);
+        request.addRequestParam("memberAccount", User.getUser().getUseraccount());
+        request.setUseCookie(true);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
             }
-        }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    FragmentResultDialog dialog = FragmentResultDialog.newInstance(requestMessage.getResult());
+                    dialog.show(getFragmentManager(), FragmentResultDialog.class.getName());
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
 
-    class WinEgg extends AsyncTask<Void, Void, String> {
+//    class GetAwardHistory extends AsyncTask<Void, Void, String> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            showLoading();
+//        }
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            List<NameValuePair> nameValuePairs = new ArrayList<>();
+//            nameValuePairs.add(new BasicNameValuePair("activityId", activityId));
+//            nameValuePairs.add(new BasicNameValuePair("memberAccount", User.getUser().getUseraccount()));
+//            return NetUtil.getInstance().postWithCookie(API.API_ACTIVITY_AWARD_HISTORY, nameValuePairs);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            hideLoading();
+//            if (!TextUtils.isEmpty(result)) {
+//                FragmentResultDialog dialog = FragmentResultDialog.newInstance(result);
+//                dialog.show(getFragmentManager(), FragmentResultDialog.class.getName());
+//            }
+//        }
+//    }
 
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
+    private void winEgg() {
+        Request request = new Request();
+        request.setUrl(API.API_ACTIVITY_EGG_WIN);
+        request.addRequestParam("activctId", activityId);
+        request.addRequestParam("memberAccount", User.getUser().getUseraccount());
+        request.setUseCookie(true);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
 
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("activctId", activityId));
-            nameValuePairs.add(new BasicNameValuePair("memberAccount", User.getUser().getUseraccount()));
-            return netUtil.postWithCookie(API.API_ACTIVITY_EGG_WIN, nameValuePairs);
-        }
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
 
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (!TextUtils.isEmpty(result)) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONObject awardObject = object.optJSONObject("object");
-                        if (awardObject == null) {
-                            winNothing();
-                        } else {
-                            ModelAward award = new ModelAward(awardObject);
-                            if (award.getType() == 1) {
-                                winMoney(award.getTypeValue());
-                            } else if (award.getType() == 2) {
-                                winGoods(award.getName(), award.getImage());
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONObject awardObject = object.optJSONObject("object");
+                            if (awardObject == null) {
+                                winNothing();
+                            } else {
+                                ModelAward award = new ModelAward(awardObject);
+                                if (award.getType() == 1) {
+                                    winMoney(award.getTypeValue());
+                                } else if (award.getType() == 2) {
+                                    winGoods(award.getName(), award.getImage());
+                                }
                             }
+                            return;
                         }
-                        return;
+                        Notify.show(object.optString("message"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                    Notify.show(object.optString("message"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                } else {
+                    Notify.show("参与人数太多，请稍后再试。");
                 }
-            } else {
-                Notify.show("参与人数太多，请稍后再试。");
             }
-        }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
+
+//    class WinEgg extends AsyncTask<Void, Void, String> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            showLoading();
+//        }
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            List<NameValuePair> nameValuePairs = new ArrayList<>();
+//            nameValuePairs.add(new BasicNameValuePair("activctId", activityId));
+//            nameValuePairs.add(new BasicNameValuePair("memberAccount", User.getUser().getUseraccount()));
+//            return netUtil.postWithCookie(API.API_ACTIVITY_EGG_WIN, nameValuePairs);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            hideLoading();
+//            if (!TextUtils.isEmpty(result)) {
+//                try {
+//                    JSONObject object = new JSONObject(result);
+//                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+//                        JSONObject awardObject = object.optJSONObject("object");
+//                        if (awardObject == null) {
+//                            winNothing();
+//                        } else {
+//                            ModelAward award = new ModelAward(awardObject);
+//                            if (award.getType() == 1) {
+//                                winMoney(award.getTypeValue());
+//                            } else if (award.getType() == 2) {
+//                                winGoods(award.getName(), award.getImage());
+//                            }
+//                        }
+//                        return;
+//                    }
+//                    Notify.show(object.optString("message"));
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            } else {
+//                Notify.show("参与人数太多，请稍后再试。");
+//            }
+//        }
+//    }
 
     private void winNothing() {
         FragmentNoPriceDialog dialog = new FragmentNoPriceDialog();
@@ -443,9 +623,9 @@ public class EggMainFragment extends BaseNotifyFragment {
             @Override
             public void onDialogDismiss(boolean retry) {
                 if (retry) {
-                    new Retry().execute();
+                    reTry();
                 } else {
-                    new GetEggActivity().execute();
+                    getEggActivity();
                 }
             }
         });
@@ -458,9 +638,9 @@ public class EggMainFragment extends BaseNotifyFragment {
             @Override
             public void onDialogDismiss(boolean retry) {
                 if (retry) {
-                    new Retry().execute();
+                    reTry();
                 } else {
-                    new GetEggActivity().execute();
+                    getEggActivity();
                 }
             }
         });
@@ -473,9 +653,9 @@ public class EggMainFragment extends BaseNotifyFragment {
             @Override
             public void onDialogDismiss(boolean retry) {
                 if (retry) {
-                    new Retry().execute();
+                    reTry();
                 } else {
-                    new GetEggActivity().execute();
+                    getEggActivity();
                 }
             }
         });
@@ -483,18 +663,6 @@ public class EggMainFragment extends BaseNotifyFragment {
     }
 
     class AwardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-        class AwardViewHolder extends RecyclerView.ViewHolder {
-
-            ImageView imageView;
-            TextView textView;
-
-            public AwardViewHolder(View view) {
-                super(view);
-                imageView = (ImageView) view.findViewById(R.id.list_award_image);
-                textView = (TextView) view.findViewById(R.id.list_award_name);
-            }
-        }
 
         @Override
         public int getItemCount() {
@@ -519,6 +687,18 @@ public class EggMainFragment extends BaseNotifyFragment {
             view.setLayoutParams(layoutParams);
             AwardViewHolder viewHolder = new AwardViewHolder(view);
             return viewHolder;
+        }
+
+        class AwardViewHolder extends RecyclerView.ViewHolder {
+
+            ImageView imageView;
+            TextView textView;
+
+            public AwardViewHolder(View view) {
+                super(view);
+                imageView = (ImageView) view.findViewById(R.id.list_award_image);
+                textView = (TextView) view.findViewById(R.id.list_award_name);
+            }
         }
     }
 

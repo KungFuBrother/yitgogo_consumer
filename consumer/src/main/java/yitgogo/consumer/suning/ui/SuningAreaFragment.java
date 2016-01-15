@@ -1,6 +1,5 @@
 package yitgogo.consumer.suning.ui;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -14,11 +13,14 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,9 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.store.SelectStoreByAreaFragment;
-import yitgogo.consumer.suning.model.GetNewSignature;
 import yitgogo.consumer.suning.model.ModelSuningArea;
 import yitgogo.consumer.suning.model.ModelSuningAreas;
 import yitgogo.consumer.suning.model.SuningManager;
@@ -94,7 +95,7 @@ public class SuningAreaFragment extends BaseNotifyFragment {
         areasScrollView = (HorizontalScrollView) contentView.findViewById(R.id.select_area_scroll);
         selectedAreaLayout = (LinearLayout) contentView.findViewById(R.id.select_area_selected_areas);
         listView = (ListView) contentView.findViewById(R.id.select_area_areas);
-        initViews();
+            initViews();
         registerViews();
     }
 
@@ -111,15 +112,17 @@ public class SuningAreaFragment extends BaseNotifyFragment {
                 if (selectedAreaHashMap.containsKey(1)) {
                     if (selectedAreaHashMap.containsKey(2)) {
                         if (selectedAreaHashMap.containsKey(3)) {
-                            ModelSuningAreas suningAreas = SuningManager.getSuningAreas();
-                            suningAreas.setProvince(selectedAreaHashMap.get(1));
-                            suningAreas.setCity(selectedAreaHashMap.get(2));
-                            suningAreas.setDistrict(selectedAreaHashMap.get(3));
                             if (selectedAreaHashMap.containsKey(4)) {
+                                ModelSuningAreas suningAreas = SuningManager.getSuningAreas();
+                                suningAreas.setProvince(selectedAreaHashMap.get(1));
+                                suningAreas.setCity(selectedAreaHashMap.get(2));
+                                suningAreas.setDistrict(selectedAreaHashMap.get(3));
                                 suningAreas.setTown(selectedAreaHashMap.get(4));
+                                suningAreas.save();
+                                getActivity().finish();
+                            } else {
+                                Notify.show("请选择所在镇");
                             }
-                            suningAreas.save();
-                            getActivity().finish();
                         } else {
                             Notify.show("请选择所在区县");
                         }
@@ -140,13 +143,13 @@ public class SuningAreaFragment extends BaseNotifyFragment {
             refreshSelectedArea();
             switch (area.getType()) {
                 case 1:
-                    new GetSuningProvince().execute();
+                    getSuningProvince();
                     break;
                 case 2:
-                    new GetSuningCity().execute();
+                    getSuningCity();
                     break;
                 case 3:
-                    new GetSuningDistrict().execute();
+                    getSuningDistrict();
                     break;
             }
         }
@@ -159,13 +162,13 @@ public class SuningAreaFragment extends BaseNotifyFragment {
             refreshSelectedArea();
             switch (area.getType()) {
                 case 1:
-                    new GetSuningCity().execute();
+                    getSuningCity();
                     break;
                 case 2:
-                    new GetSuningDistrict().execute();
+                    getSuningDistrict();
                     break;
                 case 3:
-                    new GetSuningTown().execute();
+                    getSuningTown();
                     break;
             }
         }
@@ -175,7 +178,7 @@ public class SuningAreaFragment extends BaseNotifyFragment {
         selectedAreaLayout.removeAllViews();
         if (selectedAreaHashMap.isEmpty()) {
             selectedAreaLayout.addView(newTextView("请选择收货区域", R.color.textColorThird, null));
-            new GetSuningProvince().execute();
+            getSuningProvince();
             return;
         }
         List<Map.Entry<Integer, ModelSuningArea>> entries = new ArrayList<>(selectedAreaHashMap.entrySet());
@@ -222,6 +225,536 @@ public class SuningAreaFragment extends BaseNotifyFragment {
         }
         return textView;
     }
+
+    private void getSuningProvince() {
+        Request request = new Request();
+        request.setUrl(API.API_SUNING_AREA_PROVINCE);
+        JSONObject data = new JSONObject();
+        try {
+            data.put("accessToken", SuningManager.getSignature().getToken());
+            data.put("appKey", SuningManager.appKey);
+            data.put("v", SuningManager.version);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        request.addRequestParam("data", data.toString());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+                suningAreas.clear();
+                areaListAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    if (SuningManager.isSignatureOutOfDate(requestMessage.getResult())) {
+                        SuningManager.getNewSignature(getActivity(), new RequestListener() {
+                            @Override
+                            protected void onStart() {
+
+                            }
+
+                            @Override
+                            protected void onFail(MissionMessage missionMessage) {
+
+                            }
+
+                            @Override
+                            protected void onSuccess(RequestMessage requestMessage) {
+                                if (SuningManager.initSignature(requestMessage)) {
+                                    getSuningProvince();
+                                }
+                            }
+
+                            @Override
+                            protected void onFinish() {
+
+                            }
+                        });
+                        return;
+                    }
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optBoolean("isSuccess")) {
+                            JSONArray array = object.optJSONArray("province");
+                            if (array != null) {
+                                for (int i = 0; i < array.length(); i++) {
+                                    suningAreas.add(new ModelSuningArea(array.optJSONObject(i), 1));
+                                }
+                                areaListAdapter.notifyDataSetChanged();
+                            }
+                            return;
+                        }
+                        Notify.show(object.optString("returnMsg"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
+    }
+
+    private void getSuningCity() {
+        Request request = new Request();
+        request.setUrl(API.API_SUNING_AREA_CITY);
+        JSONObject data = new JSONObject();
+        try {
+            data.put("accessToken", SuningManager.getSignature().getToken());
+            data.put("appKey", SuningManager.appKey);
+            data.put("v", SuningManager.version);
+            data.put("provinceId", selectedAreaHashMap.get(1).getCode());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        request.addRequestParam("data", data.toString());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+                suningAreas.clear();
+                areaListAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    if (SuningManager.isSignatureOutOfDate(requestMessage.getResult())) {
+                        SuningManager.getNewSignature(getActivity(), new RequestListener() {
+                            @Override
+                            protected void onStart() {
+
+                            }
+
+                            @Override
+                            protected void onFail(MissionMessage missionMessage) {
+
+                            }
+
+                            @Override
+                            protected void onSuccess(RequestMessage requestMessage) {
+                                if (SuningManager.initSignature(requestMessage)) {
+                                    getSuningCity();
+                                }
+                            }
+
+                            @Override
+                            protected void onFinish() {
+
+                            }
+                        });
+                        return;
+                    }
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optBoolean("isSuccess")) {
+                            JSONArray array = object.optJSONArray("city");
+                            if (array != null) {
+                                for (int i = 0; i < array.length(); i++) {
+                                    suningAreas.add(new ModelSuningArea(array.optJSONObject(i), 2));
+                                }
+                                areaListAdapter.notifyDataSetChanged();
+                                return;
+                            }
+                            Notify.show(object.optString("returnMsg"));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
+    }
+
+//    class GetSuningProvince extends AsyncTask<Void, Void, String> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            showLoading();
+//            suningAreas.clear();
+//            areaListAdapter.notifyDataSetChanged();
+//        }
+//
+//        @Override
+//        protected String doInBackground(Void... voids) {
+//            List<NameValuePair> nameValuePairs = new ArrayList<>();
+//            JSONObject data = new JSONObject();
+//            try {
+//                data.put("accessToken", SuningManager.getSignature().getToken());
+//                data.put("appKey", SuningManager.appKey);
+//                data.put("v", SuningManager.version);
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//            nameValuePairs.add(new BasicNameValuePair("data", data.toString()));
+//            return netUtil.postWithoutCookie(API.API_SUNING_AREA_PROVINCE, nameValuePairs, true, true);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String s) {
+//            hideLoading();
+//            if (SuningManager.isSignatureOutOfDate(s)) {
+//                GetNewSignature getNewSignature = new GetNewSignature() {
+//                    @Override
+//                    protected void onPreExecute() {
+//                        showLoading();
+//                    }
+//
+//                    @Override
+//                    protected void onPostExecute(Boolean isSuccess) {
+//                        hideLoading();
+//                        if (isSuccess) {
+//                            new GetSuningProvince().execute();
+//                        }
+//                    }
+//                };
+//                getNewSignature.execute();
+//                return;
+//            }
+//            if (!TextUtils.isEmpty(s)) {
+//                try {
+//                    JSONObject object = new JSONObject(s);
+//                    if (object.optBoolean("isSuccess")) {
+//                        JSONArray array = object.optJSONArray("province");
+//                        if (array != null) {
+//                            for (int i = 0; i < array.length(); i++) {
+//                                suningAreas.add(new ModelSuningArea(array.optJSONObject(i), 1));
+//                            }
+//                            areaListAdapter.notifyDataSetChanged();
+//                        }
+//                        return;
+//                    }
+//                    Notify.show(object.optString("returnMsg"));
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }
+//        }
+//    }
+
+    private void getSuningDistrict() {
+        Request request = new Request();
+        request.setUrl(API.API_SUNING_AREA_DISTRICT);
+        JSONObject data = new JSONObject();
+        try {
+            data.put("accessToken", SuningManager.getSignature().getToken());
+            data.put("appKey", SuningManager.appKey);
+            data.put("v", SuningManager.version);
+            data.put("cityId", selectedAreaHashMap.get(2).getCode());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        request.addRequestParam("data", data.toString());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+                suningAreas.clear();
+                areaListAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    if (SuningManager.isSignatureOutOfDate(requestMessage.getResult())) {
+                        SuningManager.getNewSignature(getActivity(), new RequestListener() {
+                            @Override
+                            protected void onStart() {
+
+                            }
+
+                            @Override
+                            protected void onFail(MissionMessage missionMessage) {
+
+                            }
+
+                            @Override
+                            protected void onSuccess(RequestMessage requestMessage) {
+                                if (SuningManager.initSignature(requestMessage)) {
+                                    getSuningDistrict();
+                                }
+                            }
+
+                            @Override
+                            protected void onFinish() {
+
+                            }
+                        });
+                        return;
+                    }
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optBoolean("isSuccess")) {
+                            JSONArray array = object.optJSONArray("district");
+                            if (array != null) {
+                                for (int i = 0; i < array.length(); i++) {
+                                    suningAreas.add(new ModelSuningArea(array.optJSONObject(i), 3));
+                                }
+                                areaListAdapter.notifyDataSetChanged();
+                                return;
+                            }
+                            Notify.show(object.optString("returnMsg"));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
+    }
+
+//    class GetSuningCity extends AsyncTask<Void, Void, String> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            showLoading();
+//            suningAreas.clear();
+//            areaListAdapter.notifyDataSetChanged();
+//        }
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            List<NameValuePair> nameValuePairs = new ArrayList<>();
+//            JSONObject data = new JSONObject();
+//            try {
+//                data.put("accessToken", SuningManager.getSignature().getToken());
+//                data.put("appKey", SuningManager.appKey);
+//                data.put("v", SuningManager.version);
+//                data.put("provinceId", selectedAreaHashMap.get(1).getCode());
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//            nameValuePairs.add(new BasicNameValuePair("data", data.toString()));
+//            return netUtil.postWithoutCookie(API.API_SUNING_AREA_CITY, nameValuePairs, true, true);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String s) {
+//            hideLoading();
+//            if (SuningManager.isSignatureOutOfDate(s)) {
+//                GetNewSignature getNewSignature = new GetNewSignature() {
+//                    @Override
+//                    protected void onPreExecute() {
+//                        showLoading();
+//                    }
+//
+//                    @Override
+//                    protected void onPostExecute(Boolean isSuccess) {
+//                        hideLoading();
+//                        if (isSuccess) {
+//                            new GetSuningCity().execute();
+//                        }
+//                    }
+//                };
+//                getNewSignature.execute();
+//                return;
+//            }
+//            if (!TextUtils.isEmpty(s)) {
+//                try {
+//                    JSONObject object = new JSONObject(s);
+//                    if (object.optBoolean("isSuccess")) {
+//                        JSONArray array = object.optJSONArray("city");
+//                        if (array != null) {
+//                            for (int i = 0; i < array.length(); i++) {
+//                                suningAreas.add(new ModelSuningArea(array.optJSONObject(i), 2));
+//                            }
+//                            areaListAdapter.notifyDataSetChanged();
+//                            return;
+//                        }
+//                        Notify.show(object.optString("returnMsg"));
+//                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }
+//        }
+//    }
+
+    private void getSuningTown() {
+        Request request = new Request();
+        request.setUrl(API.API_SUNING_AREA_TOWN);
+        JSONObject data = new JSONObject();
+        try {
+            data.put("accessToken", SuningManager.getSignature().getToken());
+            data.put("appKey", SuningManager.appKey);
+            data.put("v", SuningManager.version);
+            data.put("cityId", selectedAreaHashMap.get(2).getCode());
+            data.put("countyId", selectedAreaHashMap.get(3).getCode());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        request.addRequestParam("data", data.toString());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+                suningAreas.clear();
+                areaListAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    if (SuningManager.isSignatureOutOfDate(requestMessage.getResult())) {
+                        SuningManager.getNewSignature(getActivity(), new RequestListener() {
+                            @Override
+                            protected void onStart() {
+
+                            }
+
+                            @Override
+                            protected void onFail(MissionMessage missionMessage) {
+
+                            }
+
+                            @Override
+                            protected void onSuccess(RequestMessage requestMessage) {
+                                if (SuningManager.initSignature(requestMessage)) {
+                                    getSuningTown();
+                                }
+                            }
+
+                            @Override
+                            protected void onFinish() {
+
+                            }
+                        });
+                        return;
+                    }
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optBoolean("isSuccess")) {
+                            JSONArray array = object.optJSONArray("town");
+                            if (array != null) {
+                                for (int i = 0; i < array.length(); i++) {
+                                    suningAreas.add(new ModelSuningArea(array.optJSONObject(i), 4));
+                                }
+                                areaListAdapter.notifyDataSetChanged();
+                                return;
+                            }
+                            Notify.show(object.optString("returnMsg"));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
+    }
+
+//    class GetSuningDistrict extends AsyncTask<Void, Void, String> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            showLoading();
+//            suningAreas.clear();
+//            areaListAdapter.notifyDataSetChanged();
+//        }
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            List<NameValuePair> nameValuePairs = new ArrayList<>();
+//            JSONObject data = new JSONObject();
+//            try {
+//                data.put("accessToken", SuningManager.getSignature().getToken());
+//                data.put("appKey", SuningManager.appKey);
+//                data.put("v", SuningManager.version);
+//                data.put("cityId", selectedAreaHashMap.get(2).getCode());
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//            nameValuePairs.add(new BasicNameValuePair("data", data.toString()));
+//            return netUtil.postWithoutCookie(API.API_SUNING_AREA_DISTRICT, nameValuePairs, true, true);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String s) {
+//            hideLoading();
+//            if (SuningManager.isSignatureOutOfDate(s)) {
+//                GetNewSignature getNewSignature = new GetNewSignature() {
+//                    @Override
+//                    protected void onPreExecute() {
+//                        showLoading();
+//                    }
+//
+//                    @Override
+//                    protected void onPostExecute(Boolean isSuccess) {
+//                        hideLoading();
+//                        if (isSuccess) {
+//                            new GetSuningDistrict().execute();
+//                        }
+//                    }
+//                };
+//                getNewSignature.execute();
+//                return;
+//            }
+//            if (!TextUtils.isEmpty(s)) {
+//                try {
+//                    JSONObject object = new JSONObject(s);
+//                    if (object.optBoolean("isSuccess")) {
+//                        JSONArray array = object.optJSONArray("district");
+//                        if (array != null) {
+//                            for (int i = 0; i < array.length(); i++) {
+//                                suningAreas.add(new ModelSuningArea(array.optJSONObject(i), 3));
+//                            }
+//                            areaListAdapter.notifyDataSetChanged();
+//                            return;
+//                        }
+//                        Notify.show(object.optString("returnMsg"));
+//                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }
+//        }
+//    }
 
     class AreaListAdapter extends BaseAdapter {
 
@@ -270,276 +803,72 @@ public class SuningAreaFragment extends BaseNotifyFragment {
         }
     }
 
-    class GetSuningProvince extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-            suningAreas.clear();
-            areaListAdapter.notifyDataSetChanged();
-        }
-
-        @Override
-        protected String doInBackground(Void... voids) {
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            JSONObject data = new JSONObject();
-            try {
-                data.put("accessToken", SuningManager.getSignature().getToken());
-                data.put("appKey", SuningManager.appKey);
-                data.put("v", SuningManager.version);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            nameValuePairs.add(new BasicNameValuePair("data", data.toString()));
-            return netUtil.postWithoutCookie(API.API_SUNING_AREA_PROVINCE, nameValuePairs, true, true);
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            hideLoading();
-            if (SuningManager.isSignatureOutOfDate(s)) {
-                GetNewSignature getNewSignature = new GetNewSignature() {
-                    @Override
-                    protected void onPreExecute() {
-                        showLoading();
-                    }
-
-                    @Override
-                    protected void onPostExecute(Boolean isSuccess) {
-                        hideLoading();
-                        if (isSuccess) {
-                            new GetSuningProvince().execute();
-                        }
-                    }
-                };
-                getNewSignature.execute();
-                return;
-            }
-            if (!TextUtils.isEmpty(s)) {
-                try {
-                    JSONObject object = new JSONObject(s);
-                    if (object.optBoolean("isSuccess")) {
-                        JSONArray array = object.optJSONArray("province");
-                        if (array != null) {
-                            for (int i = 0; i < array.length(); i++) {
-                                suningAreas.add(new ModelSuningArea(array.optJSONObject(i), 1));
-                            }
-                            areaListAdapter.notifyDataSetChanged();
-                        }
-                        return;
-                    }
-                    Notify.show(object.optString("returnMsg"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }
-    }
-
-    class GetSuningCity extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-            suningAreas.clear();
-            areaListAdapter.notifyDataSetChanged();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            JSONObject data = new JSONObject();
-            try {
-                data.put("accessToken", SuningManager.getSignature().getToken());
-                data.put("appKey", SuningManager.appKey);
-                data.put("v", SuningManager.version);
-                data.put("provinceId", selectedAreaHashMap.get(1).getCode());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            nameValuePairs.add(new BasicNameValuePair("data", data.toString()));
-            return netUtil.postWithoutCookie(API.API_SUNING_AREA_CITY, nameValuePairs, true, true);
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            hideLoading();
-            if (SuningManager.isSignatureOutOfDate(s)) {
-                GetNewSignature getNewSignature = new GetNewSignature() {
-                    @Override
-                    protected void onPreExecute() {
-                        showLoading();
-                    }
-
-                    @Override
-                    protected void onPostExecute(Boolean isSuccess) {
-                        hideLoading();
-                        if (isSuccess) {
-                            new GetSuningCity().execute();
-                        }
-                    }
-                };
-                getNewSignature.execute();
-                return;
-            }
-            if (!TextUtils.isEmpty(s)) {
-                try {
-                    JSONObject object = new JSONObject(s);
-                    if (object.optBoolean("isSuccess")) {
-                        JSONArray array = object.optJSONArray("city");
-                        if (array != null) {
-                            for (int i = 0; i < array.length(); i++) {
-                                suningAreas.add(new ModelSuningArea(array.optJSONObject(i), 2));
-                            }
-                            areaListAdapter.notifyDataSetChanged();
-                            return;
-                        }
-                        Notify.show(object.optString("returnMsg"));
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }
-    }
-
-    class GetSuningDistrict extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-            suningAreas.clear();
-            areaListAdapter.notifyDataSetChanged();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            JSONObject data = new JSONObject();
-            try {
-                data.put("accessToken", SuningManager.getSignature().getToken());
-                data.put("appKey", SuningManager.appKey);
-                data.put("v", SuningManager.version);
-                data.put("cityId", selectedAreaHashMap.get(2).getCode());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            nameValuePairs.add(new BasicNameValuePair("data", data.toString()));
-            return netUtil.postWithoutCookie(API.API_SUNING_AREA_DISTRICT, nameValuePairs, true, true);
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            hideLoading();
-            if (SuningManager.isSignatureOutOfDate(s)) {
-                GetNewSignature getNewSignature = new GetNewSignature() {
-                    @Override
-                    protected void onPreExecute() {
-                        showLoading();
-                    }
-
-                    @Override
-                    protected void onPostExecute(Boolean isSuccess) {
-                        hideLoading();
-                        if (isSuccess) {
-                            new GetSuningDistrict().execute();
-                        }
-                    }
-                };
-                getNewSignature.execute();
-                return;
-            }
-            if (!TextUtils.isEmpty(s)) {
-                try {
-                    JSONObject object = new JSONObject(s);
-                    if (object.optBoolean("isSuccess")) {
-                        JSONArray array = object.optJSONArray("district");
-                        if (array != null) {
-                            for (int i = 0; i < array.length(); i++) {
-                                suningAreas.add(new ModelSuningArea(array.optJSONObject(i), 3));
-                            }
-                            areaListAdapter.notifyDataSetChanged();
-                            return;
-                        }
-                        Notify.show(object.optString("returnMsg"));
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }
-    }
-
-
-    class GetSuningTown extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-            suningAreas.clear();
-            areaListAdapter.notifyDataSetChanged();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            JSONObject data = new JSONObject();
-            try {
-                data.put("accessToken", SuningManager.getSignature().getToken());
-                data.put("appKey", SuningManager.appKey);
-                data.put("v", SuningManager.version);
-                data.put("cityId", selectedAreaHashMap.get(2).getCode());
-                data.put("countyId", selectedAreaHashMap.get(3).getCode());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            nameValuePairs.add(new BasicNameValuePair("data", data.toString()));
-            return netUtil.postWithoutCookie(API.API_SUNING_AREA_TOWN, nameValuePairs, true, true);
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            hideLoading();
-            if (SuningManager.isSignatureOutOfDate(s)) {
-                GetNewSignature getNewSignature = new GetNewSignature() {
-                    @Override
-                    protected void onPreExecute() {
-                        showLoading();
-                    }
-
-                    @Override
-                    protected void onPostExecute(Boolean isSuccess) {
-                        hideLoading();
-                        if (isSuccess) {
-                            new GetSuningTown().execute();
-                        }
-                    }
-                };
-                getNewSignature.execute();
-                return;
-            }
-            if (!TextUtils.isEmpty(s)) {
-                try {
-                    JSONObject object = new JSONObject(s);
-                    if (object.optBoolean("isSuccess")) {
-                        JSONArray array = object.optJSONArray("town");
-                        if (array != null) {
-                            for (int i = 0; i < array.length(); i++) {
-                                suningAreas.add(new ModelSuningArea(array.optJSONObject(i), 4));
-                            }
-                            areaListAdapter.notifyDataSetChanged();
-                            return;
-                        }
-                        Notify.show(object.optString("returnMsg"));
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
+//    class GetSuningTown extends AsyncTask<Void, Void, String> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            showLoading();
+//            suningAreas.clear();
+//            areaListAdapter.notifyDataSetChanged();
+//        }
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            List<NameValuePair> nameValuePairs = new ArrayList<>();
+//            JSONObject data = new JSONObject();
+//            try {
+//                data.put("accessToken", SuningManager.getSignature().getToken());
+//                data.put("appKey", SuningManager.appKey);
+//                data.put("v", SuningManager.version);
+//                data.put("cityId", selectedAreaHashMap.get(2).getCode());
+//                data.put("countyId", selectedAreaHashMap.get(3).getCode());
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//            nameValuePairs.add(new BasicNameValuePair("data", data.toString()));
+//            return netUtil.postWithoutCookie(API.API_SUNING_AREA_TOWN, nameValuePairs, true, true);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String s) {
+//            hideLoading();
+//            if (SuningManager.isSignatureOutOfDate(s)) {
+//                GetNewSignature getNewSignature = new GetNewSignature() {
+//                    @Override
+//                    protected void onPreExecute() {
+//                        showLoading();
+//                    }
+//
+//                    @Override
+//                    protected void onPostExecute(Boolean isSuccess) {
+//                        hideLoading();
+//                        if (isSuccess) {
+//                            new GetSuningTown().execute();
+//                        }
+//                    }
+//                };
+//                getNewSignature.execute();
+//                return;
+//            }
+//            if (!TextUtils.isEmpty(s)) {
+//                try {
+//                    JSONObject object = new JSONObject(s);
+//                    if (object.optBoolean("isSuccess")) {
+//                        JSONArray array = object.optJSONArray("town");
+//                        if (array != null) {
+//                            for (int i = 0; i < array.length(); i++) {
+//                                suningAreas.add(new ModelSuningArea(array.optJSONObject(i), 4));
+//                            }
+//                            areaListAdapter.notifyDataSetChanged();
+//                            return;
+//                        }
+//                        Notify.show(object.optString("returnMsg"));
+//                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
 
 }

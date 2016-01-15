@@ -1,6 +1,5 @@
 package yitgogo.consumer.order.ui;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -8,19 +7,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.tools.API;
-import yitgogo.consumer.tools.NetUtil;
 import yitgogo.consumer.tools.Parameters;
 import yitgogo.consumer.view.Notify;
 
@@ -102,7 +100,7 @@ public class OrderPlatformReturnFragment extends BaseNotifyFragment {
             @Override
             public void onClick(View view) {
                 if (!TextUtils.isEmpty(reasonEditText.getText().toString())) {
-                    new ReturnProduct().execute();
+                    returnProduct();
                 } else {
                     Notify.show("请填写退货原因");
                 }
@@ -110,43 +108,50 @@ public class OrderPlatformReturnFragment extends BaseNotifyFragment {
         });
     }
 
-    class ReturnProduct extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
-
-        @Override
-        protected String doInBackground(Void... voids) {
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("saleId", saleId));
-            nameValuePairs.add(new BasicNameValuePair("supplierId", supplierId));
-            nameValuePairs.add(new BasicNameValuePair("orderNumber", orderNumber));
-            nameValuePairs.add(new BasicNameValuePair("productInfo", productInfo));
-            nameValuePairs.add(new BasicNameValuePair("reason", reasonEditText.getText().toString()));
-            return NetUtil.getInstance().postWithCookie(API.API_ORDER_RETURN, nameValuePairs);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (!TextUtils.isEmpty(result)) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        jump(OrderPlatformReturnCommitedFragment.class.getName(), "申请退货");
-                        getActivity().finish();
-                    } else {
-                        Notify.show(object.optString("message"));
-                    }
-                    return;
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+    private void returnProduct() {
+        Request request = new Request();
+        request.setUrl(API.API_ORDER_RETURN);
+        request.addRequestParam("saleId", saleId);
+        request.addRequestParam("supplierId", supplierId);
+        request.addRequestParam("orderNumber", orderNumber);
+        request.addRequestParam("productInfo", productInfo);
+        request.addRequestParam("reason", reasonEditText.getText().toString());
+        request.setUseCookie(true);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
             }
-            Notify.show("申请退货失败");
-        }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            jump(OrderPlatformReturnCommitedFragment.class.getName(), "申请退货");
+                            getActivity().finish();
+                        } else {
+                            Notify.show(object.optString("message"));
+                        }
+                        return;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Notify.show("申请退货失败");
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
 
 }

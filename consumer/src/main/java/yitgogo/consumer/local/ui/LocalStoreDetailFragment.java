@@ -3,7 +3,7 @@ package yitgogo.consumer.local.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import yitgogo.consumer.BaseNormalFragment;
+import yitgogo.consumer.base.BaseNormalFragment;
 import yitgogo.consumer.view.FragmentTabAdapter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;

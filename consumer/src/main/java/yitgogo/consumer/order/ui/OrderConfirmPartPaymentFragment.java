@@ -1,6 +1,6 @@
 package yitgogo.consumer.order.ui;
 
-import yitgogo.consumer.BaseNormalFragment;
+import yitgogo.consumer.base.BaseNormalFragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

@@ -3,7 +3,7 @@ package yitgogo.consumer.order.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import yitgogo.consumer.BaseNormalFragment;
+import yitgogo.consumer.base.BaseNormalFragment;
 import yitgogo.consumer.bianmin.order.BianminOrderFragment;
 import yitgogo.consumer.local.ui.LocalGoodsOrderFragment;
 import yitgogo.consumer.local.ui.LocalServiceOrderFragment;

@@ -1,7 +1,6 @@
 package yitgogo.consumer.suning.ui;
 
 import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -16,18 +15,18 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.money.ui.PayFragment;
 import yitgogo.consumer.suning.model.ModelSuningOrder;
 import yitgogo.consumer.suning.model.ModelSuningOrderProduct;
@@ -147,7 +146,7 @@ public class SuningOrderDetailFragment extends BaseNotifyFragment {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
                         if (makeSure) {
-                            new Received().execute();
+                            received();
                         }
                         super.onDismiss(dialog);
                     }
@@ -185,6 +184,90 @@ public class SuningOrderDetailFragment extends BaseNotifyFragment {
         }
         payButton.setVisibility(View.GONE);
         receiveButton.setVisibility(View.GONE);
+    }
+
+    private Button createActionButton(String lable, int backgroundResId, OnClickListener onClickListener) {
+        Button button = new Button(getActivity());
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, ScreenUtil.dip2px(28));
+        button.setLayoutParams(layoutParams);
+        button.setGravity(Gravity.CENTER);
+        button.setPadding(ScreenUtil.dip2px(8), 0, ScreenUtil.dip2px(8), 0);
+        button.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
+        button.setText(lable);
+        button.setTextColor(getResources().getColor(R.color.white));
+        button.setBackgroundResource(backgroundResId);
+        button.setOnClickListener(onClickListener);
+        return button;
+    }
+
+    private TextView createActionText(String lable, int textColorResId, OnClickListener onClickListener) {
+        TextView textView = new TextView(getActivity());
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, ScreenUtil.dip2px(28));
+        textView.setGravity(Gravity.CENTER);
+        textView.setLayoutParams(layoutParams);
+        textView.setPadding(ScreenUtil.dip2px(8), 0, ScreenUtil.dip2px(8), 0);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
+        textView.setText(lable);
+        textView.setTextColor(getResources().getColor(textColorResId));
+        textView.setOnClickListener(onClickListener);
+        return textView;
+    }
+
+    private String getSecretPhone(String phone) {
+        int length = phone.length();
+        if (length > 3) {
+            String string = "";
+            if (length < 8) {
+                string = phone.substring(0, 3) + "****";
+            } else {
+                string = phone.substring(0, 3) + "****"
+                        + phone.substring(7, length);
+            }
+            return string;
+        }
+        return "***";
+    }
+
+    private void received() {
+        Request request = new Request();
+        request.setUrl(API.API_SUNING_ORDER_RECEIVE_RETURN);
+        request.addRequestParam("tradeNo", suningOrder.getOrderNumber());
+        request.addRequestParam("type", String.valueOf(2));
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    JSONObject object;
+                    try {
+                        object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            suningOrder.setOrderType("已收货");
+                            showInfo();
+                            return;
+                        }
+                        Notify.show(object.optString("message"));
+                        return;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
 
     class OrderProductAdapter extends BaseAdapter {
@@ -286,82 +369,39 @@ public class SuningOrderDetailFragment extends BaseNotifyFragment {
         }
     }
 
-    private Button createActionButton(String lable, int backgroundResId, OnClickListener onClickListener) {
-        Button button = new Button(getActivity());
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, ScreenUtil.dip2px(28));
-        button.setLayoutParams(layoutParams);
-        button.setGravity(Gravity.CENTER);
-        button.setPadding(ScreenUtil.dip2px(8), 0, ScreenUtil.dip2px(8), 0);
-        button.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
-        button.setText(lable);
-        button.setTextColor(getResources().getColor(R.color.white));
-        button.setBackgroundResource(backgroundResId);
-        button.setOnClickListener(onClickListener);
-        return button;
-    }
-
-    private TextView createActionText(String lable, int textColorResId, OnClickListener onClickListener) {
-        TextView textView = new TextView(getActivity());
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, ScreenUtil.dip2px(28));
-        textView.setGravity(Gravity.CENTER);
-        textView.setLayoutParams(layoutParams);
-        textView.setPadding(ScreenUtil.dip2px(8), 0, ScreenUtil.dip2px(8), 0);
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
-        textView.setText(lable);
-        textView.setTextColor(getResources().getColor(textColorResId));
-        textView.setOnClickListener(onClickListener);
-        return textView;
-    }
-
-    private String getSecretPhone(String phone) {
-        int length = phone.length();
-        if (length > 3) {
-            String string = "";
-            if (length < 8) {
-                string = phone.substring(0, 3) + "****";
-            } else {
-                string = phone.substring(0, 3) + "****"
-                        + phone.substring(7, length);
-            }
-            return string;
-        }
-        return "***";
-    }
-
-
-    class Received extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> parameters = new ArrayList<NameValuePair>();
-            parameters.add(new BasicNameValuePair("tradeNo", suningOrder.getOrderNumber()));
-            parameters.add(new BasicNameValuePair("type", "2"));
-            return netUtil.postWithoutCookie(API.API_SUNING_ORDER_RECEIVE_RETURN, parameters, false, false);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (!TextUtils.isEmpty(result)) {
-                JSONObject object;
-                try {
-                    object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        suningOrder.setOrderType("已收货");
-                        showInfo();
-                        return;
-                    }
-                    Notify.show(object.optString("message"));
-                    return;
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
+//    class Received extends AsyncTask<Void, Void, String> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            showLoading();
+//        }
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+//            parameters.add(new BasicNameValuePair("tradeNo", suningOrder.getOrderNumber()));
+//            parameters.add(new BasicNameValuePair("type", "2"));
+//            return netUtil.postWithoutCookie(API.API_SUNING_ORDER_RECEIVE_RETURN, parameters, false, false);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            hideLoading();
+//            if (!TextUtils.isEmpty(result)) {
+//                JSONObject object;
+//                try {
+//                    object = new JSONObject(result);
+//                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+//                        suningOrder.setOrderType("已收货");
+//                        showInfo();
+//                        return;
+//                    }
+//                    Notify.show(object.optString("message"));
+//                    return;
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
 }

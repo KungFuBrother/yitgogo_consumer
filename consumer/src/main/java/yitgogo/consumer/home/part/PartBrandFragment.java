@@ -7,7 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import yitgogo.consumer.BaseNormalFragment;
+import yitgogo.consumer.base.BaseNormalFragment;
 import yitgogo.consumer.home.model.ModelHomeBrand;
 import yitgogo.consumer.product.ui.ProductListFragment;
 import yitgogo.consumer.view.InnerGridView;

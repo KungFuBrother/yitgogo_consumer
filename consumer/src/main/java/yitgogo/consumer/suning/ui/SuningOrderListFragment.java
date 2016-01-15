@@ -1,6 +1,5 @@
 package yitgogo.consumer.suning.ui;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -19,11 +18,14 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,7 +33,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.suning.model.ModelSuningOrder;
 import yitgogo.consumer.suning.model.ModelSuningOrderProduct;
 import yitgogo.consumer.tools.API;
@@ -41,10 +43,10 @@ import yitgogo.consumer.view.InnerGridView;
 
 public class SuningOrderListFragment extends BaseNotifyFragment {
 
+    public static boolean needRefersh = true;
     PullToRefreshListView orderList;
     OrderAdapter orderAdapter;
     List<ModelSuningOrder> orders;
-    public static boolean needRefersh = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -107,7 +109,7 @@ public class SuningOrderListFragment extends BaseNotifyFragment {
 
             @Override
             public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
-                new GetOrders().execute();
+                getOrders();
             }
 
         });
@@ -118,7 +120,7 @@ public class SuningOrderListFragment extends BaseNotifyFragment {
         pagenum = 0;
         orders.clear();
         orderAdapter.notifyDataSetChanged();
-        new GetOrders().execute();
+        getOrders();
     }
 
     private void showOrderDetail(int index) {
@@ -127,57 +129,114 @@ public class SuningOrderListFragment extends BaseNotifyFragment {
         jump(SuningOrderDetailFragment.class.getName(), "订单详情", bundle);
     }
 
-    class GetOrders extends AsyncTask<Void, Void, String> {
+    private void getOrders() {
+        pagenum++;
+        Request request = new Request();
+        request.setUrl(API.API_SUNING_ORDER_LIST);
+        request.addRequestParam("menberAccount", User.getUser().getUseraccount());
+        request.addRequestParam("pagenum", pagenum + "");
+        request.addRequestParam("pagesize", pagesize + "");
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
 
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-            pagenum++;
-        }
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+                orderList.onRefreshComplete();
+                pagenum--;
+            }
 
-        @Override
-        protected String doInBackground(Void... arg0) {
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("menberAccount", User
-                    .getUser().getUseraccount()));
-            nameValuePairs.add(new BasicNameValuePair("pagenum", pagenum + ""));
-            nameValuePairs.add(new BasicNameValuePair("pagesize", pagesize + ""));
-            return netUtil.postWithoutCookie(API.API_SUNING_ORDER_LIST,
-                    nameValuePairs, false, false);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            orderList.onRefreshComplete();
-            if (!TextUtils.isEmpty(result)) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONArray array = object.optJSONArray("dataList");
-                        if (array != null) {
-                            if (array.length() < pagesize) {
-                                orderList.setMode(Mode.PULL_FROM_START);
-                            }
-                            for (int i = 0; i < array.length(); i++) {
-                                orders.add(new ModelSuningOrder(array
-                                        .getJSONObject(i)));
-                            }
-                            if (orders.size() > 0) {
-                                orderAdapter.notifyDataSetChanged();
-                                return;
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                orderList.onRefreshComplete();
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONArray array = object.optJSONArray("dataList");
+                            if (array != null) {
+                                if (array.length() < pagesize) {
+                                    orderList.setMode(Mode.PULL_FROM_START);
+                                }
+                                for (int i = 0; i < array.length(); i++) {
+                                    orders.add(new ModelSuningOrder(array
+                                            .getJSONObject(i)));
+                                }
+                                if (orders.size() > 0) {
+                                    orderAdapter.notifyDataSetChanged();
+                                    return;
+                                }
                             }
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                }
+                if (orders.size() == 0) {
+                    loadingEmpty();
                 }
             }
-            if (orders.size() == 0) {
-                loadingEmpty();
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
             }
-        }
+        });
     }
+
+//    class GetOrders extends AsyncTask<Void, Void, String> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            showLoading();
+//            pagenum++;
+//        }
+//
+//        @Override
+//        protected String doInBackground(Void... arg0) {
+//            List<NameValuePair> nameValuePairs = new ArrayList<>();
+//            nameValuePairs.add(new BasicNameValuePair("menberAccount", User
+//                    .getUser().getUseraccount()));
+//            nameValuePairs.add(new BasicNameValuePair("pagenum", pagenum + ""));
+//            nameValuePairs.add(new BasicNameValuePair("pagesize", pagesize + ""));
+//            return netUtil.postWithoutCookie(API.API_SUNING_ORDER_LIST,
+//                    nameValuePairs, false, false);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            hideLoading();
+//            orderList.onRefreshComplete();
+//            if (!TextUtils.isEmpty(result)) {
+//                try {
+//                    JSONObject object = new JSONObject(result);
+//                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+//                        JSONArray array = object.optJSONArray("dataList");
+//                        if (array != null) {
+//                            if (array.length() < pagesize) {
+//                                orderList.setMode(Mode.PULL_FROM_START);
+//                            }
+//                            for (int i = 0; i < array.length(); i++) {
+//                                orders.add(new ModelSuningOrder(array
+//                                        .getJSONObject(i)));
+//                            }
+//                            if (orders.size() > 0) {
+//                                orderAdapter.notifyDataSetChanged();
+//                                return;
+//                            }
+//                        }
+//                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            if (orders.size() == 0) {
+//                loadingEmpty();
+//            }
+//        }
+//    }
 
     class OrderAdapter extends BaseAdapter {
 

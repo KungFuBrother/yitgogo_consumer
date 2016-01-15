@@ -1,7 +1,6 @@
 package yitgogo.consumer.local.ui;
 
 import android.app.Dialog;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,11 +20,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,7 +35,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.local.model.ModelLocalSaleMiaoshaDetail;
 import yitgogo.consumer.money.ui.PayFragment;
 import yitgogo.consumer.order.model.ModelDiliver;
@@ -50,33 +52,36 @@ import yitgogo.consumer.view.Notify;
 
 public class LocalGoodsSaleMiaoshaBuyFragment extends BaseNotifyFragment {
 
-    ImageView goodsImageView;
-    TextView goodsNameTextView, goodsAttrTextView, goodsPriceTextView,
+    private ImageView goodsImageView;
+    private TextView goodsNameTextView, goodsAttrTextView, goodsPriceTextView,
             storeInfoTextView, goodsCountTextView, payDiliverTextView,
             goodsMoneyTextView, postFeeTextView, totalPayTextView,
             confirmButton;
-    LinearLayout diliverPayButton;
-    FrameLayout countDeleteButton, countAddButton;
+    private LinearLayout diliverPayButton;
+    private FrameLayout countDeleteButton, countAddButton;
 
-    double totalMoney = 0;
-    int goodsCount = 1;
+    private double totalMoney = 0;
+    private int buyCount = 1;
 
-    ModelStorePostInfo storePostInfo = new ModelStorePostInfo();
+    private int boughtCount = 0;
 
-    List<ModelDiliver> dilivers;
-    List<ModelPayment> payments;
-    ModelDiliver diliver;
-    ModelPayment payment;
-    DiliverAdapter diliverAdapter;
-    PaymentAdapter paymentAdapter;
+    private ModelStorePostInfo storePostInfo = new ModelStorePostInfo();
 
-    ModelLocalSaleMiaoshaDetail miaoshaDetail = new ModelLocalSaleMiaoshaDetail();
-    OrderConfirmPartAddressFragment addressFragment = new OrderConfirmPartAddressFragment();
+    private List<ModelDiliver> dilivers;
+    private List<ModelPayment> payments;
+    private ModelDiliver diliver;
+    private ModelPayment payment;
+    private DiliverAdapter diliverAdapter;
+    private PaymentAdapter paymentAdapter;
+
+    private ModelLocalSaleMiaoshaDetail miaoshaDetail = new ModelLocalSaleMiaoshaDetail();
+    private OrderConfirmPartAddressFragment addressFragment = new OrderConfirmPartAddressFragment();
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        new GetStoreInfo().execute();
+        getStoreInfo();
+        getBoughtCount();
     }
 
     @Override
@@ -178,15 +183,29 @@ public class LocalGoodsSaleMiaoshaBuyFragment extends BaseNotifyFragment {
 
             @Override
             public void onClick(View paramView) {
-                Notify.show("秒杀产品一次只能购买一件");
+                if (miaoshaDetail.getNumbers() > buyCount) {
+                    if (miaoshaDetail.getSeckillNUmber() > buyCount) {
+                        if (buyCount + boughtCount > miaoshaDetail.getMemberNumber()) {
+                            notifyCount();
+                        } else {
+                            buyCount++;
+                            countTotalMoney();
+                        }
+                    } else {
+                        Notify.show("商品库存不足");
+                    }
+                } else {
+                    Notify.show("商品库存不足");
+                }
             }
         });
         countDeleteButton.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View paramView) {
-                if (goodsCount > 1) {
-                    goodsCount--;
+                if (buyCount > 1) {
+                    buyCount--;
+                    countTotalMoney();
                 }
             }
         });
@@ -213,15 +232,11 @@ public class LocalGoodsSaleMiaoshaBuyFragment extends BaseNotifyFragment {
     private void setStorePostInfo() {
         dilivers.clear();
         payments.clear();
-        dilivers.add(new ModelDiliver(ModelDiliver.TYPE_SELF,
-                ModelDiliver.NAME_SELF));
-        dilivers.add(new ModelDiliver(ModelDiliver.TYPE_HOME,
-                ModelDiliver.NAME_HOME));
-        payments.add(new ModelPayment(ModelPayment.TYPE_ONLINE,
-                ModelPayment.NAME_ONLINE));
+        dilivers.add(new ModelDiliver(ModelDiliver.TYPE_SELF, ModelDiliver.NAME_SELF));
+        dilivers.add(new ModelDiliver(ModelDiliver.TYPE_HOME, ModelDiliver.NAME_HOME));
+        payments.add(new ModelPayment(ModelPayment.TYPE_ONLINE, ModelPayment.NAME_ONLINE));
         if (storePostInfo.isSupportForDelivery()) {
-            payments.add(new ModelPayment(ModelPayment.TYPE_RECEIVED,
-                    ModelPayment.NAME_RECEIVED));
+            payments.add(new ModelPayment(ModelPayment.TYPE_RECEIVED, ModelPayment.NAME_RECEIVED));
         }
         diliverAdapter.notifyDataSetChanged();
         paymentAdapter.notifyDataSetChanged();
@@ -229,29 +244,50 @@ public class LocalGoodsSaleMiaoshaBuyFragment extends BaseNotifyFragment {
 
     private void countTotalMoney() {
         totalMoney = 0;
-        double goodsMoney = goodsCount * miaoshaDetail.getSeckillPrice();
+        double goodsMoney = buyCount * miaoshaDetail.getSeckillPrice();
         double postFee = 0;
-        if (diliver.getType() != ModelDiliver.TYPE_SELF & goodsMoney > 0
-                & goodsMoney < storePostInfo.getHawManyPackages()) {
+        if (diliver.getType() != ModelDiliver.TYPE_SELF & goodsMoney > 0 & goodsMoney < storePostInfo.getHawManyPackages()) {
             postFee = storePostInfo.getPostage();
         }
         totalMoney = goodsMoney + postFee;
-        goodsCountTextView.setText(goodsCount + "");
-        goodsMoneyTextView.setText(Parameters.CONSTANT_RMB
-                + decimalFormat.format(goodsMoney));
-        postFeeTextView.setText(Parameters.CONSTANT_RMB
-                + decimalFormat.format(postFee));
-        totalPayTextView.setText(Parameters.CONSTANT_RMB
-                + decimalFormat.format(totalMoney));
+        goodsCountTextView.setText(String.valueOf(buyCount));
+        goodsMoneyTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format(goodsMoney));
+        postFeeTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format(postFee));
+        totalPayTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format(totalMoney));
+    }
+
+    /**
+     * 超过限购数量提示
+     */
+    private void notifyCount() {
+        String toastString = "每个账号限购" + miaoshaDetail.getMemberNumber() + "件";
+        if (boughtCount > 0) {
+            toastString += "，您已购买过" + boughtCount + "件";
+        }
+        Notify.show(toastString);
     }
 
     private void confirmOrder() {
-        if (totalMoney <= 0) {
-            Notify.show("商品信息有误");
-        } else if (addressFragment.getAddress() == null) {
-            Notify.show("收货人地址有误");
+        if (addressFragment.getAddress() != null) {
+            if (totalMoney > 0) {
+                if (miaoshaDetail.getNumbers() >= buyCount) {
+                    if (miaoshaDetail.getSeckillNUmber() >= buyCount) {
+                        if (buyCount + boughtCount > miaoshaDetail.getMemberNumber()) {
+                            notifyCount();
+                        } else {
+                            addLocalGoodsOrder();
+                        }
+                    } else {
+                        Notify.show("商品库存不足");
+                    }
+                } else {
+                    Notify.show("商品库存不足");
+                }
+            } else {
+                Notify.show("商品信息有误");
+            }
         } else {
-            new AddLocalGoodsOrder().execute();
+            Notify.show("收货人地址有误");
         }
     }
 
@@ -264,44 +300,89 @@ public class LocalGoodsSaleMiaoshaBuyFragment extends BaseNotifyFragment {
      * ,"autoPurchase":false,"supportForDelivery":true,"postage":10.0}
      * ,"object":null}
      */
-    class GetStoreInfo extends AsyncTask<Void, Void, String> {
+    private void getStoreInfo() {
+        Request request = new Request();
+        request.setUrl(API.API_STORE_SEND_FEE);
+        request.addRequestParam("no", miaoshaDetail.getSpNo());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            showLoading();
-        }
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+                Notify.show(missionMessage.getMessage());
 
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair("no", miaoshaDetail
-                    .getSpNo()));
-            return netUtil.postWithoutCookie(API.API_STORE_SEND_FEE,
-                    nameValuePairs, false, false);
-        }
+            }
 
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (!TextUtils.isEmpty(result)) {
-                JSONObject object;
-                try {
-                    object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        storePostInfo = new ModelStorePostInfo(
-                                object.optJSONObject("dataMap"));
-                        storeInfoTextView
-                                .setText(getStorePostInfoString(storePostInfo));
-                        setStorePostInfo();
-                        countTotalMoney();
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    JSONObject object;
+                    try {
+                        object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            storePostInfo = new ModelStorePostInfo(
+                                    object.optJSONObject("dataMap"));
+                            storeInfoTextView
+                                    .setText(getStorePostInfoString(storePostInfo));
+                            setStorePostInfo();
+                            countTotalMoney();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
             }
-        }
 
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
+    }
+
+    /**
+     * 查询已购数量
+     */
+    private void getBoughtCount() {
+        Request request = new Request();
+        request.setUrl(API.API_LOCAL_SALE_MIAOSHA_COUNT);
+        request.addRequestParam("memberAccount", User.getUser().getUseraccount());
+        request.addRequestParam("productId", miaoshaDetail.getId());
+        request.addRequestParam("spId", miaoshaDetail.getSpId());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+                Notify.show(missionMessage.getMessage());
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    JSONObject object;
+                    try {
+                        object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            boughtCount = object.optInt("object");
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
 
     class DiliverPaymentDialog extends DialogFragment {
@@ -493,118 +574,121 @@ public class LocalGoodsSaleMiaoshaBuyFragment extends BaseNotifyFragment {
      * :"66.0","servicePhone":"13228116626"}],"totalCount":1,
      * "dataMap":{},"object":null}
      */
-    class AddLocalGoodsOrder extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading("下单中,请稍候...");
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
-            valuePairs.add(new BasicNameValuePair("serviceProvidID", Store
-                    .getStore().getStoreId()));
-            valuePairs.add(new BasicNameValuePair("memberAccount", User
-                    .getUser().getUseraccount()));
-            valuePairs.add(new BasicNameValuePair("customerName",
-                    addressFragment.getAddress().getPersonName()));
-            valuePairs.add(new BasicNameValuePair("customerPhone",
-                    addressFragment.getAddress().getPhone()));
-            valuePairs.add(new BasicNameValuePair("retailOrderPrice",
-                    totalMoney + ""));
-
-            JSONArray data = new JSONArray();
-            JSONArray deliveryInfo = new JSONArray();
-            try {
-                JSONObject deliveryInfoObject = new JSONObject();
-                deliveryInfoObject.put("supplyId", miaoshaDetail.getSpId());
-                deliveryInfoObject.put("deliveryType", diliver.getName());
-                switch (diliver.getType()) {
-                    case ModelDiliver.TYPE_HOME:
-                        deliveryInfoObject
-                                .put("address", addressFragment.getAddress()
-                                        .getAreaAddress()
-                                        + addressFragment.getAddress()
-                                        .getDetailedAddress());
-                        break;
-                    case ModelDiliver.TYPE_SELF:
-                        deliveryInfoObject.put("address", Store.getStore()
-                                .getStoreAddess());
-                        break;
-                    default:
-                        break;
-                }
-                deliveryInfoObject.put("paymentType", payment.getType());
-                deliveryInfo.put(deliveryInfoObject);
-
-                JSONObject dataObject = new JSONObject();
-                dataObject.put("retailProductManagerID", miaoshaDetail.getId());
-                dataObject.put("orderType", "1");
-                dataObject.put("shopNum", goodsCount);
-                dataObject.put("productPrice", miaoshaDetail.getSeckillPrice());
-                data.put(dataObject);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
+    private void addLocalGoodsOrder() {
+        // pagenum++;
+        Request request = new Request();
+        request.setUrl(API.API_LOCAL_BUSINESS_GOODS_ORDER_ADD);
+        request.addRequestParam("serviceProvidID", Store
+                .getStore().getStoreId());
+        request.addRequestParam("memberAccount", User
+                .getUser().getUseraccount());
+        request.addRequestParam("customerName", addressFragment.getAddress().getPersonName());
+        request.addRequestParam("customerPhone", addressFragment.getAddress().getPhone());
+        request.addRequestParam("retailOrderPrice", totalMoney + "");
+        JSONArray data = new JSONArray();
+        JSONArray deliveryInfo = new JSONArray();
+        try {
+            JSONObject deliveryInfoObject = new JSONObject();
+            deliveryInfoObject.put("supplyId", miaoshaDetail.getSpId());
+            deliveryInfoObject.put("deliveryType", diliver.getName());
+            switch (diliver.getType()) {
+                case ModelDiliver.TYPE_HOME:
+                    deliveryInfoObject
+                            .put("address", addressFragment.getAddress()
+                                    .getAreaAddress()
+                                    + addressFragment.getAddress()
+                                    .getDetailedAddress());
+                    break;
+                case ModelDiliver.TYPE_SELF:
+                    deliveryInfoObject.put("address", Store.getStore()
+                            .getStoreAddess());
+                    break;
+                default:
+                    break;
             }
-            valuePairs.add(new BasicNameValuePair("data", data.toString()));
-            valuePairs.add(new BasicNameValuePair("deliveryInfo", deliveryInfo
-                    .toString()));
+            deliveryInfoObject.put("paymentType", payment.getType());
+            deliveryInfo.put(deliveryInfoObject);
 
-            return netUtil.postWithoutCookie(
-                    API.API_LOCAL_BUSINESS_GOODS_ORDER_ADD, valuePairs, false,
-                    false);
+            JSONObject dataObject = new JSONObject();
+            dataObject.put("retailProductManagerID", miaoshaDetail.getId());
+            dataObject.put("orderType", "1");
+            dataObject.put("shopNum", buyCount);
+            dataObject.put("productPrice", miaoshaDetail.getSeckillPrice());
+            data.put(dataObject);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+        request.addRequestParam("data", data.toString());
+        request.addRequestParam("deliveryInfo", deliveryInfo.toString());
 
-        @Override
-        protected void onPostExecute(String result) {
-            if (result.length() > 0) {
-                JSONObject object;
-                try {
-                    object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        Notify.show("下单成功");
-                        JSONArray orderArray = object.optJSONArray("dataList");
-                        if (orderArray != null) {
-                            double payPrice = 0;
-                            ArrayList<String> orderNumbers = new ArrayList<String>();
-                            for (int i = 0; i < orderArray.length(); i++) {
-                                ModelLocalGoodsOrderResult orderResult = new ModelLocalGoodsOrderResult(
-                                        orderArray.optJSONObject(i));
-                                if (orderResult.getPaymentType() == ModelPayment.TYPE_ONLINE) {
-                                    orderNumbers.add(orderResult
-                                            .getOrdernumber());
-                                    payPrice += orderResult.getOrderPrice();
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading("下单中,请稍候...");
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+                Notify.show(missionMessage.getMessage());
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    JSONObject object;
+                    try {
+                        object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            Notify.show("下单成功");
+                            JSONArray orderArray = object.optJSONArray("dataList");
+                            if (orderArray != null) {
+                                double payPrice = 0;
+                                ArrayList<String> orderNumbers = new ArrayList<String>();
+                                for (int i = 0; i < orderArray.length(); i++) {
+                                    ModelLocalGoodsOrderResult orderResult = new ModelLocalGoodsOrderResult(
+                                            orderArray.optJSONObject(i));
+                                    if (orderResult.getPaymentType() == ModelPayment.TYPE_ONLINE) {
+                                        orderNumbers.add(orderResult
+                                                .getOrdernumber());
+                                        payPrice += orderResult.getOrderPrice();
+                                    }
+                                }
+                                if (orderNumbers.size() > 0) {
+                                    if (payPrice > 0) {
+                                        payMoney(orderNumbers, payPrice,
+                                                PayFragment.ORDER_TYPE_LP);
+                                        getActivity().finish();
+                                        return;
+                                    }
                                 }
                             }
-                            if (orderNumbers.size() > 0) {
-                                if (payPrice > 0) {
-                                    payMoney(orderNumbers, payPrice,
-                                            PayFragment.ORDER_TYPE_LP);
-                                    getActivity().finish();
-                                    return;
-                                }
-                            }
+                            showOrder(PayFragment.ORDER_TYPE_LP);
+                            getActivity().finish();
+                            return;
+                        } else {
+                            hideLoading();
+                            Notify.show(object.optString("message"));
+                            return;
                         }
-                        showOrder(PayFragment.ORDER_TYPE_LP);
-                        getActivity().finish();
-                        return;
-                    } else {
+                    } catch (JSONException e) {
                         hideLoading();
-                        Notify.show(object.optString("message"));
+                        Notify.show("下单失败");
+                        e.printStackTrace();
                         return;
                     }
-                } catch (JSONException e) {
+                } else {
                     hideLoading();
                     Notify.show("下单失败");
-                    e.printStackTrace();
-                    return;
                 }
             }
-            hideLoading();
-            Notify.show("下单失败");
-        }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
 
 }

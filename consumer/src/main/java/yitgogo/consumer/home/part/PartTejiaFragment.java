@@ -6,7 +6,7 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import yitgogo.consumer.BaseNormalFragment;
+import yitgogo.consumer.base.BaseNormalFragment;
 import yitgogo.consumer.home.model.ModelSaleTejia;
 import yitgogo.consumer.home.model.ModelSaleTejiaProduct;
 import android.os.Bundle;

@@ -1,7 +1,6 @@
 package yitgogo.consumer.money.ui;
 
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -16,11 +15,14 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
 import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,7 +30,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.money.model.ModelTrade;
 import yitgogo.consumer.tools.API;
 import yitgogo.consumer.tools.Parameters;
@@ -66,11 +68,11 @@ public class TradeHistoryFragment extends BaseNotifyFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        new GetTradeHistory().execute();
+        refresh();
     }
 
     private void init() {
-        trades = new ArrayList<ModelTrade>();
+        trades = new ArrayList<>();
         tradeHistoryAdapter = new TradeHistoryAdapter();
     }
 
@@ -91,142 +93,86 @@ public class TradeHistoryFragment extends BaseNotifyFragment {
 
     @Override
     protected void registerViews() {
-        refreshScrollView
-                .setOnRefreshListener(new OnRefreshListener2<ScrollView>() {
+        refreshScrollView.setOnRefreshListener(new OnRefreshListener2<ScrollView>() {
 
-                    @Override
-                    public void onPullDownToRefresh(
-                            PullToRefreshBase<ScrollView> refreshView) {
-                        refreshScrollView.setMode(Mode.BOTH);
-                        pagenum = 0;
-                        trades.clear();
-                        tradeHistoryAdapter.notifyDataSetChanged();
-                        new GetTradeHistory().execute();
-                    }
+            @Override
+            public void onPullDownToRefresh(PullToRefreshBase<ScrollView> refreshView) {
+                refresh();
+            }
 
-                    @Override
-                    public void onPullUpToRefresh(
-                            PullToRefreshBase<ScrollView> refreshView) {
-                        new GetTradeHistory().execute();
-                    }
-                });
+            @Override
+            public void onPullUpToRefresh(PullToRefreshBase<ScrollView> refreshView) {
+                getTradeHistory();
+            }
+        });
     }
 
-    /**
-     * @author Tiger
-     * @Url http://192.168.8.2:8030/member/cash/listdetail
-     * @Parameters [pageindex=1, pagecount=10]
-     * @Put_Cookie JSESSIONID=09DC823F27F1756D01E2D0FD9CC3ED03
-     * @Result {"state":"success","msg":"操作成功","databody":{"currentPageNo":1,"data"
-     * :[{"account":"HY048566511863","amount":116.00,"amountFlow":true,
-     * "datatime":"2015-08-19 21:25:16","description":"参与活动中奖","id":
-     * "15081921250003"
-     * ,"realname":"赵晋","sourceid":"YT1519063489"},{"account"
-     * :"HY048566511863","amount":350.00,"amountFlow":true,"datatime":
-     * "2015-08-19 21:27:00"
-     * ,"description":"参与活动中奖","id":"15081921270002"
-     * ,"realname":"赵晋","sourceid"
-     * :"YT1519162417"},{"account":"HY048566511863"
-     * ,"amount":261.00,"amountFlow"
-     * :true,"datatime":"2015-08-19 21:27:25"
-     * ,"description":"参与活动中奖","id"
-     * :"15081921270004","realname":"赵晋","sourceid"
-     * :"YT1519266519"},{"account"
-     * :"HY048566511863","amount":348.00,"amountFlow"
-     * :true,"datatime":"2015-08-19 21:30:07"
-     * ,"description":"参与活动中奖","id"
-     * :"15081921300003","realname":"赵晋","sourceid"
-     * :"YT1519689582"},{"account"
-     * :"HY048566511863","amount":237.00,"amountFlow"
-     * :true,"datatime":"2015-08-19 21:35:01"
-     * ,"description":"参与活动中奖","id"
-     * :"15081921350002","realname":"赵晋","sourceid"
-     * :"YT5248796282"},{"account"
-     * :"HY048566511863","amount":401.00,"amountFlow"
-     * :true,"datatime":"2015-08-19 21:38:44"
-     * ,"description":"参与活动中奖","id"
-     * :"15081921380004","realname":"赵晋","sourceid"
-     * :"YT5249071584"},{"account"
-     * :"HY048566511863","amount":428.00,"amountFlow"
-     * :true,"datatime":"2015-08-19 21:38:55"
-     * ,"description":"参与活动中奖","id"
-     * :"15081921380006","realname":"赵晋","sourceid"
-     * :"YT5249146239"},{"account"
-     * :"HY048566511863","amount":387.00,"amountFlow"
-     * :true,"datatime":"2015-08-19 21:39:01"
-     * ,"description":"参与活动中奖","id"
-     * :"15081921390002","realname":"赵晋","sourceid"
-     * :"YT5249220214"},{"account"
-     * :"HY048566511863","amount":305.00,"amountFlow"
-     * :true,"datatime":"2015-08-19 21:39:10"
-     * ,"description":"参与活动中奖","id"
-     * :"15081921390004","realname":"赵晋","sourceid"
-     * :"YT5249333139"},{"account"
-     * :"HY048566511863","amount":10.00,"amountFlow"
-     * :true,"datatime":"2015-08-19 21:46:56"
-     * ,"description":"参与活动中奖","id"
-     * :"15081921460002","realname":"赵晋","sourceid"
-     * :"YT5249440321"}],"hasNextPage"
-     * :true,"hasPreviousPage":false,"pageSize"
-     * :10,"totalCount":14,"totalPageCount":2}}
-     */
-    class GetTradeHistory extends AsyncTask<Void, Void, String> {
+    private void refresh() {
+        refreshScrollView.setMode(Mode.BOTH);
+        pagenum = 0;
+        trades.clear();
+        tradeHistoryAdapter.notifyDataSetChanged();
+        getTradeHistory();
+    }
 
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-            pagenum++;
-        }
+    private void getTradeHistory() {
+        pagenum++;
+        Request request = new Request();
+        request.setUrl(API.MONEY_TRADE_DETAIL);
+        request.setUseCookie(true);
+        request.addRequestParam("pageindex", String.valueOf(pagenum));
+        request.addRequestParam("pagecount", String.valueOf(pagesize));
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
 
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs
-                    .add(new BasicNameValuePair("pageindex", pagenum + ""));
-            nameValuePairs.add(new BasicNameValuePair("pagecount", pagesize
-                    + ""));
-            return netUtil.postWithCookie(API.MONEY_TRADE_DETAIL,
-                    nameValuePairs);
-        }
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
 
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            refreshScrollView.onRefreshComplete();
-            if (!TextUtils.isEmpty(result)) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("success")) {
-                        JSONObject jsonObject = object
-                                .optJSONObject("databody");
-                        if (jsonObject != null) {
-                            JSONArray array = jsonObject.optJSONArray("data");
-                            if (array != null) {
-                                if (array.length() < pagesize) {
-                                    refreshScrollView
-                                            .setMode(Mode.PULL_FROM_START);
-                                }
-                                for (int i = 0; i < array.length(); i++) {
-                                    trades.add(new ModelTrade(array
-                                            .optJSONObject(i)));
-                                }
-                                if (trades.size() > 0) {
-                                    tradeHistoryAdapter.notifyDataSetChanged();
-                                    return;
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("success")) {
+                            JSONObject jsonObject = object.optJSONObject("databody");
+                            if (jsonObject != null) {
+                                JSONArray array = jsonObject.optJSONArray("data");
+                                if (array != null) {
+                                    if (array.length() < pagesize) {
+                                        refreshScrollView.setMode(Mode.PULL_FROM_START);
+                                    }
+                                    for (int i = 0; i < array.length(); i++) {
+                                        trades.add(new ModelTrade(array.optJSONObject(i)));
+                                    }
+                                    if (trades.size() > 0) {
+                                        tradeHistoryAdapter.notifyDataSetChanged();
+                                        return;
+                                    }
                                 }
                             }
                         }
+                        Notify.show(object.optString("msg"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                    Notify.show(object.optString("msg"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                }
+                refreshScrollView.setMode(Mode.PULL_FROM_START);
+                if (trades.isEmpty()) {
+                    loadingEmpty();
                 }
             }
-            refreshScrollView.setMode(Mode.PULL_FROM_START);
-            if (trades.isEmpty()) {
-                loadingEmpty();
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+                refreshScrollView.onRefreshComplete();
             }
-        }
+        });
     }
 
     class TradeHistoryAdapter extends BaseAdapter {

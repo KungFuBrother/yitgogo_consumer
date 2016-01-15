@@ -3,10 +3,9 @@ package yitgogo.consumer.main.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import yitgogo.consumer.BaseNormalFragment;
+import yitgogo.consumer.base.BaseNormalFragment;
 import yitgogo.consumer.local.ui.LocalGoodsFragment;
 import yitgogo.consumer.local.ui.LocalServiceFragment;
-import yitgogo.consumer.store.model.Store;
 import yitgogo.consumer.view.FragmentTabAdapter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;

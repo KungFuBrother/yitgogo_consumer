@@ -1,7 +1,7 @@
 package yitgogo.consumer.product.ui;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -14,14 +14,19 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.smartown.controller.mission.ControllableListener;
+import com.smartown.controller.mission.ControllableMission;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.controller.shoppingcart.DataBaseHelper;
 import com.smartown.controller.shoppingcart.ModelShoppingCart;
 import com.smartown.controller.shoppingcart.ShoppingCartController;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,7 +36,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.home.model.ModelListPrice;
 import yitgogo.consumer.local.ui.ShoppingCarLocalFragment;
 import yitgogo.consumer.order.ui.ShoppingCarPlatformBuyFragment;
@@ -159,7 +164,8 @@ public class ShoppingCarFragment extends BaseNotifyFragment {
                 }
                 stringBuilder.append(shoppingCarts.get(i).getProductId());
             }
-            new GetPriceList().execute(stringBuilder.toString());
+            getPriceList(stringBuilder.toString());
+//            new GetPriceList().execute(stringBuilder.toString());
         } else {
             loadingEmpty("购物车还没有添加商品");
         }
@@ -268,7 +274,7 @@ public class ShoppingCarFragment extends BaseNotifyFragment {
             if (User.getUser().isLogin()) {
                 //跳转到确认订单界面，confirm设为true，跳过onpause的数据保存，使用异步任务保存数据后在跳转，延时较长
                 confirm = true;
-                new SavaCar().execute();
+                saveChangedCar();
             } else {
                 Notify.show("请先登录");
                 jump(UserLoginFragment.class.getName(), "登录");
@@ -285,6 +291,74 @@ public class ShoppingCarFragment extends BaseNotifyFragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    private void saveChangedCar() {
+        ControllableMission controllableMission = new ControllableMission() {
+            @Override
+            protected void doing() {
+                ShoppingCartController.getInstance().saveChangedShoppingCart(DataBaseHelper.tableCarPlatform, shoppingCarts);
+            }
+        };
+        controllableMission.setControllableListener(new ControllableListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+                jump(ShoppingCarPlatformBuyFragment.class.getName(), "确认订单");
+            }
+        });
+        MissionController.startControllableMission(getActivity(), controllableMission);
+    }
+
+    private void getPriceList(String ids) {
+        Request request = new Request();
+        request.setUrl(API.API_PRICE_LIST);
+        request.addRequestParam("jmdId", Store.getStore().getStoreId());
+        request.addRequestParam("productId", ids);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    JSONObject object;
+                    try {
+                        object = new JSONObject(requestMessage.getResult());
+                        if (object.getString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONArray priceArray = object.optJSONArray("dataList");
+                            if (priceArray != null) {
+                                for (int i = 0; i < priceArray.length(); i++) {
+                                    ModelListPrice priceList = new ModelListPrice(priceArray.getJSONObject(i));
+                                    priceMap.put(priceList.getProductId(), priceList);
+                                }
+                                countTotalPrice();
+                                carAdapter.notifyDataSetChanged();
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+
+            }
+        });
     }
 
     class CarAdapter extends BaseAdapter {
@@ -395,59 +469,4 @@ public class ShoppingCarFragment extends BaseNotifyFragment {
             CheckBox selection;
         }
     }
-
-    class SavaCar extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            ShoppingCartController.getInstance().saveChangedShoppingCart(DataBaseHelper.tableCarPlatform, shoppingCarts);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            hideLoading();
-            jump(ShoppingCarPlatformBuyFragment.class.getName(), "确认订单");
-        }
-    }
-
-    class GetPriceList extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... value) {
-            List<NameValuePair> valuePairs = new ArrayList<>();
-            valuePairs.add(new BasicNameValuePair("jmdId", Store.getStore().getStoreId()));
-            valuePairs.add(new BasicNameValuePair("productId", value[0]));
-            return netUtil.postWithoutCookie(API.API_PRICE_LIST, valuePairs, false, false);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            if (result.length() > 0) {
-                JSONObject object;
-                try {
-                    object = new JSONObject(result);
-                    if (object.getString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONArray priceArray = object.optJSONArray("dataList");
-                        if (priceArray != null) {
-                            for (int i = 0; i < priceArray.length(); i++) {
-                                ModelListPrice priceList = new ModelListPrice(priceArray.getJSONObject(i));
-                                priceMap.put(priceList.getProductId(), priceList);
-                            }
-                            countTotalPrice();
-                            carAdapter.notifyDataSetChanged();
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
 }

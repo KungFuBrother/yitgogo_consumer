@@ -2,7 +2,6 @@ package yitgogo.consumer.activity.shake.ui;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -27,11 +26,14 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,7 +41,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.activity.shake.model.ModelActivity;
 import yitgogo.consumer.tools.API;
 import yitgogo.consumer.user.model.User;
@@ -66,7 +68,7 @@ public class ActivityFragment extends BaseNotifyFragment {
 
     private void init() {
         measureScreen();
-        activities = new ArrayList<ModelActivity>();
+        activities = new ArrayList<>();
         imageAdapter = new ImageAdapter();
     }
 
@@ -113,7 +115,7 @@ public class ActivityFragment extends BaseNotifyFragment {
                                     long arg3) {
                 activity = activities.get(arg2);
                 if (User.getUser().isLogin()) {
-                    new JoinActivityState().execute();
+                    joinActivityState();
                 } else {
                     jump(UserLoginFragment.class.getName(), "会员登录");
                 }
@@ -123,8 +125,7 @@ public class ActivityFragment extends BaseNotifyFragment {
                 .setOnRefreshListener(new OnRefreshListener<ScrollView>() {
 
                     @Override
-                    public void onRefresh(
-                            PullToRefreshBase<ScrollView> refreshView) {
+                    public void onRefresh(PullToRefreshBase<ScrollView> refreshView) {
                         refresh();
                     }
 
@@ -135,7 +136,7 @@ public class ActivityFragment extends BaseNotifyFragment {
         pagenum = 0;
         activities.clear();
         imageAdapter.notifyDataSetChanged();
-        new GetActivities().execute();
+        getActivities();
     }
 
     /**
@@ -202,41 +203,249 @@ public class ActivityFragment extends BaseNotifyFragment {
      * ,"winExtent"
      * :5,"winNum":2}],"totalCount":1,"dataMap":{},"object":null}
      */
-    class GetActivities extends AsyncTask<Void, Void, String> {
 
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
+    private void getActivities() {
+        Request request = new Request();
+        request.setUrl(API.API_ACTIVITY_LIST);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
 
-        @Override
-        protected String doInBackground(Void... params) {
-            return netUtil.postWithoutCookie(API.API_ACTIVITY_LIST, null,
-                    false, false);
-        }
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
 
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            refreshScrollView.onRefreshComplete();
-            if (!TextUtils.isEmpty(result)) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONArray array = object.optJSONArray("dataList");
-                        if (array != null) {
-                            for (int i = 0; i < array.length(); i++) {
-                                activities.add(new ModelActivity(array
-                                        .optJSONObject(i)));
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONArray array = object.optJSONArray("dataList");
+                            if (array != null) {
+                                for (int i = 0; i < array.length(); i++) {
+                                    activities.add(new ModelActivity(array
+                                            .optJSONObject(i)));
+                                }
+                                imageAdapter.notifyDataSetChanged();
                             }
-                            imageAdapter.notifyDataSetChanged();
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+                refreshScrollView.onRefreshComplete();
+            }
+        });
+    }
+
+//    class GetActivities extends AsyncTask<Void, Void, String> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            showLoading();
+//        }
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            return netUtil.postWithoutCookie(API.API_ACTIVITY_LIST, null,
+//                    false, false);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            hideLoading();
+//            refreshScrollView.onRefreshComplete();
+//            if (!TextUtils.isEmpty(result)) {
+//                try {
+//                    JSONObject object = new JSONObject(result);
+//                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+//                        JSONArray array = object.optJSONArray("dataList");
+//                        if (array != null) {
+//                            for (int i = 0; i < array.length(); i++) {
+//                                activities.add(new ModelActivity(array
+//                                        .optJSONObject(i)));
+//                            }
+//                            imageAdapter.notifyDataSetChanged();
+//                        }
+//                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 5) {
+            if (data != null) {
+                Bundle bundle = data.getExtras();
+                if (bundle != null) {
+                    if (bundle.containsKey("activityCode")) {
+                        joinActivity(bundle.getString("activityCode"));
+                    }
                 }
             }
         }
+    }
+
+    /**
+     * @author Tiger
+     * @Url http://192.168.8.80:8088/member/activityManage/memberActivity
+     * /getIsJoin
+     * @Parameters [memberAccount=HY048566511863, activityId=4,
+     * activityNum=489799]
+     * @Put_Cookie JSESSIONID=6D7768E6D
+     * 6EC4B4FA5E5C7D3A602F511;ytAuthId=6D7768E6D6EC4B4FA5E5C7D3A602
+     * F 5 1 1
+     * @Result {"message":"ok","state":"SUCCESS","cacheKey":null,"dataList"
+     * :[],"totalCount":1,"dataMap":{"state":2},"object":null}
+     */
+
+    private void joinActivityState() {
+        Request request = new Request();
+        request.setUrl(API.API_ACTIVITY_JOIN_STATE);
+        request.addRequestParam("memberAccount", User.getUser().getUseraccount());
+        request.addRequestParam("activityId", activity.getId());
+        request.setUseCookie(true);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONObject dataMap = object.optJSONObject("dataMap");
+                            if (dataMap != null) {
+                                switch (dataMap.optInt("state")) {
+                                    case 0:
+                                        new CodeDialog().show(getFragmentManager(),
+                                                null);
+                                        break;
+                                    case 1:
+                                        Bundle bundle = new Bundle();
+                                        bundle.putString("activity", activity
+                                                .getJsonObject().toString());
+                                        jumpFull(ShakeFragment.class.getName(),
+                                                activity.getActivityName(), bundle);
+                                        // new JoinActivity().execute(activity
+                                        // .getActivityNum());
+                                        break;
+
+                                    default:
+                                        break;
+                                }
+                                return;
+                            }
+                        }
+                        Notify.show(object.optString("message"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
+    }
+
+    /**
+     * @author Tiger
+     * @Url http://192.168.8.80:8088/member/activityManage/memberActivity
+     * /getIsJoin
+     * @Parameters [memberAccount=HY048566511863, activityId=4,
+     * activityNum=489799]
+     * @Put_Cookie JSESSIONID=6D7768E6D
+     * 6EC4B4FA5E5C7D3A602F511;ytAuthId=6D7768E6D6EC4B4FA5E5C7D3A602
+     * F 5 1 1
+     * @Result {"message":"ok","state":"SUCCESS","cacheKey":null,"dataList"
+     * :[],"totalCount":1,"dataMap":{"state":2},"object":null}
+     */
+
+    private void joinActivity(String activityNum) {
+        Request request = new Request();
+        request.setUrl(API.API_ACTIVITY_JOIN);
+        request.addRequestParam("memberAccount", User.getUser().getUseraccount());
+        request.addRequestParam("activityId", activity.getId());
+        request.addRequestParam("activityNum", activityNum);
+        request.setUseCookie(true);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONObject dataMap = object.optJSONObject("dataMap");
+                            switch (dataMap.optInt("state")) {
+                                case 0:
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString("activity", activity
+                                            .getJsonObject().toString());
+                                    jumpFull(ShakeFragment.class.getName(),
+                                            activity.getActivityName(), bundle);
+                                    break;
+                                // case 1:
+                                // Notify.show("参与次数已达上限");
+                                // break;
+                                // case 2:
+                                // Notify.show("活动未开始");
+                                // break;
+                                // case 3:
+                                // Notify.show("活动已结束");
+                                // break;
+                                case 4:
+                                    Notify.show("活动码填写错误");
+                                    break;
+                                default:
+                                    break;
+                            }
+                            return;
+                        }
+                        Notify.show(object.optString("message"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
 
     class ImageAdapter extends BaseAdapter {
@@ -287,6 +496,62 @@ public class ActivityFragment extends BaseNotifyFragment {
 
     }
 
+//    class JoinActivityState extends AsyncTask<String, Void, String> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            showLoading();
+//        }
+//
+//        @Override
+//        protected String doInBackground(String... params) {
+//            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+//            nameValuePairs.add(new BasicNameValuePair("memberAccount", User
+//                    .getUser().getUseraccount()));
+//            nameValuePairs.add(new BasicNameValuePair("activityId", activity
+//                    .getId()));
+//            return netUtil.postWithCookie(API.API_ACTIVITY_JOIN_STATE,
+//                    nameValuePairs);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            hideLoading();
+//            if (!TextUtils.isEmpty(result)) {
+//                try {
+//                    JSONObject object = new JSONObject(result);
+//                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+//                        JSONObject dataMap = object.optJSONObject("dataMap");
+//                        if (dataMap != null) {
+//                            switch (dataMap.optInt("state")) {
+//                                case 0:
+//                                    new CodeDialog().show(getFragmentManager(),
+//                                            null);
+//                                    break;
+//                                case 1:
+//                                    Bundle bundle = new Bundle();
+//                                    bundle.putString("activity", activity
+//                                            .getJsonObject().toString());
+//                                    jumpFull(ShakeFragment.class.getName(),
+//                                            activity.getActivityName(), bundle);
+//                                    // new JoinActivity().execute(activity
+//                                    // .getActivityNum());
+//                                    break;
+//
+//                                default:
+//                                    break;
+//                            }
+//                            return;
+//                        }
+//                    }
+//                    Notify.show(object.optString("message"));
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
+
     class CodeDialog extends DialogFragment {
 
         View dialogView;
@@ -335,7 +600,7 @@ public class ActivityFragment extends BaseNotifyFragment {
                             .trim())) {
                         Notify.show("请输入活动码");
                     } else {
-                        new JoinActivity().execute(codeEditText.getText()
+                        joinActivity(codeEditText.getText()
                                 .toString().trim());
                         dismiss();
                     }
@@ -361,160 +626,64 @@ public class ActivityFragment extends BaseNotifyFragment {
         }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 5) {
-            if (data != null) {
-                Bundle bundle = data.getExtras();
-                if (bundle != null) {
-                    if (bundle.containsKey("activityCode")) {
-                        new JoinActivity().execute(bundle
-                                .getString("activityCode"));
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * @author Tiger
-     * @Url http://192.168.8.80:8088/member/activityManage/memberActivity
-     * /getIsJoin
-     * @Parameters [memberAccount=HY048566511863, activityId=4,
-     * activityNum=489799]
-     * @Put_Cookie JSESSIONID=6D7768E6D
-     * 6EC4B4FA5E5C7D3A602F511;ytAuthId=6D7768E6D6EC4B4FA5E5C7D3A602
-     * F 5 1 1
-     * @Result {"message":"ok","state":"SUCCESS","cacheKey":null,"dataList"
-     * :[],"totalCount":1,"dataMap":{"state":2},"object":null}
-     */
-    class JoinActivityState extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair("memberAccount", User
-                    .getUser().getUseraccount()));
-            nameValuePairs.add(new BasicNameValuePair("activityId", activity
-                    .getId()));
-            return netUtil.postWithCookie(API.API_ACTIVITY_JOIN_STATE,
-                    nameValuePairs);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (!TextUtils.isEmpty(result)) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONObject dataMap = object.optJSONObject("dataMap");
-                        if (dataMap != null) {
-                            switch (dataMap.optInt("state")) {
-                                case 0:
-                                    new CodeDialog().show(getFragmentManager(),
-                                            null);
-                                    break;
-                                case 1:
-                                    Bundle bundle = new Bundle();
-                                    bundle.putString("activity", activity
-                                            .getJsonObject().toString());
-                                    jumpFull(ShakeFragment.class.getName(),
-                                            activity.getActivityName(), bundle);
-                                    // new JoinActivity().execute(activity
-                                    // .getActivityNum());
-                                    break;
-
-                                default:
-                                    break;
-                            }
-                            return;
-                        }
-                    }
-                    Notify.show(object.optString("message"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    /**
-     * @author Tiger
-     * @Url http://192.168.8.80:8088/member/activityManage/memberActivity
-     * /getIsJoin
-     * @Parameters [memberAccount=HY048566511863, activityId=4,
-     * activityNum=489799]
-     * @Put_Cookie JSESSIONID=6D7768E6D
-     * 6EC4B4FA5E5C7D3A602F511;ytAuthId=6D7768E6D6EC4B4FA5E5C7D3A602
-     * F 5 1 1
-     * @Result {"message":"ok","state":"SUCCESS","cacheKey":null,"dataList"
-     * :[],"totalCount":1,"dataMap":{"state":2},"object":null}
-     */
-    class JoinActivity extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair("memberAccount", User
-                    .getUser().getUseraccount()));
-            nameValuePairs.add(new BasicNameValuePair("activityId", activity
-                    .getId()));
-            nameValuePairs
-                    .add(new BasicNameValuePair("activityNum", params[0]));
-            return netUtil
-                    .postWithCookie(API.API_ACTIVITY_JOIN, nameValuePairs);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (!TextUtils.isEmpty(result)) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONObject dataMap = object.optJSONObject("dataMap");
-                        switch (dataMap.optInt("state")) {
-                            case 0:
-                                Bundle bundle = new Bundle();
-                                bundle.putString("activity", activity
-                                        .getJsonObject().toString());
-                                jumpFull(ShakeFragment.class.getName(),
-                                        activity.getActivityName(), bundle);
-                                break;
-                            // case 1:
-                            // Notify.show("参与次数已达上限");
-                            // break;
-                            // case 2:
-                            // Notify.show("活动未开始");
-                            // break;
-                            // case 3:
-                            // Notify.show("活动已结束");
-                            // break;
-                            case 4:
-                                Notify.show("活动码填写错误");
-                                break;
-                            default:
-                                break;
-                        }
-                        return;
-                    }
-                    Notify.show(object.optString("message"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
+//    class JoinActivity extends AsyncTask<String, Void, String> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            showLoading();
+//        }
+//
+//        @Override
+//        protected String doInBackground(String... params) {
+//            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+//            nameValuePairs.add(new BasicNameValuePair("memberAccount", User
+//                    .getUser().getUseraccount()));
+//            nameValuePairs.add(new BasicNameValuePair("activityId", activity
+//                    .getId()));
+//            nameValuePairs
+//                    .add(new BasicNameValuePair("activityNum", params[0]));
+//            return netUtil
+//                    .postWithCookie(API.API_ACTIVITY_JOIN, nameValuePairs);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            hideLoading();
+//            if (!TextUtils.isEmpty(result)) {
+//                try {
+//                    JSONObject object = new JSONObject(result);
+//                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+//                        JSONObject dataMap = object.optJSONObject("dataMap");
+//                        switch (dataMap.optInt("state")) {
+//                            case 0:
+//                                Bundle bundle = new Bundle();
+//                                bundle.putString("activity", activity
+//                                        .getJsonObject().toString());
+//                                jumpFull(ShakeFragment.class.getName(),
+//                                        activity.getActivityName(), bundle);
+//                                break;
+//                            // case 1:
+//                            // Notify.show("参与次数已达上限");
+//                            // break;
+//                            // case 2:
+//                            // Notify.show("活动未开始");
+//                            // break;
+//                            // case 3:
+//                            // Notify.show("活动已结束");
+//                            // break;
+//                            case 4:
+//                                Notify.show("活动码填写错误");
+//                                break;
+//                            default:
+//                                break;
+//                        }
+//                        return;
+//                    }
+//                    Notify.show(object.optString("message"));
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
 }

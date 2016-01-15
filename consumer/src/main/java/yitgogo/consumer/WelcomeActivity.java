@@ -1,5 +1,6 @@
 package yitgogo.consumer;
 
+import yitgogo.consumer.base.BaseActivity;
 import yitgogo.consumer.tools.Content;
 import android.content.Intent;
 import android.os.Bundle;

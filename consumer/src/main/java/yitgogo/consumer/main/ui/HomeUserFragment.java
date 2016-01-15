@@ -3,7 +3,6 @@ package yitgogo.consumer.main.ui;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -15,18 +14,26 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
+import com.umeng.update.UmengDialogButtonListener;
+import com.umeng.update.UmengDownloadListener;
+import com.umeng.update.UmengUpdateAgent;
+import com.umeng.update.UmengUpdateListener;
+import com.umeng.update.UpdateResponse;
+import com.umeng.update.UpdateStatus;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.money.model.MoneyAccount;
 import yitgogo.consumer.money.ui.MoneyHomeFragment;
 import yitgogo.consumer.order.ui.OrderFragment;
@@ -35,10 +42,8 @@ import yitgogo.consumer.store.SelectStoreActivity;
 import yitgogo.consumer.store.model.Store;
 import yitgogo.consumer.tools.API;
 import yitgogo.consumer.tools.Content;
-import yitgogo.consumer.tools.PackageTool;
 import yitgogo.consumer.tools.Parameters;
 import yitgogo.consumer.user.model.User;
-import yitgogo.consumer.user.model.VersionInfo;
 import yitgogo.consumer.user.ui.OpenStoreFragment;
 import yitgogo.consumer.user.ui.UserAddressFragment;
 import yitgogo.consumer.user.ui.UserInfoFragment;
@@ -46,7 +51,6 @@ import yitgogo.consumer.user.ui.UserLoginFragment;
 import yitgogo.consumer.user.ui.UserRecommendFragment;
 import yitgogo.consumer.user.ui.UserScoreFragment;
 import yitgogo.consumer.user.ui.UserShareFragment;
-import yitgogo.consumer.view.DownloadDialog;
 import yitgogo.consumer.view.NormalAskDialog;
 import yitgogo.consumer.view.Notify;
 
@@ -75,12 +79,6 @@ public class HomeUserFragment extends BaseNotifyFragment implements
         setContentView(R.layout.fragment_user);
         measureScreen();
         findViews();
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        showDisconnectMargin();
     }
 
     @Override
@@ -143,7 +141,7 @@ public class HomeUserFragment extends BaseNotifyFragment implements
         storeAddressTextView.setText(Store.getStore().getStoreAddess());
         if (User.getUser().isLogin()) {
             loginButton.setText("注销");
-            new GetUserInfo().execute();
+            getUserInfo();
         } else {
             userNameTextView.setText("");
             userLevelTextView.setText("");
@@ -199,7 +197,7 @@ public class HomeUserFragment extends BaseNotifyFragment implements
 
             @Override
             public void onClick(View v) {
-                new CheckUpdate().execute();
+                checkUpdate();
             }
         });
     }
@@ -267,87 +265,49 @@ public class HomeUserFragment extends BaseNotifyFragment implements
         }
     }
 
-    /**
-     * 获取会员等级
-     */
-    // class GetUserLevel extends AsyncTask<Void, Void, String> {
-    //
-    // @Override
-    // protected String doInBackground(Void... params) {
-    // List<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
-    // // valuePairs.add(new BasicNameValuePair("memberAccount",
-    // // "13668192000"));
-    // valuePairs.add(new BasicNameValuePair("memberAccount", User
-    // .getUser().getUseraccount()));
-    // return netUtil.postWithCookie(API.API_MEMBER_GRADE, valuePairs);
-    // }
-    //
-    // @Override
-    // protected void onPostExecute(String result) {
-    // //
-    // {"message":"ok","state":"SUCCESS","cacheKey":null,"dataList":[],"totalCount":1,"dataMap":{"grade":null},"object":null}
-    // if (result.length() > 0) {
-    // JSONObject object;
-    // try {
-    // object = new JSONObject(result);
-    // if (object.getString("state").equalsIgnoreCase("SUCCESS")) {
-    // JSONObject jsonObject = object.getJSONObject("dataMap");
-    // if (jsonObject != null) {
-    // String level = jsonObject.optString("grade");
-    // if (!level.equalsIgnoreCase("null")) {
-    // userLevelTextView.setText(level);
-    // } else {
-    // userLevelTextView.setText("易田新人");
-    // }
-    // }
-    // }
-    // } catch (JSONException e) {
-    // e.printStackTrace();
-    // }
-    //
-    // }
-    // }
-    // }
+    private void getUserInfo() {
+        Request request = new Request();
+        request.setUrl(API.API_USER_INFO_GET);
+        request.addRequestParam("username", User.getUser().getUseraccount());
+        request.setUseCookie(true);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
 
-    class GetUserInfo extends AsyncTask<Void, Void, String> {
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
 
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair("username", User
-                    .getUser().getUseraccount()));
-            return netUtil
-                    .postWithCookie(API.API_USER_INFO_GET, nameValuePairs);
-        }
+            }
 
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (result.length() > 0) {
-                JSONObject object;
-                try {
-                    object = new JSONObject(result);
-                    if (object.getString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONObject userObject = object.optJSONObject("object");
-                        if (userObject != null) {
-                            Content.saveStringContent(
-                                    Parameters.CACHE_KEY_USER_JSON,
-                                    userObject.toString());
-                            User.init(getActivity());
-                            showUserInfo();
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    JSONObject object;
+                    try {
+                        object = new JSONObject(requestMessage.getResult());
+                        if (object.getString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONObject userObject = object.optJSONObject("object");
+                            if (userObject != null) {
+                                Content.saveStringContent(Parameters.CACHE_KEY_USER_JSON, userObject.toString());
+                                User.init(getActivity());
+                                showUserInfo();
+                            }
+                        } else {
+                            Notify.show(object.getString("message"));
                         }
-                    } else {
-                        Notify.show(object.getString("message"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
             }
-        }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
 
     private void showUserInfo() {
@@ -363,40 +323,67 @@ public class HomeUserFragment extends BaseNotifyFragment implements
                 User.getUser().getGrade().getGradeImg(), levelImageView);
     }
 
-    /**
-     * 检查更新
-     *
-     * @author Tiger
-     */
-    class CheckUpdate extends AsyncTask<Void, Void, String> {
+    private UpdateResponse updateResponse;
 
-        @Override
-        protected String doInBackground(Void... params) {
-            return netUtil
-                    .postWithoutCookie(API.API_UPDATE, null, false, false);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            final VersionInfo versionInfo = new VersionInfo(result);
-            if (versionInfo.getVerCode() > PackageTool.getVersionCode()) {
-                // 网络上的版本大于此安装版本，需要更新
-                NormalAskDialog askDialog = new NormalAskDialog(versionInfo) {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        if (makeSure) {
-                            DownloadDialog downloadDialog = new DownloadDialog(
-                                    versionInfo);
-                            downloadDialog.show(getFragmentManager(), null);
-                        }
-                        super.onDismiss(dialog);
+    private void checkUpdate() {
+        UmengUpdateAgent.setUpdateListener(new UmengUpdateListener() {
+            @Override
+            public void onUpdateReturned(int updateStatus, UpdateResponse response) {
+                if (updateStatus == UpdateStatus.Yes) {
+                    updateResponse = response;
+                    if (getActivity() != null) {
+                        showUpdateDialog();
                     }
-                };
-                askDialog.show(getFragmentManager(), null);
-                return;
+                    return;
+                }
+                Notify.show("已是最新版本");
             }
-            Notify.show("已是最新版本");
-        }
+        });
+        UmengUpdateAgent.update(getActivity());
+    }
+
+    private void showUpdateDialog() {
+        UmengUpdateAgent.setDialogListener(new UmengDialogButtonListener() {
+            @Override
+            public void onClick(int status) {
+                if (status == UpdateStatus.Update) {
+                    File downloadedFile = UmengUpdateAgent.downloadedFile(getActivity(), updateResponse);
+                    if (downloadedFile != null) {
+                        UmengUpdateAgent.startInstall(getActivity(), downloadedFile);
+                    } else {
+                        download();
+                    }
+                }
+            }
+        });
+        UmengUpdateAgent.showUpdateDialog(getActivity(), updateResponse);
+    }
+
+    private void download() {
+        UmengUpdateAgent.setDownloadListener(new UmengDownloadListener() {
+            @Override
+            public void OnDownloadStart() {
+                Notify.show("正在下载新版本,请在通知栏查看下载进度");
+            }
+
+            @Override
+            public void OnDownloadUpdate(int i) {
+
+            }
+
+            @Override
+            public void OnDownloadEnd(int i, String s) {
+                File downloadedFile = UmengUpdateAgent.downloadedFile(getActivity(), updateResponse);
+                if (downloadedFile != null) {
+                    if (getActivity() != null) {
+                        UmengUpdateAgent.startInstall(getActivity(), downloadedFile);
+                    }
+                } else {
+                    Notify.show("下载新版本失败");
+                }
+            }
+        });
+        UmengUpdateAgent.startDownload(getActivity(), updateResponse);
     }
 
 }

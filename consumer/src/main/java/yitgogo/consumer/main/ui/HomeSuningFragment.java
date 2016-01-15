@@ -36,9 +36,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.product.ui.ProductSearchFragment;
-import yitgogo.consumer.suning.model.GetNewSignature;
 import yitgogo.consumer.suning.model.ModelProduct;
 import yitgogo.consumer.suning.model.ModelProductClass;
 import yitgogo.consumer.suning.model.ModelProductPrice;
@@ -100,12 +99,6 @@ public class HomeSuningFragment extends BaseNotifyFragment {
     public void onPause() {
         super.onPause();
         MobclickAgent.onPageEnd(HomeSuningFragment.class.getName());
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        showDisconnectMargin();
     }
 
     private void init() {
@@ -210,7 +203,7 @@ public class HomeSuningFragment extends BaseNotifyFragment {
         request.addRequestParam("classId", productClass.getId());
         request.addRequestParam("pagenum", String.valueOf(pagenum));
         request.addRequestParam("pagesize", String.valueOf(pagesize));
-        MissionController.startNetworkMission(getActivity(), request, new RequestListener() {
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
             @Override
             protected void onStart() {
                 showLoading();
@@ -283,7 +276,7 @@ public class HomeSuningFragment extends BaseNotifyFragment {
         }
         request.addRequestParam("data", data.toString());
 
-        MissionController.startNetworkMission(getActivity(), request, new RequestListener() {
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
             @Override
             protected void onStart() {
                 showLoading();
@@ -296,21 +289,29 @@ public class HomeSuningFragment extends BaseNotifyFragment {
             @Override
             protected void onSuccess(RequestMessage requestMessage) {
                 if (SuningManager.isSignatureOutOfDate(requestMessage.getResult())) {
-                    GetNewSignature getNewSignature = new GetNewSignature() {
+                    SuningManager.getNewSignature(getActivity(), new RequestListener() {
                         @Override
-                        protected void onPreExecute() {
-                            showLoading();
+                        protected void onStart() {
+
                         }
 
                         @Override
-                        protected void onPostExecute(Boolean isSuccess) {
-                            hideLoading();
-                            if (isSuccess) {
+                        protected void onFail(MissionMessage missionMessage) {
+
+                        }
+
+                        @Override
+                        protected void onSuccess(RequestMessage requestMessage) {
+                            if (SuningManager.initSignature(requestMessage)) {
                                 getSuningProductPrice(priceJsonArray);
                             }
                         }
-                    };
-                    getNewSignature.execute();
+
+                        @Override
+                        protected void onFinish() {
+
+                        }
+                    });
                     return;
                 }
                 if (!TextUtils.isEmpty(requestMessage.getResult())) {
@@ -320,8 +321,7 @@ public class HomeSuningFragment extends BaseNotifyFragment {
                             JSONArray array = object.optJSONArray("result");
                             if (array != null) {
                                 for (int j = 0; j < array.length(); j++) {
-                                    ModelProductPrice productPrice = new
-                                            ModelProductPrice(array.optJSONObject(j));
+                                    ModelProductPrice productPrice = new ModelProductPrice(array.optJSONObject(j));
                                     priceHashMap.put(productPrice.getSkuId(), productPrice);
                                 }
                                 productAdapter.notifyDataSetChanged();

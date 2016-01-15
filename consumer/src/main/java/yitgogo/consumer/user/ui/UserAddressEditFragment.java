@@ -1,31 +1,30 @@
 package yitgogo.consumer.user.ui;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
+import yitgogo.consumer.local.model.ModelAddress;
 import yitgogo.consumer.store.SelectAreaFragment;
 import yitgogo.consumer.tools.API;
-import yitgogo.consumer.user.model.User;
 import yitgogo.consumer.view.Notify;
 
 /**
@@ -66,7 +65,9 @@ public class UserAddressEditFragment extends BaseNotifyFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        new GetAddressDetail().execute();
+        if (!TextUtils.isEmpty(addressId)) {
+            getAddressDetail();
+        }
     }
 
     @Override
@@ -91,20 +92,13 @@ public class UserAddressEditFragment extends BaseNotifyFragment {
 
     @Override
     protected void findViews() {
-        nameEditText = (EditText) contentView
-                .findViewById(R.id.address_add_name);
-        phoneEditText = (EditText) contentView
-                .findViewById(R.id.address_add_phone);
-        addressEditText = (EditText) contentView
-                .findViewById(R.id.address_add_address);
-        telephoneEditText = (EditText) contentView
-                .findViewById(R.id.address_add_telephone);
-        postcodeEditText = (EditText) contentView
-                .findViewById(R.id.address_add_postcode);
-        emailEditText = (EditText) contentView
-                .findViewById(R.id.address_add_email);
-        areaTextView = (TextView) contentView
-                .findViewById(R.id.address_add_area);
+        nameEditText = (EditText) contentView.findViewById(R.id.address_add_name);
+        phoneEditText = (EditText) contentView.findViewById(R.id.address_add_phone);
+        addressEditText = (EditText) contentView.findViewById(R.id.address_add_address);
+        telephoneEditText = (EditText) contentView.findViewById(R.id.address_add_telephone);
+        postcodeEditText = (EditText) contentView.findViewById(R.id.address_add_postcode);
+        emailEditText = (EditText) contentView.findViewById(R.id.address_add_email);
+        areaTextView = (TextView) contentView.findViewById(R.id.address_add_area);
         addButton = (Button) contentView.findViewById(R.id.address_add_add);
         initViews();
         registerViews();
@@ -146,253 +140,167 @@ public class UserAddressEditFragment extends BaseNotifyFragment {
             Notify.show("请选择收货区域");
         } else if (addressEditText.length() <= 0) {
             Notify.show("请输入详细收货地址");
-        } else if (telephoneEditText.length() > 0
-                & telephoneEditText.length() < 11) {
+        } else if (telephoneEditText.length() > 0 & telephoneEditText.length() < 11) {
             Notify.show("请输入正确的固定电话号码");
-        } else if (postcodeEditText.length() > 0
-                & postcodeEditText.length() < 6) {
+        } else if (postcodeEditText.length() > 0 & postcodeEditText.length() < 6) {
             Notify.show("请输入正确的邮政编码");
         } else {
             if (addressId.length() > 0) {
-                new ModifyAddress().execute();
+                modifyAddress();
             } else {
-                new AddAdress().execute();
+                addAdress();
             }
         }
     }
 
-    /**
-     * 添加收货地址
-     */
+    private void modifyAddress() {
+        Request request = new Request();
+        request.setUrl(API.API_USER_ADDRESS_MODIFY);
+        request.addRequestParam("id", addressId);
+        request.addRequestParam("personName", nameEditText.getText().toString());
+        request.addRequestParam("phone", phoneEditText.getText().toString());
+        request.addRequestParam("areaAddress", areaName);
+        request.addRequestParam("areaId", areaId);
+        request.addRequestParam("detailedAddress", addressEditText.getText().toString());
+        request.addRequestParam("fixPhone", telephoneEditText.getText().toString());
+        request.addRequestParam("postcode", postcodeEditText.getText().toString());
+        request.addRequestParam("email", emailEditText.getText().toString());
+        request.setUseCookie(true);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
 
-    class AddAdress extends AsyncTask<Void, Void, String> {
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+                Notify.show("修改失败");
+            }
 
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair("memberAccount", User
-                    .getUser().getUseraccount()));
-            nameValuePairs.add(new BasicNameValuePair("personName",
-                    nameEditText.getText().toString()));
-            nameValuePairs.add(new BasicNameValuePair("phone", phoneEditText
-                    .getText().toString()));
-            nameValuePairs.add(new BasicNameValuePair("areaAddress", areaName));
-            nameValuePairs.add(new BasicNameValuePair("areaId", areaId));
-            nameValuePairs.add(new BasicNameValuePair("detailedAddress",
-                    addressEditText.getText().toString()));
-            nameValuePairs.add(new BasicNameValuePair("fixPhone",
-                    telephoneEditText.getText().toString()));
-            nameValuePairs.add(new BasicNameValuePair("postcode",
-                    postcodeEditText.getText().toString()));
-            nameValuePairs.add(new BasicNameValuePair("email", emailEditText
-                    .getText().toString()));
-            return netUtil.postWithCookie(API.API_USER_ADDRESS_ADD,
-                    nameValuePairs);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (result.length() > 0) {
-                JSONObject object;
-                try {
-                    object = new JSONObject(result);
-                    if (object.getString("state").equalsIgnoreCase("SUCCESS")) {
-                        Notify.show("添加成功");
-                        getActivity().finish();
-                    } else {
-                        Toast.makeText(getActivity(),
-                                object.getString("message"), Toast.LENGTH_SHORT)
-                                .show();
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            Notify.show("修改成功");
+                            getActivity().finish();
+                            return;
+                        }
+                        Notify.show(object.optString("message"));
+                        return;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
+                Notify.show("修改失败");
             }
-        }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
 
-    /**
-     * 获取地址详情对象
-     *
-     * @author Tiger
-     * @Json {"message":"ok","state":"SUCCESS"
-     * ,"cacheKey":null,"dataList":[],"totalCount"
-     * :1,"dataMap":{"updateMemberAddress"
-     * :{"id":3,"personName":"赵晋","areaId":2421
-     * ,"areaAddress":"四川省成都市金牛区","detailedAddress"
-     * :"解放路二段6号凤凰大厦","phone":"18584182653"
-     * ,"fixPhone":"","postcode":"","email":""
-     * ,"isDefault":1,"memberAccount":"18584182653"
-     * ,"millis":1438598019428},"secondId"
-     * :269,"thirdId":2421,"firstId":23},"object":null}
-     */
-    class GetAddressDetail extends AsyncTask<Void, Void, String> {
+    private void getAddressDetail() {
+        Request request = new Request();
+        request.setUrl(API.API_USER_ADDRESS_DETAIL);
+        request.addRequestParam("id", addressId);
+        request.setUseCookie(true);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
 
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
 
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair("id", addressId));
-            return netUtil.postWithCookie(API.API_USER_ADDRESS_DETAIL,
-                    nameValuePairs);
-        }
+            }
 
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (result.length() > 0) {
-                JSONObject object;
-                try {
-                    object = new JSONObject(result);
-                    if (object.getString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONObject dataMap = object.optJSONObject("dataMap");
-                        if (dataMap != null) {
-                            JSONObject updateMemberAddress = dataMap
-                                    .optJSONObject("updateMemberAddress");
-                            if (updateMemberAddress != null) {
-                                if (updateMemberAddress.has("personName")) {
-                                    if (!updateMemberAddress.optString(
-                                            "personName").equalsIgnoreCase(
-                                            "null")) {
-                                        nameEditText
-                                                .setText(updateMemberAddress
-                                                        .optString("personName"));
-                                    }
-                                }
-                                if (updateMemberAddress.has("areaAddress")) {
-                                    if (!updateMemberAddress.optString(
-                                            "areaAddress").equalsIgnoreCase(
-                                            "null")) {
-                                        areaName = updateMemberAddress
-                                                .optString("areaAddress");
-                                        areaTextView.setText(areaName);
-                                    }
-                                }
-                                if (updateMemberAddress.has("areaId")) {
-                                    if (!updateMemberAddress
-                                            .optString("areaId")
-                                            .equalsIgnoreCase("null")) {
-                                        areaId = updateMemberAddress
-                                                .optString("areaId");
-                                    }
-                                }
-                                if (updateMemberAddress.has("detailedAddress")) {
-                                    if (!updateMemberAddress.optString(
-                                            "detailedAddress")
-                                            .equalsIgnoreCase("null")) {
-                                        addressEditText
-                                                .setText(updateMemberAddress
-                                                        .optString("detailedAddress"));
-                                    }
-                                }
-                                if (updateMemberAddress.has("phone")) {
-                                    if (!updateMemberAddress.optString("phone")
-                                            .equalsIgnoreCase("null")) {
-                                        phoneEditText
-                                                .setText(updateMemberAddress
-                                                        .optString("phone"));
-                                    }
-                                }
-                                if (updateMemberAddress.has("fixPhone")) {
-                                    if (!updateMemberAddress.optString(
-                                            "fixPhone")
-                                            .equalsIgnoreCase("null")) {
-                                        telephoneEditText
-                                                .setText(updateMemberAddress
-                                                        .optString("fixPhone"));
-                                    }
-                                }
-                                if (updateMemberAddress.has("postcode")) {
-                                    if (!updateMemberAddress.optString(
-                                            "postcode")
-                                            .equalsIgnoreCase("null")) {
-                                        postcodeEditText
-                                                .setText(updateMemberAddress
-                                                        .optString("postcode"));
-                                    }
-                                }
-                                if (updateMemberAddress.has("email")) {
-                                    if (!updateMemberAddress.optString("email")
-                                            .equalsIgnoreCase("null")) {
-                                        emailEditText
-                                                .setText(updateMemberAddress
-                                                        .optString("email"));
-                                    }
-                                }
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONObject dataMap = object.optJSONObject("dataMap");
+                            if (dataMap != null) {
+                                JSONObject updateMemberAddress = dataMap.optJSONObject("updateMemberAddress");
+                                ModelAddress address = new ModelAddress(updateMemberAddress);
+                                nameEditText.setText(address.getPersonName());
+                                areaName = address.getAreaAddress();
+                                areaTextView.setText(areaName);
+                                areaId = address.getAreaId();
+                                addressEditText.setText(address.getDetailedAddress());
+                                phoneEditText.setText(address.getPhone());
+                                telephoneEditText.setText(address.getFixPhone());
+                                postcodeEditText.setText(address.getPostcode());
+                                emailEditText.setText(address.getEmail());
                             }
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
             }
-        }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
 
-    /**
-     * 修改地址信息
-     *
-     * @author Tiger
-     */
-    class ModifyAddress extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair("id", addressId));
-            nameValuePairs.add(new BasicNameValuePair("personName",
-                    nameEditText.getText().toString()));
-            nameValuePairs.add(new BasicNameValuePair("phone", phoneEditText
-                    .getText().toString()));
-            nameValuePairs.add(new BasicNameValuePair("areaAddress", areaName));
-            nameValuePairs.add(new BasicNameValuePair("areaId", areaId));
-            nameValuePairs.add(new BasicNameValuePair("detailedAddress",
-                    addressEditText.getText().toString()));
-            nameValuePairs.add(new BasicNameValuePair("fixPhone",
-                    telephoneEditText.getText().toString()));
-            nameValuePairs.add(new BasicNameValuePair("postcode",
-                    postcodeEditText.getText().toString()));
-            nameValuePairs.add(new BasicNameValuePair("email", emailEditText
-                    .getText().toString()));
-            return netUtil.postWithCookie(API.API_USER_ADDRESS_MODIFY,
-                    nameValuePairs);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (result.length() > 0) {
-                JSONObject object;
-                try {
-                    object = new JSONObject(result);
-                    if (object.getString("state").equalsIgnoreCase("SUCCESS")) {
-                        Notify.show("修改成功");
-                        getActivity().finish();
-                    } else {
-                        Toast.makeText(getActivity(),
-                                object.getString("message"), Toast.LENGTH_SHORT)
-                                .show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+    private void addAdress() {
+        Request request = new Request();
+        request.setUrl(API.API_USER_ADDRESS_ADD);
+        request.addRequestParam("id", addressId);
+        request.addRequestParam("personName", nameEditText.getText().toString());
+        request.addRequestParam("phone", phoneEditText.getText().toString());
+        request.addRequestParam("areaAddress", areaName);
+        request.addRequestParam("areaId", areaId);
+        request.addRequestParam("detailedAddress", addressEditText.getText().toString());
+        request.addRequestParam("fixPhone", telephoneEditText.getText().toString());
+        request.addRequestParam("postcode", postcodeEditText.getText().toString());
+        request.addRequestParam("email", emailEditText.getText().toString());
+        request.setUseCookie(true);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
             }
-        }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+                Notify.show("添加收货地址失败");
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            Notify.show("添加收货地址成功");
+                            getActivity().finish();
+                            return;
+                        }
+                        Notify.show(object.optString("message"));
+                        return;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Notify.show("添加收货地址失败");
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
 
 }

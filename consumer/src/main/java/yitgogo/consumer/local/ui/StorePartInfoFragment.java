@@ -1,6 +1,6 @@
 package yitgogo.consumer.local.ui;
 
-import yitgogo.consumer.BaseNormalFragment;
+import yitgogo.consumer.base.BaseNormalFragment;
 import yitgogo.consumer.home.model.ModelLocalStore;
 import yitgogo.consumer.store.model.ModelStoreSelected;
 import android.os.Bundle;

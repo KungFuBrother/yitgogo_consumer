@@ -1,8 +1,8 @@
 package yitgogo.consumer.product.ui;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -16,11 +16,14 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,9 +31,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.home.model.ModelScoreProduct;
-import yitgogo.consumer.product.ui.ScoreProductDetailFragment;
 import yitgogo.consumer.store.model.Store;
 import yitgogo.consumer.tools.API;
 import yitgogo.consumer.tools.Parameters;
@@ -67,8 +69,7 @@ public class ProductScoreFragment extends BaseNotifyFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        showDisconnectMargin();
-        new GetScoreProduct().execute();
+        getScoreProduct();
     }
 
     private void init() {
@@ -114,7 +115,7 @@ public class ProductScoreFragment extends BaseNotifyFragment {
                     @Override
                     public void onPullUpToRefresh(
                             PullToRefreshBase<ListView> refreshView) {
-                        new GetScoreProduct().execute();
+                        getScoreProduct();
                     }
                 });
     }
@@ -124,66 +125,98 @@ public class ProductScoreFragment extends BaseNotifyFragment {
         scoreProducts.clear();
         scoreProductAdapter.notifyDataSetChanged();
         refreshListView.setMode(Mode.BOTH);
-        new GetScoreProduct().execute();
+        getScoreProduct();
     }
 
-    class GetScoreProduct extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            if (pagenum == 0) {
-                showLoading();
+    private void getScoreProduct() {
+        Request request = new Request();
+        request.setUrl(API.API_SCORE_PRODUCT_LIST);
+        request.addRequestParam("jgbh", Store.getStore()
+                .getStoreNumber());
+        request.addRequestParam("pagenum", pagenum + "");
+        request.addRequestParam("pagesize", pagesize + "");
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                if (pagenum == 0) {
+                    showLoading();
+                }
+                pagenum++;
             }
-            pagenum++;
-        }
 
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
-            valuePairs.add(new BasicNameValuePair("jgbh", Store.getStore()
-                    .getStoreNumber()));
-            valuePairs.add(new BasicNameValuePair("pagenum", pagenum + ""));
-            valuePairs.add(new BasicNameValuePair("pagesize", pagesize + ""));
-            return netUtil.postWithCookie(API.API_SCORE_PRODUCT_LIST,
-                    valuePairs);
-        }
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
 
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            refreshListView.onRefreshComplete();
-            if (result.length() > 0) {
-                JSONObject object;
-                try {
-                    object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONArray array = object.optJSONArray("dataList");
-                        if (array != null) {
-                            if (array.length() > 0) {
-                                if (array.length() < pagesize) {
-                                    refreshListView
-                                            .setMode(Mode.PULL_FROM_START);
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    JSONObject object;
+                    try {
+                        object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONArray array = object.optJSONArray("dataList");
+                            if (array != null) {
+                                if (array.length() > 0) {
+                                    if (array.length() < pagesize) {
+                                        refreshListView
+                                                .setMode(Mode.PULL_FROM_START);
+                                    }
+                                    for (int i = 0; i < array.length(); i++) {
+                                        scoreProducts.add(new ModelScoreProduct(
+                                                array.optJSONObject(i)));
+                                    }
+                                    scoreProductAdapter.notifyDataSetChanged();
+                                    return;
                                 }
-                                for (int i = 0; i < array.length(); i++) {
-                                    scoreProducts.add(new ModelScoreProduct(
-                                            array.optJSONObject(i)));
-                                }
-                                scoreProductAdapter.notifyDataSetChanged();
-                                return;
                             }
                         }
+                    } catch (JSONException e) {
+                        loadingEmpty();
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
+                }
+                refreshListView.setMode(Mode.PULL_FROM_START);
+                if (scoreProducts.isEmpty()) {
                     loadingEmpty();
-                    e.printStackTrace();
                 }
             }
-            refreshListView.setMode(Mode.PULL_FROM_START);
-            if (scoreProducts.isEmpty()) {
-                loadingEmpty();
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+                refreshListView.onRefreshComplete();
             }
-        }
+        });
     }
+//    class GetScoreProduct extends AsyncTask<Void, Void, String> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//
+//        }
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            List<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
+//            valuePairs.add(new BasicNameValuePair("jgbh", Store.getStore()
+//                    .getStoreNumber()));
+//            valuePairs.add(new BasicNameValuePair("pagenum", pagenum + ""));
+//            valuePairs.add(new BasicNameValuePair("pagesize", pagesize + ""));
+//            return netUtil.postWithCookie(API.API_SCORE_PRODUCT_LIST,
+//                    valuePairs);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//
+//            if (result.length() > 0) {
+//
+//            }
+//
+//        }
+//    }
 
     class ScoreProductAdapter extends BaseAdapter {
 

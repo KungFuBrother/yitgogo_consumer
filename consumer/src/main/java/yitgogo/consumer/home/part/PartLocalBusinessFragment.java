@@ -7,7 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import yitgogo.consumer.BaseNormalFragment;
+import yitgogo.consumer.base.BaseNormalFragment;
 import yitgogo.consumer.local.model.ModelLocalGoods;
 import yitgogo.consumer.local.model.ModelLocalService;
 import yitgogo.consumer.local.ui.LocalGoodsDetailFragment;

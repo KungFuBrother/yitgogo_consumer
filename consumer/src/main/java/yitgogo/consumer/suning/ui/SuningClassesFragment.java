@@ -25,7 +25,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.suning.model.ModelProductClass;
 import yitgogo.consumer.suning.model.SuningManager;
 import yitgogo.consumer.tools.API;
@@ -35,7 +35,6 @@ import yitgogo.consumer.view.Notify;
  * Created by Tiger on 2015-10-21.
  */
 public abstract class SuningClassesFragment extends BaseNotifyFragment {
-
 
     private SwipeRefreshLayout refreshLayout;
     private ListView listView;
@@ -115,7 +114,7 @@ public abstract class SuningClassesFragment extends BaseNotifyFragment {
         productClassAdapter.notifyDataSetChanged();
         Request request = new Request();
         request.setUrl(API.API_SUNING_PRODUCT_CALSSES);
-        MissionController.startNetworkMission(getActivity(), request, new RequestListener() {
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
             @Override
             protected void onStart() {
                 refreshLayout.setRefreshing(true);

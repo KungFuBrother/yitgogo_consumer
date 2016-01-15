@@ -1,29 +1,9 @@
 package yitgogo.consumer.local.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import yitgogo.consumer.BaseNormalFragment;
-import yitgogo.consumer.BaseNotifyFragment;
-import yitgogo.consumer.local.model.ModelLocalGoods;
-import yitgogo.consumer.local.model.ModelLocalGoodsClass;
-import yitgogo.consumer.local.model.ModelLocalServiceClass;
-import yitgogo.consumer.store.model.Store;
-import yitgogo.consumer.tools.API;
-import yitgogo.consumer.tools.Parameters;
-import yitgogo.consumer.view.InnerGridView;
-
-import android.R.color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -44,8 +24,30 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
 import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import yitgogo.consumer.base.BaseNormalFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
+import yitgogo.consumer.local.model.ModelLocalGoods;
+import yitgogo.consumer.local.model.ModelLocalGoodsClass;
+import yitgogo.consumer.local.model.ModelLocalServiceClass;
+import yitgogo.consumer.store.model.Store;
+import yitgogo.consumer.tools.API;
+import yitgogo.consumer.tools.Parameters;
+import yitgogo.consumer.view.InnerGridView;
 
 /**
  * @author Tiger
@@ -87,19 +89,12 @@ public class LocalGoodsFragment extends BaseNotifyFragment implements
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        showDisconnectMargin();
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         MobclickAgent.onPageStart(LocalGoodsFragment.class.getName());
         if (!currentStoreId.equals(Store.getStore().getStoreId())) {
-            useCache = true;
             currentStoreId = Store.getStore().getStoreId();
-            new GetGoodsClasses().execute();
+            getGoodsClasses();
             refresh();
         }
     }
@@ -153,16 +148,14 @@ public class LocalGoodsFragment extends BaseNotifyFragment implements
                 .setOnRefreshListener(new OnRefreshListener2<ScrollView>() {
 
                     @Override
-                    public void onPullDownToRefresh(
-                            PullToRefreshBase<ScrollView> refreshView) {
-                        useCache = false;
+                    public void onPullDownToRefresh(PullToRefreshBase<ScrollView> refreshView) {
                         refresh();
                     }
 
                     @Override
                     public void onPullUpToRefresh(
                             PullToRefreshBase<ScrollView> refreshView) {
-                        new GetGoods().execute();
+                        getGoods();
                     }
 
                 });
@@ -174,7 +167,7 @@ public class LocalGoodsFragment extends BaseNotifyFragment implements
         pagenum = 0;
         localGoods.clear();
         goodsAdapter.notifyDataSetChanged();
-        new GetGoods().execute();
+        getGoods();
     }
 
     private void showSelector(Fragment fragment) {
@@ -212,126 +205,147 @@ public class LocalGoodsFragment extends BaseNotifyFragment implements
         }
     }
 
-    class GetGoods extends AsyncTask<Void, Void, String> {
 
-        @Override
-        protected void onPreExecute() {
-            if (pagenum == 0) {
-                showLoading();
+    private void getGoods() {
+        pagenum++;
+        Request request = new Request();
+        request.setUrl(API.API_LOCAL_BUSINESS_GOODS);
+        request.addRequestParam("pageNo", String.valueOf(pagenum));
+        request.addRequestParam("pageSize", String.valueOf(pagesize));
+        request.addRequestParam("serviceProviderID", Store.getStore().getStoreId());
+        if (localGoodsClasses2.getSelection() >= 0) {
+            if (localGoodsClasses2.getGoodsClasses().size() > localGoodsClasses2.getSelection()) {
+                String classId = localGoodsClasses2.getGoodsClasses().get(localGoodsClasses2.getSelection()).getId();
+                request.addRequestParam("retailProTypeValueID", classId);
             }
-            pagenum++;
         }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> parameters = new ArrayList<NameValuePair>();
-            parameters.add(new BasicNameValuePair("pageNo", pagenum + ""));
-            parameters.add(new BasicNameValuePair("pageSize", pagesize + ""));
-            parameters.add(new BasicNameValuePair("serviceProviderID", Store
-                    .getStore().getStoreId()));
-            if (localGoodsClasses2.getSelection() >= 0) {
-                if (localGoodsClasses2.getGoodsClasses().size() > localGoodsClasses2
-                        .getSelection()) {
-                    String classId = localGoodsClasses2.getGoodsClasses()
-                            .get(localGoodsClasses2.getSelection()).getId();
-                    parameters.add(new BasicNameValuePair(
-                            "retailProTypeValueID", classId));
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                if (pagenum == 0) {
+                    showLoading();
                 }
             }
-            return netUtil.postWithoutCookie(API.API_LOCAL_BUSINESS_GOODS,
-                    parameters, useCache, true);
-        }
 
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            refreshScrollView.onRefreshComplete();
-            if (result.length() > 0) {
-                JSONObject object;
-                try {
-                    object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONArray array = object.optJSONArray("dataList");
-                        if (array != null) {
-                            if (array.length() > 0) {
-                                if (array.length() < pagesize) {
-                                    refreshScrollView
-                                            .setMode(Mode.PULL_FROM_START);
-                                }
-                                for (int i = 0; i < array.length(); i++) {
-                                    JSONObject goods = array.optJSONObject(i);
-                                    if (goods != null) {
-                                        localGoods.add(new ModelLocalGoods(
-                                                goods));
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+                refreshScrollView.onRefreshComplete();
+                pagenum--;
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                refreshScrollView.onRefreshComplete();
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    JSONObject object;
+                    try {
+                        object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONArray array = object.optJSONArray("dataList");
+                            if (array != null) {
+                                if (array.length() > 0) {
+                                    if (array.length() < pagesize) {
+                                        refreshScrollView.setMode(Mode.PULL_FROM_START);
                                     }
+                                    for (int i = 0; i < array.length(); i++) {
+                                        JSONObject goods = array.optJSONObject(i);
+                                        if (goods != null) {
+                                            localGoods.add(new ModelLocalGoods(goods));
+                                        }
+                                    }
+                                    goodsAdapter.notifyDataSetChanged();
+                                    return;
+                                } else {
+                                    refreshScrollView.setMode(Mode.PULL_FROM_START);
                                 }
-                                goodsAdapter.notifyDataSetChanged();
-                                return;
-                            } else {
-                                refreshScrollView.setMode(Mode.PULL_FROM_START);
                             }
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    if (localGoods.size() == 0) {
+                        loadingEmpty();
+                    }
+                } else {
+                    loadingFailed();
                 }
-                if (localGoods.size() == 0) {
-                    loadingEmpty();
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
+    }
+
+
+    private void getGoodsClasses() {
+        Request request = new Request();
+        request.setUrl(API.API_LOCAL_BUSINESS_GOODS_CLASS_PRIMARY);
+        request.addRequestParam("serviceProviderID", Store
+                .getStore().getStoreId());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        localGoodsClasses = new LocalGoodsClasses(requestMessage.getResult(), 1);
+                        goodsClassAdapter.notifyDataSetChanged();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
-            } else {
-                loadingFailed();
             }
-        }
+
+            @Override
+            protected void onFinish() {
+            }
+        });
     }
 
-    class GetGoodsClasses extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> parameters = new ArrayList<NameValuePair>();
-            parameters.add(new BasicNameValuePair("serviceProviderID", Store
-                    .getStore().getStoreId()));
-            // parameters.add(new BasicNameValuePair("serviceProviderID", "1"));
-            return netUtil.postWithoutCookie(
-                    API.API_LOCAL_BUSINESS_GOODS_CLASS_PRIMARY, parameters,
-                    true, true);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            try {
-                localGoodsClasses = new LocalGoodsClasses(result, 1);
-                goodsClassAdapter.notifyDataSetChanged();
-            } catch (JSONException e) {
-                e.printStackTrace();
+    private void GetGoodsClasses2(String params) {
+        Request request = new Request();
+        request.setUrl(API.API_LOCAL_BUSINESS_GOODS_CLASS_SECOND);
+        request.addRequestParam("serviceProviderID", Store
+                .getStore().getStoreId());
+        request.addRequestParam("productTypeValueID", params);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
             }
-        }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        localGoodsClasses2 = new LocalGoodsClasses(requestMessage.getResult(), 2);
+                        goodsClassAdapter2.notifyDataSetChanged();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+            }
+        });
     }
 
-    class GetGoodsClasses2 extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... params) {
-            List<NameValuePair> parameters = new ArrayList<NameValuePair>();
-            parameters.add(new BasicNameValuePair("serviceProviderID", Store
-                    .getStore().getStoreId()));
-            parameters.add(new BasicNameValuePair("productTypeValueID",
-                    params[0]));
-            return netUtil.postWithoutCookie(
-                    API.API_LOCAL_BUSINESS_GOODS_CLASS_SECOND, parameters,
-                    true, true);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            try {
-                localGoodsClasses2 = new LocalGoodsClasses(result, 2);
-                goodsClassAdapter2.notifyDataSetChanged();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     class LocalGoodsClasses {
 
@@ -446,7 +460,7 @@ public class LocalGoodsFragment extends BaseNotifyFragment implements
         public void onResume() {
             super.onResume();
             if (localGoodsClasses.getGoodsClasses().isEmpty()) {
-                new GetGoodsClasses().execute();
+                getGoodsClasses();
             }
         }
 
@@ -480,8 +494,7 @@ public class LocalGoodsFragment extends BaseNotifyFragment implements
                         goodsClassAdapter2.notifyDataSetChanged();
                         refresh();
                     } else {
-                        new GetGoodsClasses2().execute(localGoodsClasses
-                                .getGoodsClasses().get(arg2).getId());
+                        GetGoodsClasses2(localGoodsClasses.getGoodsClasses().get(arg2).getId());
                     }
                 }
             });

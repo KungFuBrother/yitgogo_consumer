@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import com.smartown.yitian.gogo.R;
 
-import yitgogo.consumer.BaseActivity;
+import yitgogo.consumer.base.BaseActivity;
 import yitgogo.consumer.tools.Content;
 import yitgogo.consumer.tools.Parameters;
 

@@ -1,6 +1,6 @@
 package yitgogo.consumer.order.ui;
 
-import yitgogo.consumer.BaseNormalFragment;
+import yitgogo.consumer.base.BaseNormalFragment;
 import yitgogo.consumer.store.model.Store;
 import yitgogo.consumer.view.Notify;
 import android.os.Bundle;

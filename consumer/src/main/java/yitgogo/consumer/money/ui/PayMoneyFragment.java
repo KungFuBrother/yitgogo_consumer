@@ -2,11 +2,8 @@ package yitgogo.consumer.money.ui;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.os.AsyncTask;
-import android.os.AsyncTask.Status;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -25,11 +22,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,30 +39,24 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.money.model.ModelBankCard;
 import yitgogo.consumer.money.model.MoneyAccount;
-import yitgogo.consumer.money.task.GetBankCards;
-import yitgogo.consumer.money.task.LoginMoneyTask;
-import yitgogo.consumer.money.task.VerifyPayPasswordTask;
 import yitgogo.consumer.tools.API;
 import yitgogo.consumer.tools.Parameters;
 import yitgogo.consumer.user.model.User;
 import yitgogo.consumer.user.ui.UserLoginFragment;
-import yitgogo.consumer.view.CodeEditDialog;
 import yitgogo.consumer.view.InnerListView;
 import yitgogo.consumer.view.Notify;
 
 public class PayMoneyFragment extends BaseNotifyFragment {
 
+    public static final int PAY_TYPE_EGG = 7;
     String activityId = "";
     String activityName = "";
     int activityType = 7;
     double totalMoney = 0;
     String serialNumber = "";
-
-    public static final int PAY_TYPE_EGG = 7;
-
     InnerListView bankCardListView;
     TextView contentTextView, amountTextView, payButton;
 
@@ -73,10 +68,6 @@ public class PayMoneyFragment extends BaseNotifyFragment {
     BandCardAdapter bandCardAdapter;
 
     LinearLayout addBankCardButton;
-
-    LoginMoneyTask loginMoneyTask;
-    VerifyPayPasswordTask verifyPayPasswordTask;
-    GetBankCards getBankCards;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -102,12 +93,6 @@ public class PayMoneyFragment extends BaseNotifyFragment {
             jump(UserLoginFragment.class.getName(), "会员登录");
             getActivity().finish();
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        stopAsyncTasks();
-        super.onDestroy();
     }
 
     private void init() {
@@ -168,12 +153,9 @@ public class PayMoneyFragment extends BaseNotifyFragment {
                     } else {
                         if (selectedBankCard.getCardType().contains("储蓄")) {
                             inputPayPassword(1);
-                        } else if (selectedBankCard.getCardType()
-                                .contains("信用")) {
-                            new CreditInfoDialog().show(getFragmentManager(),
-                                    null);
-                        } else if (selectedBankCard.getCardType().contains(
-                                "钱袋子")) {
+                        } else if (selectedBankCard.getCardType().contains("信用")) {
+                            new CreditInfoDialog().show(getFragmentManager(), null);
+                        } else if (selectedBankCard.getCardType().contains("钱袋子")) {
                             inputPayPassword(2);
                         }
                     }
@@ -190,9 +172,8 @@ public class PayMoneyFragment extends BaseNotifyFragment {
     }
 
     private void pay() {
-        serialNumber = serialNumberFormat.format(new Date(System
-                .currentTimeMillis()));
-        new GetSmsCode().execute();
+        serialNumber = serialNumberFormat.format(new Date(System.currentTimeMillis()));
+        getSmsCode();
     }
 
     /**
@@ -202,8 +183,7 @@ public class PayMoneyFragment extends BaseNotifyFragment {
      */
     private void inputPayPassword(int type) {
         final int payType = type;
-        PayPasswordDialog passwordDialog = new PayPasswordDialog("请输入支付密码",
-                false) {
+        PayPasswordDialog passwordDialog = new PayPasswordDialog("请输入支付密码", false) {
             @Override
             public void onDismiss(DialogInterface dialog) {
                 if (!TextUtils.isEmpty(payPassword)) {
@@ -212,7 +192,7 @@ public class PayMoneyFragment extends BaseNotifyFragment {
                             verifyPayPassword(payPassword);
                             break;
                         case 2:
-                            new PayBalance().execute(payPassword);
+                            payBalance(payPassword);
                             break;
                         default:
                             break;
@@ -222,347 +202,6 @@ public class PayMoneyFragment extends BaseNotifyFragment {
             }
         };
         passwordDialog.show(getFragmentManager(), null);
-    }
-
-    /**
-     * @author Tiger
-     * @Url http://192.168.8.98:8086/api/settlement/kuaiqian/getAuthCodeApi
-     * @Parameters [pan=6225881285953427, expiredDate=, cvv2=, amount=0.01,
-     * externalRefNumber=20150818051557895, customerId=zhaojin1992,
-     * cardHolderName=赵晋, cardHolderId=510823199201163922,
-     * phoneNO=18584182653]
-     * @Result {"message":"ok","state":"SUCCESS","cacheKey":null,"dataList"
-     * :[],"totalCount":1,"dataMap":{"responseCode":"00", "customerId"
-     * :"zhaojin1992","token":"1133738","merchantId": "104110045112012"
-     * ,"storablePan":"6225883427"},"object":null}
-     * @Result {"message":"ok","state":"SUCCESS","cacheKey":null,"dataList"
-     * :[],"totalCount":1,"dataMap":{"responseCode":"L5", "customerId"
-     * :"13032889558","responseTextMessage":"卡号无效/卡号输入错误" ,"merchantId"
-     * :"104110045112012","storablePan":"6210986422"} ,"object":null}
-     * @Result {"message":"ok","state"
-     * :"SUCCESS","cacheKey":null,"dataList":[],"totalCount"
-     * :1,"dataMap":{"errorMessage":
-     * "Data length of element[expiredDate] is incorrect!"
-     * ,"errorCode":"B.MGW.0120","version":"1.0"},"object":null}
-     */
-    class GetSmsCode extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair("pan", selectedBankCard
-                    .getBanknumber()));
-            // nameValuePairs.add(new BasicNameValuePair("pan",
-            // "6225881285953427"));
-            nameValuePairs.add(new BasicNameValuePair("expiredDate",
-                    selectedBankCard.getExpiredDate()));
-            nameValuePairs.add(new BasicNameValuePair("cvv2", selectedBankCard
-                    .getCvv2()));
-            nameValuePairs.add(new BasicNameValuePair("amount", decimalFormat
-                    .format(totalMoney)));
-            nameValuePairs.add(new BasicNameValuePair("externalRefNumber",
-                    serialNumber));
-            nameValuePairs.add(new BasicNameValuePair("customerId",
-                    selectedBankCard.getOrg()));
-            // nameValuePairs.add(new BasicNameValuePair("customerId",
-            // "HY048566511863"));
-            nameValuePairs.add(new BasicNameValuePair("cardHolderName",
-                    selectedBankCard.getCradname()));
-            nameValuePairs.add(new BasicNameValuePair("cardHolderId",
-                    selectedBankCard.getIdCard()));
-            nameValuePairs.add(new BasicNameValuePair("phoneNO",
-                    selectedBankCard.getMobile()));
-            nameValuePairs.add(new BasicNameValuePair("bankCode",
-                    selectedBankCard.getBank().getCode()));
-            if (selectedBankCard.getCardType().equalsIgnoreCase("储蓄卡")) {
-                nameValuePairs.add(new BasicNameValuePair("isBankType", "1"));
-            } else {
-                nameValuePairs.add(new BasicNameValuePair("isBankType", "2"));
-            }
-            return netUtil.postWithoutCookie(API.API_PAY_BIND,
-                    nameValuePairs, false, false);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (result.length() > 0) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONObject dataMap = object.optJSONObject("dataMap");
-                        if (dataMap != null) {
-                            bindResult = new BindResult(dataMap);
-                            if (bindResult.getResponseCode().equals("00")) {
-                                new SmsDialog()
-                                        .show(getFragmentManager(), null);
-                                return;
-                            }
-                            if (TextUtils.isEmpty(bindResult
-                                    .getResponseTextMessage())) {
-                                Notify.show("获取验证码失败");
-                            } else {
-                                Notify.show(bindResult.getResponseTextMessage());
-                            }
-                            return;
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            Notify.show("获取验证码失败");
-        }
-    }
-
-    private void showSmsCodeDialog() {
-        CodeEditDialog codeEditDialog = new CodeEditDialog("请输入验证码", false) {
-
-            @Override
-            @NonNull
-            public Dialog onCreateDialog(Bundle savedInstanceState) {
-                return super.onCreateDialog(savedInstanceState);
-            }
-
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                if (ok) {
-                    if (selectedBankCard.isValidation()) {
-                        new PaySecondTime().execute(code);
-                    } else {
-                        new PayFirstTime().execute(code);
-                    }
-                }
-                super.onDismiss(dialog);
-            }
-        };
-    }
-
-    /**
-     * @author Tiger
-     * @Url http://192.168.8.98:8086/api/settlement/kuaiqian/payDataFirstApi
-     * @Parameters [payInfoType=1, orderNumber=YT54654564,
-     * cardNo=6225881285953427, externalRefNumber=20150818060530114,
-     * storableCardNo=6210982, expiredDate=, cvv2=, amount=0.01,
-     * customerId=zhaojin1992, cardHolderName=赵晋,
-     * cardHolderId=510823199201163922, phone=18584182653,
-     * validCode=157871, token=1133850]
-     * @Result {"message":"ok","state":"SUCCESS","cacheKey":null,"dataList"
-     * :[],"totalCount":1,"dataMap":{"responseCode":"00",
-     * "responseTextMessage"
-     * :"会员不存在","externalRefNumber":"20150818060530114" },"object":null}
-     * @Result {"message":"ok","state"
-     * :"SUCCESS","cacheKey":null,"dataList":[],"totalCount"
-     * :1,"dataMap":{"responseCode":"T6","responseTextMessage":"验证码不匹配",
-     * "externalRefNumber":"20150818061712246"},"object":null}
-     * @Result {"message":"ok","state":"SUCCESS","cacheKey":null,"dataList":[],
-     * "totalCount"
-     * :1,"dataMap":{"responseCode":"OT","responseTextMessage"
-     * :"交易金额太小","externalRefNumber":"20150819063754516"},"object":null}
-     * @Url http://192.168.8.98:8086/api/settlement/kuaiqian/getAuthCodeApi
-     * @Parameters [pan=6217003810000524929, expiredDate=, cvv2=, amount=1.00,
-     * externalRefNumber=20150819064740036, customerId=18615760358,
-     * cardHolderName=肖宗其, cardHolderId=510525198705013057,
-     * phoneNO=18615760358]
-     * @Result {"message":"ok","state":"SUCCESS","cacheKey":null,"dataList"
-     * :[],"totalCount":1,"dataMap":{"responseCode":"00", "customerId"
-     * :"18615760358","token":"299196900","merchantId"
-     * :"812310053990815" ,"storablePan":"6217004929"},"object":null}
-     * @Url http://192.168.8.98:8086/api/settlement/kuaiqian/payDataFirstApi
-     * @Parameters [payInfoType=1, orderNumber=YT3420562512,
-     * cardNo=6217003810000524929,
-     * externalRefNumber=20150819064740036,
-     * storableCardNo=6217004929, expiredDate=, cvv2=, amount=1.00,
-     * customerId=18615760358, cardHolderName=肖宗其,
-     * cardHolderId=510525198705013057, phone=18615760358,
-     * validCode=777159, token=299196900]
-     * @Result {"message":"ok","state":"SUCCESS","cacheKey":null,"dataList"
-     * :[],"totalCount":1,"dataMap":{"responseCode":"00",
-     * "responseTextMessage"
-     * :"交易成功","externalRefNumber":"20150819064740036" },"object":null}
-     */
-    class PayFirstTime extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair("payInfoType", String.valueOf(activityType)));
-            nameValuePairs.add(new BasicNameValuePair("orderNumber", activityId + "_" + activityName));
-            nameValuePairs.add(new BasicNameValuePair("cardNo", selectedBankCard.getBanknumber()));
-            nameValuePairs.add(new BasicNameValuePair("externalRefNumber", serialNumber));
-            nameValuePairs.add(new BasicNameValuePair("storableCardNo", getShortCardNumber(selectedBankCard.getBanknumber())));
-            nameValuePairs.add(new BasicNameValuePair("expiredDate", selectedBankCard.getExpiredDate()));
-            nameValuePairs.add(new BasicNameValuePair("cvv2", selectedBankCard.getCvv2()));
-            nameValuePairs.add(new BasicNameValuePair("amount", decimalFormat.format(totalMoney)));
-            nameValuePairs.add(new BasicNameValuePair("customerId", selectedBankCard.getOrg()));
-            nameValuePairs.add(new BasicNameValuePair("cardHolderName", selectedBankCard.getCradname()));
-            nameValuePairs.add(new BasicNameValuePair("cardHolderId", selectedBankCard.getIdCard()));
-            nameValuePairs.add(new BasicNameValuePair("phone", selectedBankCard.getMobile()));
-            nameValuePairs.add(new BasicNameValuePair("validCode", params[0]));
-            if (!TextUtils.isEmpty(bindResult.getToken())) {
-                nameValuePairs.add(new BasicNameValuePair("token", bindResult.getToken()));
-            }
-            nameValuePairs.add(new BasicNameValuePair("bankCode", selectedBankCard.getBank().getCode()));
-            if (selectedBankCard.getCardType().equalsIgnoreCase("储蓄卡")) {
-                nameValuePairs.add(new BasicNameValuePair("isBankType", "1"));
-            } else {
-                nameValuePairs.add(new BasicNameValuePair("isBankType", "2"));
-            }
-            return netUtil.postWithoutCookie(API.API_PAY_FIRST_TIME, nameValuePairs, false, false);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (result.length() > 0) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONObject dataMap = object.optJSONObject("dataMap");
-                        if (dataMap != null) {
-                            BindResult payResult = new BindResult(dataMap);
-                            if (payResult.getResponseCode().equals("00")) {
-                                paySuccess();
-                                return;
-                            }
-                            if (TextUtils.isEmpty(payResult
-                                    .getResponseTextMessage())) {
-                                Notify.show("付款失败");
-                            } else {
-                                Notify.show(payResult.getResponseTextMessage());
-                            }
-                            return;
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            Notify.show("付款失败");
-        }
-    }
-
-    /**
-     * @author Tiger
-     * @Url http://192.168.8.98:8086/api/settlement/kuaiqian/payDataTwiceApi
-     * @Parameters [payInfoType=1, orderNumber=YT1311081879,
-     * storableCardNo=6228489814,
-     * externalRefNumber=20150818083055214, amount=771.00,
-     * customerId=HY612813352788, phone=, validCode=, token=]
-     * @Result {"message":"ok","state":"SUCCESS"
-     * ,"cacheKey":null,"dataList":[],"totalCount"
-     * :1,"dataMap":{"responseCode"
-     * :"00","responseTextMessage":"交易成功","externalRefNumber"
-     * :"20150818083055214"},"object":null}
-     */
-    class PaySecondTime extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair("payInfoType", String.valueOf(activityType)));
-            nameValuePairs.add(new BasicNameValuePair("orderNumber", activityId + "_" + activityName));
-            nameValuePairs.add(new BasicNameValuePair("storableCardNo", getShortCardNumber(selectedBankCard.getBanknumber())));
-            nameValuePairs.add(new BasicNameValuePair("externalRefNumber", serialNumber));
-            nameValuePairs.add(new BasicNameValuePair("amount", decimalFormat.format(totalMoney)));
-            nameValuePairs.add(new BasicNameValuePair("customerId", selectedBankCard.getOrg()));
-            nameValuePairs.add(new BasicNameValuePair("phone", selectedBankCard.getMobile()));
-            nameValuePairs.add(new BasicNameValuePair("validCode", params[0]));
-            nameValuePairs.add(new BasicNameValuePair("token", bindResult.getToken()));
-            return netUtil.postWithoutCookie(API.API_PAY_SECOND_TIME, nameValuePairs, false, false);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (result.length() > 0) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONObject dataMap = object.optJSONObject("dataMap");
-                        if (dataMap != null) {
-                            BindResult payResult = new BindResult(dataMap);
-                            if (payResult.getResponseCode().equals("00")) {
-                                paySuccess();
-                                return;
-                            }
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            Notify.show("付款失败");
-        }
-    }
-
-    /**
-     * @author Tiger
-     * @Result {"message":"ok","state"
-     * :"SUCCESS","cacheKey":null,"dataList":[],"totalCount"
-     * :1,"dataMap":{"status":"error","msg":"订单及类型不能为空"},"object":null}
-     */
-    class PayBalance extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair("memberAccount", User.getUser().getUseraccount()));
-            nameValuePairs.add(new BasicNameValuePair("orderType", String.valueOf(activityType)));
-            nameValuePairs.add(new BasicNameValuePair("orderNumbers", activityId + "_" + activityName));
-            nameValuePairs.add(new BasicNameValuePair("customerName", User.getUser().getRealname()));
-            nameValuePairs.add(new BasicNameValuePair("apAmount", decimalFormat.format(totalMoney)));
-            nameValuePairs.add(new BasicNameValuePair("pwd", params[0]));
-            return netUtil.postWithoutCookie(API.API_PAY_BALANCE, nameValuePairs, false, false);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (result.length() > 0) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONObject dataMap = object.optJSONObject("dataMap");
-                        if (dataMap != null) {
-                            if (dataMap.optString("status").equalsIgnoreCase("ok")) {
-                                paySuccess();
-                                return;
-                            } else {
-                                Notify.show(dataMap.optString("msg"));
-                                return;
-                            }
-                        }
-                    } else {
-                        Notify.show(object.optString("message"));
-                        return;
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            Notify.show("付款失败");
-        }
     }
 
     private void paySuccess() {
@@ -575,6 +214,400 @@ public class PayMoneyFragment extends BaseNotifyFragment {
             return cardNumber.substring(0, 6) + cardNumber.substring(cardNumber.length() - 4, cardNumber.length());
         }
         return "";
+    }
+
+    private void loginMoney() {
+        Request request = new Request();
+        request.setUrl(API.MONEY_LOGIN);
+        request.addRequestParam("sn", User.getUser().getCacheKey());
+        request.setSaveCookie(true);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+                Notify.show("暂无法进入钱袋子，请稍候再试");
+                getActivity().finish();
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                MoneyAccount.init(null);
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("success")) {
+                            MoneyAccount.init(object.optJSONObject("databody"));
+                            if (MoneyAccount.getMoneyAccount().isLogin()) {
+                                getBankCards();
+                            } else {
+                                getActivity().finish();
+                            }
+                            return;
+                        }
+                        Notify.show(object.optString("msg"));
+                        getActivity().finish();
+                        return;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Notify.show("暂无法进入钱袋子，请稍候再试");
+                getActivity().finish();
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
+    }
+
+    private void getBankCards() {
+        Request request = new Request();
+        request.setUrl(API.MONEY_BANK_BINDED);
+        request.addRequestParam("sn", User.getUser().getCacheKey());
+        request.addRequestParam("memberid", User.getUser().getUseraccount());
+        request.setUseCookie(true);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+                Notify.show("获取绑定的银行卡信息失败！");
+                getActivity().finish();
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("success")) {
+                            JSONArray array = object.optJSONArray("databody");
+                            if (array != null) {
+                                for (int i = 0; i < array.length(); i++) {
+                                    bankCards.add(new ModelBankCard(array.optJSONObject(i)));
+                                }
+                                ModelBankCard bankCard = new ModelBankCard("钱袋子余额");
+                                bankCards.add(0, bankCard);
+                                bandCardAdapter.notifyDataSetChanged();
+                            }
+                            return;
+                        }
+                        Notify.show(object.optString("msg"));
+                        getActivity().finish();
+                        return;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Notify.show("获取绑定的银行卡信息失败！");
+                getActivity().finish();
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
+    }
+
+    private void verifyPayPassword(String payPassword) {
+        Request request = new Request();
+        request.setUrl(API.MONEY_PAY_PASSWORD_VALIDATE);
+        request.addRequestParam("sn", User.getUser().getCacheKey());
+        request.addRequestParam("payaccount", MoneyAccount.getMoneyAccount().getPayaccount());
+        request.addRequestParam("paypwd", payPassword);
+        request.setUseCookie(true);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+                Notify.show("验证支付密码失败，请重试");
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("success")) {
+                            JSONObject jsonObject = object.optJSONObject("databody");
+                            if (jsonObject != null) {
+                                if (jsonObject.optBoolean("vli")) {
+                                    pay();
+                                } else {
+                                    Notify.show("支付密码错误");
+                                }
+                            }
+                            return;
+                        }
+                        Notify.show(object.optString("msg"));
+                        return;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Notify.show("验证支付密码失败，请重试");
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
+    }
+
+    private void getSmsCode() {
+        Request request = new Request();
+        request.setUrl(API.API_PAY_BIND);
+        request.addRequestParam("pan", selectedBankCard.getBanknumber());
+        request.addRequestParam("expiredDate", selectedBankCard.getExpiredDate());
+        request.addRequestParam("cvv2", selectedBankCard.getCvv2());
+        request.addRequestParam("amount", decimalFormat.format(totalMoney));
+        request.addRequestParam("externalRefNumber", serialNumber);
+        request.addRequestParam("customerId", selectedBankCard.getOrg());
+        request.addRequestParam("cardHolderName", selectedBankCard.getCradname());
+        request.addRequestParam("cardHolderId", selectedBankCard.getIdCard());
+        request.addRequestParam("phoneNO", selectedBankCard.getMobile());
+        request.addRequestParam("bankCode", selectedBankCard.getBank().getCode());
+        if (selectedBankCard.getCardType().equalsIgnoreCase("储蓄卡")) {
+            request.addRequestParam("isBankType", "1");
+        } else {
+            request.addRequestParam("isBankType", "2");
+        }
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONObject dataMap = object.optJSONObject("dataMap");
+                            if (dataMap != null) {
+                                bindResult = new BindResult(dataMap);
+                                if (bindResult.getResponseCode().equals("00")) {
+                                    new SmsDialog().show(getFragmentManager(), null);
+                                    return;
+                                }
+                                if (TextUtils.isEmpty(bindResult.getResponseTextMessage())) {
+                                    Notify.show("获取验证码失败");
+                                } else {
+                                    Notify.show(bindResult.getResponseTextMessage());
+                                }
+                                return;
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Notify.show("获取验证码失败");
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
+    }
+
+    private void payFirstTime(String validCode) {
+        Request request = new Request();
+        request.setUrl(API.API_PAY_FIRST_TIME);
+        request.addRequestParam("payInfoType", String.valueOf(activityType));
+        request.addRequestParam("orderNumber", activityId + "_" + activityName);
+        request.addRequestParam("cardNo", selectedBankCard.getBanknumber());
+        request.addRequestParam("externalRefNumber", serialNumber);
+        request.addRequestParam("storableCardNo", getShortCardNumber(selectedBankCard.getBanknumber()));
+        request.addRequestParam("expiredDate", selectedBankCard.getExpiredDate());
+        request.addRequestParam("cvv2", selectedBankCard.getCvv2());
+        request.addRequestParam("amount", decimalFormat.format(totalMoney));
+        request.addRequestParam("customerId", selectedBankCard.getOrg());
+        request.addRequestParam("cardHolderName", selectedBankCard.getCradname());
+        request.addRequestParam("cardHolderId", selectedBankCard.getIdCard());
+        request.addRequestParam("phone", selectedBankCard.getMobile());
+        request.addRequestParam("validCode", validCode);
+        if (!TextUtils.isEmpty(bindResult.getToken())) {
+            request.addRequestParam("token", bindResult.getToken());
+        }
+        request.addRequestParam("bankCode", selectedBankCard.getBank().getCode());
+        if (selectedBankCard.getCardType().equalsIgnoreCase("储蓄卡")) {
+            request.addRequestParam("isBankType", "1");
+        } else {
+            request.addRequestParam("isBankType", "2");
+        }
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONObject dataMap = object.optJSONObject("dataMap");
+                            if (dataMap != null) {
+                                BindResult payResult = new BindResult(dataMap);
+                                if (payResult.getResponseCode().equals("00")) {
+                                    paySuccess();
+                                    return;
+                                }
+                                if (TextUtils.isEmpty(payResult.getResponseTextMessage())) {
+                                    Notify.show("付款失败");
+                                } else {
+                                    Notify.show(payResult.getResponseTextMessage());
+                                }
+                                return;
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Notify.show("付款失败");
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
+    }
+
+    private void paySecondTime(String validCode) {
+        Request request = new Request();
+        request.setUrl(API.API_PAY_SECOND_TIME);
+        request.addRequestParam("payInfoType", String.valueOf(activityType));
+        request.addRequestParam("orderNumber", activityId + "_" + activityName);
+        request.addRequestParam("storableCardNo", getShortCardNumber(selectedBankCard.getBanknumber()));
+        request.addRequestParam("externalRefNumber", serialNumber);
+        request.addRequestParam("amount", decimalFormat.format(totalMoney));
+        request.addRequestParam("customerId", selectedBankCard.getOrg());
+        request.addRequestParam("phone", selectedBankCard.getMobile());
+        request.addRequestParam("validCode", validCode);
+        request.addRequestParam("token", bindResult.getToken());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+                Notify.show("付款失败");
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONObject dataMap = object.optJSONObject("dataMap");
+                            if (dataMap != null) {
+                                BindResult payResult = new BindResult(dataMap);
+                                if (payResult.getResponseCode().equals("00")) {
+                                    paySuccess();
+                                    return;
+                                }
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Notify.show("付款失败");
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
+    }
+
+    private void payBalance(String pwd) {
+        Request request = new Request();
+        request.setUrl(API.API_PAY_BALANCE);
+        request.addRequestParam("memberAccount", User.getUser().getUseraccount());
+        request.addRequestParam("orderType", String.valueOf(activityType));
+        request.addRequestParam("orderNumbers", activityId + "_" + activityName);
+        request.addRequestParam("customerName", User.getUser().getRealname());
+        request.addRequestParam("apAmount", decimalFormat.format(totalMoney));
+        request.addRequestParam("pwd", pwd);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONObject dataMap = object.optJSONObject("dataMap");
+                            if (dataMap != null) {
+                                if (dataMap.optString("status").equalsIgnoreCase("ok")) {
+                                    paySuccess();
+                                    return;
+                                } else {
+                                    Notify.show(dataMap.optString("msg"));
+                                    return;
+                                }
+                            }
+                        } else {
+                            Notify.show(object.optString("message"));
+                            return;
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Notify.show("付款失败");
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
 
     class BandCardAdapter extends BaseAdapter {
@@ -730,60 +763,40 @@ public class PayMoneyFragment extends BaseNotifyFragment {
         TextView okButton, getCodeButton;
         EditText smscodeEditText;
         ImageView closeButton;
+        boolean isFinish = false;
+        int smsTimes = 0;
         Handler handler = new Handler() {
-            public void handleMessage(Message msg) {
-                if (msg.obj != null) {
-                    getCodeButton.setText(msg.obj + "s");
-                } else {
-                    getCodeButton.setEnabled(true);
-                    getCodeButton.setTextColor(getResources().getColor(
-                            R.color.textColorSecond));
-                    getCodeButton.setText("获取验证码");
+            public void handleMessage(android.os.Message msg) {
+                if (isFinish) {
+                    return;
+                }
+                if (msg.what == 1) {
+                    if (smsTimes > 0) {
+                        getCodeButton.setText(smsTimes + "s");
+                        smsTimes--;
+                        handler.sendEmptyMessageDelayed(1, 1000);
+                    } else {
+                        getCodeButton.setEnabled(true);
+                        getCodeButton.setTextColor(getResources().getColor(R.color.textColorSecond));
+                        getCodeButton.setText("获取验证码");
+                    }
                 }
             }
-
-            ;
         };
-        boolean isFinish = false;
 
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            init();
+            setCancelable(false);
             findViews();
+            smsTimes = 60;
+            handler.sendEmptyMessage(1);
         }
 
         @Override
         public void onDismiss(DialogInterface dialog) {
-            super.onDismiss(dialog);
             isFinish = true;
-        }
-
-        private void init() {
-            setCancelable(false);
-            new Thread(new Runnable() {
-
-                @Override
-                public void run() {
-                    int time = 60;
-                    while (time > -1) {
-                        if (isFinish) {
-                            break;
-                        }
-                        try {
-                            Message message = new Message();
-                            if (time > 0) {
-                                message.obj = time;
-                            }
-                            handler.sendMessage(message);
-                            Thread.sleep(1000);
-                            time--;
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }).start();
+            super.onDismiss(dialog);
         }
 
         @Override
@@ -792,37 +805,28 @@ public class PayMoneyFragment extends BaseNotifyFragment {
             Dialog dialog = new Dialog(getActivity());
             dialog.getWindow().setBackgroundDrawableResource(R.color.divider);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setContentView(dialogView, new LayoutParams(
-                    LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+            dialog.setContentView(dialogView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
             return dialog;
         }
 
         private void findViews() {
-            dialogView = layoutInflater.inflate(R.layout.dialog_pay_smscode,
-                    null);
-            closeButton = (ImageView) dialogView
-                    .findViewById(R.id.pay_sms_close);
-            smscodeEditText = (EditText) dialogView
-                    .findViewById(R.id.pay_sms_code);
-            getCodeButton = (TextView) dialogView
-                    .findViewById(R.id.pay_sms_get);
+            dialogView = layoutInflater.inflate(R.layout.dialog_pay_smscode, null);
+            closeButton = (ImageView) dialogView.findViewById(R.id.pay_sms_close);
+            smscodeEditText = (EditText) dialogView.findViewById(R.id.pay_sms_code);
+            getCodeButton = (TextView) dialogView.findViewById(R.id.pay_sms_get);
             okButton = (TextView) dialogView.findViewById(R.id.pay_sms_ok);
             getCodeButton.setEnabled(false);
             okButton.setOnClickListener(new OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
-                    if (TextUtils.isEmpty(smscodeEditText.getText().toString()
-                            .trim())) {
+                    if (TextUtils.isEmpty(smscodeEditText.getText().toString().trim())) {
                         Notify.show("请输入验证码");
                     } else {
-
                         if (selectedBankCard.isValidation()) {
-                            new PaySecondTime().execute(smscodeEditText
-                                    .getText().toString().trim());
+                            paySecondTime(smscodeEditText.getText().toString());
                         } else {
-                            new PayFirstTime().execute(smscodeEditText
-                                    .getText().toString().trim());
+                            payFirstTime(smscodeEditText.getText().toString());
                         }
                         dismiss();
                     }
@@ -839,7 +843,7 @@ public class PayMoneyFragment extends BaseNotifyFragment {
 
                 @Override
                 public void onClick(View v) {
-                    new GetSmsCode().execute();
+                    getSmsCode();
                     dismiss();
                 }
             });
@@ -913,107 +917,6 @@ public class PayMoneyFragment extends BaseNotifyFragment {
                 }
             });
         }
-    }
-
-    private void stopAsyncTasks() {
-        if (loginMoneyTask != null) {
-            if (loginMoneyTask.getStatus() == Status.RUNNING) {
-                loginMoneyTask.cancel(true);
-            }
-        }
-        if (verifyPayPasswordTask != null) {
-            if (verifyPayPasswordTask.getStatus() == Status.RUNNING) {
-                verifyPayPasswordTask.cancel(true);
-            }
-        }
-        if (getBankCards != null) {
-            if (getBankCards.getStatus() == Status.RUNNING) {
-                getBankCards.cancel(true);
-            }
-        }
-    }
-
-    private void loginMoney() {
-        if (loginMoneyTask != null) {
-            if (loginMoneyTask.getStatus() == Status.RUNNING) {
-                return;
-            }
-        }
-        loginMoneyTask = new LoginMoneyTask() {
-
-            @Override
-            protected void onPreExecute() {
-                showLoading();
-            }
-
-            @Override
-            protected void onPostExecute(String result) {
-                hideLoading();
-                super.onPostExecute(result);
-                if (MoneyAccount.getMoneyAccount().isLogin()) {
-                    getBankCards();
-                } else {
-                    getActivity().finish();
-                }
-            }
-        };
-        loginMoneyTask.execute();
-    }
-
-    private void verifyPayPassword(String payPassword) {
-        if (verifyPayPasswordTask != null) {
-            if (verifyPayPasswordTask.getStatus() == Status.RUNNING) {
-                return;
-            }
-        }
-        verifyPayPasswordTask = new VerifyPayPasswordTask() {
-
-            @Override
-            protected void onPreExecute() {
-                showLoading();
-            }
-
-            @Override
-            protected void onPostExecute(String result) {
-                hideLoading();
-                super.onPostExecute(result);
-                if (passwordIsRight) {
-                    pay();
-                } else {
-                    Notify.show("支付密码错误");
-                }
-            }
-        };
-        verifyPayPasswordTask.execute(payPassword);
-    }
-
-    private void getBankCards() {
-        if (getBankCards != null) {
-            if (getBankCards.getStatus() == Status.RUNNING) {
-                return;
-            }
-        }
-        getBankCards = new GetBankCards() {
-            @Override
-            protected void onPreExecute() {
-                showLoading();
-            }
-
-            @Override
-            protected void onPostExecute(String result) {
-                hideLoading();
-                super.onPostExecute(result);
-                if (MoneyAccount.getMoneyAccount().isGetBankCardFailed()) {
-                    getActivity().finish();
-                } else {
-                    bankCards = MoneyAccount.getMoneyAccount().getBankCards();
-                    ModelBankCard bankCard = new ModelBankCard("钱袋子余额");
-                    bankCards.add(0, bankCard);
-                    bandCardAdapter.notifyDataSetChanged();
-                }
-            }
-        };
-        getBankCards.execute();
     }
 
 }

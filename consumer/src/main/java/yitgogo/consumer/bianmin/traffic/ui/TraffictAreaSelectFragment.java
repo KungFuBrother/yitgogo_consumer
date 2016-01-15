@@ -1,6 +1,6 @@
 package yitgogo.consumer.bianmin.traffic.ui;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 
 public class TraffictAreaSelectFragment extends BaseNotifyFragment {
 

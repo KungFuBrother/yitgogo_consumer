@@ -16,7 +16,7 @@ import com.umeng.analytics.MobclickAgent;
 import java.util.ArrayList;
 import java.util.List;
 
-import yitgogo.consumer.BaseActivity;
+import yitgogo.consumer.base.BaseActivity;
 import yitgogo.consumer.suning.model.SuningManager;
 import yitgogo.consumer.suning.ui.SuningAreaFragment;
 import yitgogo.consumer.view.FragmentTabHost;
@@ -106,6 +106,7 @@ public class MainActivity extends BaseActivity {
                 }
             }
         });
+        tabHost.getTabWidget().setDividerDrawable(null);
     }
 
     /**
@@ -130,6 +131,7 @@ public class MainActivity extends BaseActivity {
                 public void onDismiss(DialogInterface dialog) {
                     if (makeSure) {
                         finish();
+//                        android.os.Process.killProcess(android.os.Process.myPid());
                     }
                     super.onDismiss(dialog);
                 }

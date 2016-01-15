@@ -1,11 +1,11 @@
 package yitgogo.consumer.order.ui;
 
 import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -18,18 +18,21 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.money.ui.PayFragment;
 import yitgogo.consumer.order.model.ModelPlatformOrder;
 import yitgogo.consumer.order.model.ModelPlatformOrderProduct;
@@ -70,7 +73,7 @@ public class OrderDetailFragment extends BaseNotifyFragment {
     public void onResume() {
         super.onResume();
         MobclickAgent.onPageStart(OrderDetailFragment.class.getName());
-        new GetOrderDetail().execute();
+        getOrderDetail();
     }
 
     @Override
@@ -95,45 +98,28 @@ public class OrderDetailFragment extends BaseNotifyFragment {
 
     @Override
     protected void findViews() {
-        orderNumberText = (TextView) contentView
-                .findViewById(R.id.order_detail_number);
-        orderStateText = (TextView) contentView
-                .findViewById(R.id.order_detail_state);
-        orderDateText = (TextView) contentView
-                .findViewById(R.id.order_detail_date);
-        freightTextView = (TextView) contentView
-                .findViewById(R.id.order_detail_freight);
-        senderTextView = (TextView) contentView
-                .findViewById(R.id.order_detail_sender);
-        orderWuliuText = (TextView) contentView
-                .findViewById(R.id.order_detail_wuliu);
-        userNameText = (TextView) contentView
-                .findViewById(R.id.order_detail_user_name);
-        userPhoneText = (TextView) contentView
-                .findViewById(R.id.order_detail_user_phone);
-        userAddressText = (TextView) contentView
-                .findViewById(R.id.order_detail_user_address);
-        moneyText = (TextView) contentView
-                .findViewById(R.id.order_detail_total_money);
-        discountText = (TextView) contentView
-                .findViewById(R.id.order_detail_discount);
-        payMoneyText = (TextView) contentView
-                .findViewById(R.id.order_detail_real_money);
-        productList = (InnerListView) contentView
-                .findViewById(R.id.order_detail_product);
-        wuliuButton = (LinearLayout) contentView
-                .findViewById(R.id.order_detail_wuliu_button);
-        refreshLayout = (SwipeRefreshLayout) contentView
-                .findViewById(R.id.order_detail_refresh);
+        orderNumberText = (TextView) contentView.findViewById(R.id.order_detail_number);
+        orderStateText = (TextView) contentView.findViewById(R.id.order_detail_state);
+        orderDateText = (TextView) contentView.findViewById(R.id.order_detail_date);
+        freightTextView = (TextView) contentView.findViewById(R.id.order_detail_freight);
+        senderTextView = (TextView) contentView.findViewById(R.id.order_detail_sender);
+        orderWuliuText = (TextView) contentView.findViewById(R.id.order_detail_wuliu);
+        userNameText = (TextView) contentView.findViewById(R.id.order_detail_user_name);
+        userPhoneText = (TextView) contentView.findViewById(R.id.order_detail_user_phone);
+        userAddressText = (TextView) contentView.findViewById(R.id.order_detail_user_address);
+        moneyText = (TextView) contentView.findViewById(R.id.order_detail_total_money);
+        discountText = (TextView) contentView.findViewById(R.id.order_detail_discount);
+        payMoneyText = (TextView) contentView.findViewById(R.id.order_detail_real_money);
+        productList = (InnerListView) contentView.findViewById(R.id.order_detail_product);
+        wuliuButton = (LinearLayout) contentView.findViewById(R.id.order_detail_wuliu_button);
+        refreshLayout = (SwipeRefreshLayout) contentView.findViewById(R.id.order_detail_refresh);
 
         // actionBar = (LinearLayout) view
         // .findViewById(R.id.order_detail_action_bar);
         // actionBarLayout = (LinearLayout) view
         // .findViewById(R.id.order_detail_action_layout);
-        payButton = (TextView) contentView
-                .findViewById(R.id.order_detail_action_pay);
-        receiveButton = (TextView) contentView
-                .findViewById(R.id.order_detail_action_receive);
+        payButton = (TextView) contentView.findViewById(R.id.order_detail_action_pay);
+        receiveButton = (TextView) contentView.findViewById(R.id.order_detail_action_receive);
         initViews();
         registerViews();
     }
@@ -149,7 +135,7 @@ public class OrderDetailFragment extends BaseNotifyFragment {
 
             @Override
             public void onRefresh() {
-                new GetOrderDetail().execute();
+                getOrderDetail();
             }
         });
         wuliuButton.setOnClickListener(new OnClickListener() {
@@ -178,7 +164,7 @@ public class OrderDetailFragment extends BaseNotifyFragment {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
                         if (makeSure) {
-                            new Received().execute();
+                            receiveOrder();
                         }
                         super.onDismiss(dialog);
                     }
@@ -233,6 +219,142 @@ public class OrderDetailFragment extends BaseNotifyFragment {
     // button.setBackgroundResource(R.drawable.button_rec_round);
     // actionBar.addView(button);
     // }
+
+    private Button createActionButton(String lable, int backgroundResId, OnClickListener onClickListener) {
+        Button button = new Button(getActivity());
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, ScreenUtil.dip2px(28));
+        button.setLayoutParams(layoutParams);
+        button.setGravity(Gravity.CENTER);
+        button.setPadding(ScreenUtil.dip2px(8), 0, ScreenUtil.dip2px(8), 0);
+        button.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
+        button.setText(lable);
+        button.setTextColor(getResources().getColor(R.color.white));
+        button.setBackgroundResource(backgroundResId);
+        button.setOnClickListener(onClickListener);
+        return button;
+    }
+
+    private TextView createActionText(String lable, int textColorResId, OnClickListener onClickListener) {
+        TextView textView = new TextView(getActivity());
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, ScreenUtil.dip2px(28));
+        textView.setGravity(Gravity.CENTER);
+        textView.setLayoutParams(layoutParams);
+        textView.setPadding(ScreenUtil.dip2px(8), 0, ScreenUtil.dip2px(8), 0);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
+        textView.setText(lable);
+        textView.setTextColor(getResources().getColor(textColorResId));
+        textView.setOnClickListener(onClickListener);
+        return textView;
+    }
+
+    private ImageView createActionImage(int imageResId, OnClickListener onClickListener) {
+        ImageView imageView = new ImageView(getActivity());
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ScreenUtil.dip2px(28), ScreenUtil.dip2px(28));
+        imageView.setLayoutParams(layoutParams);
+        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        imageView.setImageResource(imageResId);
+        imageView.setOnClickListener(onClickListener);
+        return imageView;
+    }
+
+    private void getOrderDetail() {
+        Request request = new Request();
+        request.setUrl(API.API_ORDER_DETAIL);
+        request.addRequestParam("orderId", orderId);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.getString("state").equalsIgnoreCase("SUCCESS")) {
+                            if (object.has("object")) {
+                                if (!object.getString("object").equalsIgnoreCase("null")) {
+                                    order = new ModelPlatformOrder(object.getJSONObject("object"));
+                                    showInfo();
+                                }
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+                refreshLayout.setRefreshing(false);
+            }
+        });
+    }
+
+    private String getSecretPhone(String phone) {
+        int length = phone.length();
+        if (length > 3) {
+            String string = "";
+            if (length < 8) {
+                string = phone.substring(0, 3) + "****";
+            } else {
+                string = phone.substring(0, 3) + "****"
+                        + phone.substring(7, length);
+            }
+            return string;
+        }
+        return "***";
+    }
+
+    private void receiveOrder() {
+        Request request = new Request();
+        request.setUrl(API.API_ORDER_RECEIVED);
+        request.addRequestParam("orderNumber", order.getOrderNumber());
+        request.addRequestParam("stateId", "7");
+        request.addRequestParam("onlyOne", order.getOnlyOne());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    JSONObject object;
+                    try {
+                        object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            getOrderDetail();
+                            return;
+                        }
+                        Notify.show(object.optString("message"));
+                        return;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
+    }
 
     class OrderProductAdapter extends BaseAdapter {
 
@@ -358,129 +480,4 @@ public class OrderDetailFragment extends BaseNotifyFragment {
         }
     }
 
-    private Button createActionButton(String lable, int backgroundResId, OnClickListener onClickListener) {
-        Button button = new Button(getActivity());
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, ScreenUtil.dip2px(28));
-        button.setLayoutParams(layoutParams);
-        button.setGravity(Gravity.CENTER);
-        button.setPadding(ScreenUtil.dip2px(8), 0, ScreenUtil.dip2px(8), 0);
-        button.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
-        button.setText(lable);
-        button.setTextColor(getResources().getColor(R.color.white));
-        button.setBackgroundResource(backgroundResId);
-        button.setOnClickListener(onClickListener);
-        return button;
-    }
-
-    private TextView createActionText(String lable, int textColorResId, OnClickListener onClickListener) {
-        TextView textView = new TextView(getActivity());
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, ScreenUtil.dip2px(28));
-        textView.setGravity(Gravity.CENTER);
-        textView.setLayoutParams(layoutParams);
-        textView.setPadding(ScreenUtil.dip2px(8), 0, ScreenUtil.dip2px(8), 0);
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
-        textView.setText(lable);
-        textView.setTextColor(getResources().getColor(textColorResId));
-        textView.setOnClickListener(onClickListener);
-        return textView;
-    }
-
-    private ImageView createActionImage(int imageResId, OnClickListener onClickListener) {
-        ImageView imageView = new ImageView(getActivity());
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ScreenUtil.dip2px(28), ScreenUtil.dip2px(28));
-        imageView.setLayoutParams(layoutParams);
-        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        imageView.setImageResource(imageResId);
-        imageView.setOnClickListener(onClickListener);
-        return imageView;
-    }
-
-    class GetOrderDetail extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> parameters = new ArrayList<>();
-            parameters.add(new BasicNameValuePair("orderId", orderId));
-            return netUtil.postWithoutCookie(API.API_ORDER_DETAIL, parameters, false, false);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            refreshLayout.setRefreshing(false);
-            if (result.length() > 0) {
-                JSONObject object;
-                try {
-                    object = new JSONObject(result);
-                    if (object.getString("state").equalsIgnoreCase("SUCCESS")) {
-                        if (object.has("object")) {
-                            if (!object.getString("object").equalsIgnoreCase(
-                                    "null")) {
-                                order = new ModelPlatformOrder(object.getJSONObject("object"));
-                                showInfo();
-                            }
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    class Received extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> parameters = new ArrayList<NameValuePair>();
-            parameters.add(new BasicNameValuePair("orderNumber", order.getOrderNumber()));
-            parameters.add(new BasicNameValuePair("stateId", "7"));
-            parameters.add(new BasicNameValuePair("onlyOne", order.getOnlyOne()));
-            return netUtil.postWithoutCookie(API.API_ORDER_RECEIVED, parameters, false, false);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (result.length() > 0) {
-                JSONObject object;
-                try {
-                    object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        new GetOrderDetail().execute();
-                        return;
-                    }
-                    Notify.show(object.optString("message"));
-                    return;
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    private String getSecretPhone(String phone) {
-        int length = phone.length();
-        if (length > 3) {
-            String string = "";
-            if (length < 8) {
-                string = phone.substring(0, 3) + "****";
-            } else {
-                string = phone.substring(0, 3) + "****"
-                        + phone.substring(7, length);
-            }
-            return string;
-        }
-        return "***";
-    }
 }

@@ -1,6 +1,5 @@
 package yitgogo.consumer.suning.ui;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -15,11 +14,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.smartown.controller.mission.ControllableListener;
+import com.smartown.controller.mission.ControllableMission;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,9 +32,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.local.ui.ShoppingCarLocalFragment;
-import yitgogo.consumer.suning.model.GetNewSignature;
 import yitgogo.consumer.suning.model.ModelProductPrice;
 import yitgogo.consumer.suning.model.ModelSuningCar;
 import yitgogo.consumer.suning.model.SuningCarController;
@@ -53,6 +56,7 @@ public class ShoppingCarFragment extends BaseNotifyFragment {
     double goodsMoney = 0;
 
     HashMap<String, String> states = new HashMap<>();
+    private int getStockState = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -144,7 +148,7 @@ public class ShoppingCarFragment extends BaseNotifyFragment {
         carAdapter.notifyDataSetChanged();
         totalPriceTextView.setText("");
         if (suningCars.size() > 0) {
-            new GetProductStock().execute();
+            getProductStock();
         } else {
             loadingEmpty("购物车还没有添加商品");
         }
@@ -215,6 +219,203 @@ public class ShoppingCarFragment extends BaseNotifyFragment {
             }
             refresh();
         }
+    }
+
+    private void getSuningProductPrice() {
+        Request request = new Request();
+        request.setUrl(API.API_SUNING_PRODUCT_PRICE);
+        JSONArray dataArray = new JSONArray();
+        for (int i = 0; i < suningCars.size(); i++) {
+            dataArray.put(suningCars.get(i).getProductDetail().getSku());
+        }
+        JSONObject data = new JSONObject();
+        try {
+            data.put("accessToken", SuningManager.getSignature().getToken());
+            data.put("appKey", SuningManager.appKey);
+            data.put("v", SuningManager.version);
+            data.put("cityId", SuningManager.getSuningAreas().getCity().getCode());
+            data.put("sku", dataArray);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        request.addRequestParam("data", data.toString());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (SuningManager.isSignatureOutOfDate(requestMessage.getResult())) {
+                    SuningManager.getNewSignature(getActivity(), new RequestListener() {
+                        @Override
+                        protected void onStart() {
+
+                        }
+
+                        @Override
+                        protected void onFail(MissionMessage missionMessage) {
+
+                        }
+
+                        @Override
+                        protected void onSuccess(RequestMessage requestMessage) {
+                            if (SuningManager.initSignature(requestMessage)) {
+                                getSuningProductPrice();
+                            }
+                        }
+
+                        @Override
+                        protected void onFinish() {
+
+                        }
+                    });
+                    return;
+                }
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optBoolean("isSuccess")) {
+                            JSONArray array = object.optJSONArray("result");
+                            if (array != null) {
+                                for (int j = 0; j < array.length(); j++) {
+                                    ModelProductPrice productPrice = new ModelProductPrice(array.optJSONObject(j));
+                                    priceHashMap.put(productPrice.getSkuId(), productPrice);
+                                }
+                                carAdapter.notifyDataSetChanged();
+                                countTotalPrice();
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
+    }
+
+    private void getProductStock() {
+        getStockState = 0;
+        ControllableMission controllableMission = new ControllableMission() {
+            @Override
+            protected void doing() {
+                for (int i = 0; i < suningCars.size(); i++) {
+                    JSONObject data = new JSONObject();
+                    try {
+                        data.put("accessToken", SuningManager.getSignature().getToken());
+                        data.put("appKey", SuningManager.appKey);
+                        data.put("v", SuningManager.version);
+                        data.put("cityId", SuningManager.getSuningAreas().getCity().getCode());
+                        data.put("countyId", SuningManager.getSuningAreas().getDistrict().getCode());
+                        data.put("sku", suningCars.get(i).getProductDetail().getSku());
+                        data.put("num", suningCars.get(i).getProductCount());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Request request = new Request();
+                    request.setUrl(API.API_SUNING_PRODUCT_STOCK);
+                    request.addRequestParam("data", data.toString());
+                    String result = MissionController.request(request);
+                    if (!TextUtils.isEmpty(result)) {
+                        //令牌过期
+                        if (SuningManager.isSignatureOutOfDate(result)) {
+                            getStockState = 2;
+                            return;
+                        }
+                        try {
+                            JSONObject object = new JSONObject(result);
+                            if (object.optBoolean("isSuccess")) {
+                                states.put(suningCars.get(i).getProductDetail().getSku(), object.optString("state"));
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            getStockState = 1;
+                            return;
+                        }
+                    }
+                }
+                //获取数据成功
+                getStockState = 0;
+            }
+        };
+        controllableMission.setControllableListener(new ControllableListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+                switch (getStockState) {
+
+                    case 0:
+                        if (states.isEmpty()) {
+                            //无商品库存状态
+                            suningCars.clear();
+                            carAdapter.notifyDataSetChanged();
+                            loadingEmpty("查询商品库存状态失败");
+                        } else {
+                            //有状态信息
+                            carAdapter.notifyDataSetChanged();
+                            if (priceHashMap.isEmpty()) {
+                                getSuningProductPrice();
+                            } else {
+                                countTotalPrice();
+                            }
+                        }
+                        break;
+
+                    case 1:
+                        suningCars.clear();
+                        carAdapter.notifyDataSetChanged();
+                        loadingEmpty("查询商品库存状态失败");
+                        break;
+
+                    case 2:
+                        SuningManager.getNewSignature(getActivity(), new RequestListener() {
+                            @Override
+                            protected void onStart() {
+
+                            }
+
+                            @Override
+                            protected void onFail(MissionMessage missionMessage) {
+
+                            }
+
+                            @Override
+                            protected void onSuccess(RequestMessage requestMessage) {
+                                if (SuningManager.initSignature(requestMessage)) {
+                                    getProductStock();
+                                }
+                            }
+
+                            @Override
+                            protected void onFinish() {
+
+                            }
+                        });
+                        break;
+
+                    default:
+                        loadingEmpty();
+                        break;
+                }
+            }
+        });
+        MissionController.startControllableMission(getActivity(), controllableMission);
     }
 
     class CarAdapter extends BaseAdapter {
@@ -342,182 +543,9 @@ public class ShoppingCarFragment extends BaseNotifyFragment {
 
         class ViewHolder {
             ImageView goodsImage, addButton, deleteButton;
-            TextView goodNameText, goodsPriceText, guigeText, countText,
-                    stateText;
+            TextView goodNameText, goodsPriceText, guigeText, countText, stateText;
             FrameLayout selectButton;
             CheckBox selection;
-        }
-    }
-
-    class GetSuningProductPrice extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            JSONArray dataArray = new JSONArray();
-            for (int i = 0; i < suningCars.size(); i++) {
-                dataArray.put(suningCars.get(i).getProductDetail().getSku());
-            }
-            JSONObject data = new JSONObject();
-            try {
-                data.put("accessToken", SuningManager.getSignature().getToken());
-                data.put("appKey", SuningManager.appKey);
-                data.put("v", SuningManager.version);
-                data.put("cityId", SuningManager.getSuningAreas().getCity().getCode());
-                data.put("sku", dataArray);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("data", data.toString()));
-            return netUtil.postWithoutCookie(API.API_SUNING_PRODUCT_PRICE, nameValuePairs, false, false);
-        }
-
-        /**
-         * {"result":[{"skuId":"108246148","price":15000.00}],"isSuccess":true,"returnMsg":"查询成功。"}
-         */
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (SuningManager.isSignatureOutOfDate(result)) {
-                GetNewSignature getNewSignature = new GetNewSignature() {
-                    @Override
-                    protected void onPreExecute() {
-                        showLoading();
-                    }
-
-                    @Override
-                    protected void onPostExecute(Boolean isSuccess) {
-                        hideLoading();
-                        if (isSuccess) {
-                            new GetSuningProductPrice().execute();
-                        }
-                    }
-                };
-                getNewSignature.execute();
-                return;
-            }
-            if (!TextUtils.isEmpty(result)) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optBoolean("isSuccess")) {
-                        JSONArray array = object.optJSONArray("result");
-                        if (array != null) {
-                            for (int j = 0; j < array.length(); j++) {
-                                ModelProductPrice productPrice = new
-                                        ModelProductPrice(array.optJSONObject(j));
-                                priceHashMap.put(productPrice.getSkuId(), productPrice);
-                            }
-                            carAdapter.notifyDataSetChanged();
-                            countTotalPrice();
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    class GetProductStock extends AsyncTask<Void, Void, Integer> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
-
-        @Override
-        protected Integer doInBackground(Void... params) {
-            for (int i = 0; i < suningCars.size(); i++) {
-                JSONObject data = new JSONObject();
-                try {
-                    data.put("accessToken", SuningManager.getSignature().getToken());
-                    data.put("appKey", SuningManager.appKey);
-                    data.put("v", SuningManager.version);
-                    data.put("cityId", SuningManager.getSuningAreas().getCity().getCode());
-                    data.put("countyId", SuningManager.getSuningAreas().getDistrict().getCode());
-                    data.put("sku", suningCars.get(i).getProductDetail().getSku());
-                    data.put("num", suningCars.get(i).getProductCount());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                List<NameValuePair> nameValuePairs = new ArrayList<>();
-                nameValuePairs.add(new BasicNameValuePair("data", data.toString()));
-                String result = netUtil.postWithoutCookie(API.API_SUNING_PRODUCT_STOCK, nameValuePairs, false, false);
-                //令牌过期
-                if (SuningManager.isSignatureOutOfDate(result)) {
-                    return 2;
-                }
-                if (!TextUtils.isEmpty(result)) {
-                    try {
-                        JSONObject object = new JSONObject(result);
-                        if (object.optBoolean("isSuccess")) {
-                            states.put(suningCars.get(i).getProductDetail().getSku(), object.optString("state"));
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        return 1;
-                    }
-                }
-            }
-            //获取数据成功
-            return 0;
-        }
-
-        @Override
-        protected void onPostExecute(Integer result) {
-            hideLoading();
-            switch (result) {
-
-                case 0:
-                    if (states.isEmpty()) {
-                        //无商品库存状态
-                        suningCars.clear();
-                        carAdapter.notifyDataSetChanged();
-                        loadingEmpty("查询商品库存状态失败");
-                    } else {
-                        //有状态信息
-                        carAdapter.notifyDataSetChanged();
-                        if (priceHashMap.isEmpty()) {
-                            new GetSuningProductPrice().execute();
-                        } else {
-                            countTotalPrice();
-                        }
-                    }
-                    break;
-
-                case 1:
-                    suningCars.clear();
-                    carAdapter.notifyDataSetChanged();
-                    loadingEmpty("查询商品库存状态失败");
-                    break;
-
-                case 2:
-                    GetNewSignature getNewSignature = new GetNewSignature() {
-                        @Override
-                        protected void onPreExecute() {
-                            showLoading();
-                        }
-
-                        @Override
-                        protected void onPostExecute(Boolean isSuccess) {
-                            hideLoading();
-                            if (isSuccess) {
-                                new GetProductStock().execute();
-                            }
-                        }
-                    };
-                    getNewSignature.execute();
-                    break;
-
-                default:
-                    loadingEmpty();
-                    break;
-            }
         }
     }
 

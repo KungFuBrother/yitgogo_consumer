@@ -7,9 +7,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import yitgogo.consumer.BaseNormalFragment;
+import yitgogo.consumer.base.BaseNormalFragment;
 import yitgogo.consumer.home.model.ModelScoreProduct;
-import yitgogo.consumer.main.ui.MainActivity;
 import yitgogo.consumer.product.ui.ProductScoreFragment;
 import yitgogo.consumer.product.ui.ScoreProductDetailFragment;
 import yitgogo.consumer.tools.Parameters;

@@ -2,12 +2,12 @@ package yitgogo.consumer.home.part;
 
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,10 +18,13 @@ import android.widget.TextView;
 
 import com.dtr.zxing.activity.CaptureActivity;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,7 +35,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import yitgogo.consumer.BaseNormalFragment;
+import yitgogo.consumer.base.BaseNormalFragment;
 import yitgogo.consumer.home.model.ModelKillPrice;
 import yitgogo.consumer.home.model.ModelSaleMiaosha;
 import yitgogo.consumer.product.ui.SaleMiaoshaFragment;
@@ -49,7 +52,6 @@ public class PartMiaoshaFragment extends BaseNormalFragment {
     MiaoshaAdapter miaoshaAdapter;
     HashMap<String, ModelKillPrice> killPriceHashMap;
 
-    String result = "";
 
     public static PartMiaoshaFragment getMiaoshaFragment() {
         if (miaoshaFragment == null) {
@@ -103,15 +105,12 @@ public class PartMiaoshaFragment extends BaseNormalFragment {
 
             @Override
             public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putString("result", result);
-                jump(SaleMiaoshaFragment.class.getName(), "秒杀", bundle);
+                jump(SaleMiaoshaFragment.class.getName(), "秒杀");
             }
         });
     }
 
     public void refresh(String result) {
-        this.result = result;
         saleMiaoshas.clear();
         miaoshaAdapter.notifyDataSetChanged();
         if (result.length() > 0) {
@@ -133,7 +132,7 @@ public class PartMiaoshaFragment extends BaseNormalFragment {
                             }
                         }
                         miaoshaAdapter.notifyDataSetChanged();
-                        new GetSalePrice().execute();
+                        getSalePrice();
                     }
                 }
             } catch (JSONException e) {
@@ -147,24 +146,60 @@ public class PartMiaoshaFragment extends BaseNormalFragment {
         }
     }
 
-    class MiaoshaAdapter extends RecyclerView.Adapter<ViewHolder> {
-
-        class MiaoshaViewHolder extends RecyclerView.ViewHolder {
-
-            ImageView imageView;
-            TextView priceTextView, salePriceTextView, stateTextView;
-
-            public MiaoshaViewHolder(View view) {
-                super(view);
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(screenWidth / 5 * 2, LinearLayout.LayoutParams.MATCH_PARENT);
-                imageView = (ImageView) view.findViewById(R.id.item_kill_image);
-                priceTextView = (TextView) view.findViewById(R.id.item_kill_price);
-                salePriceTextView = (TextView) view.findViewById(R.id.item_kill_sale_price);
-                stateTextView = (TextView) view.findViewById(R.id.item_kill_state);
-                priceTextView.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-                view.setLayoutParams(layoutParams);
+    private void getSalePrice() {
+        Request request = new Request();
+        request.setUrl(API.API_SALE_PRICE);
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < saleMiaoshas.size(); i++) {
+            if (i > 0) {
+                builder.append(",");
             }
+            builder.append(saleMiaoshas.get(i).getProdutId());
         }
+        request.addRequestParam("productId", builder.toString());
+        request.addRequestParam("type", "2");
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONArray array = object.optJSONArray("dataList");
+                            if (array != null) {
+                                for (int i = 0; i < array.length(); i++) {
+                                    JSONObject jsonObject = array.optJSONObject(i);
+                                    if (jsonObject != null) {
+                                        killPriceHashMap.put(jsonObject.optString("id"), new ModelKillPrice(jsonObject));
+                                    }
+                                }
+                                miaoshaAdapter.notifyDataSetChanged();
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+
+            }
+        });
+    }
+
+    class MiaoshaAdapter extends RecyclerView.Adapter<ViewHolder> {
 
         @Override
         public int getItemCount() {
@@ -222,49 +257,23 @@ public class PartMiaoshaFragment extends BaseNormalFragment {
             MiaoshaViewHolder viewHolder = new MiaoshaViewHolder(view);
             return viewHolder;
         }
-    }
 
-    class GetSalePrice extends AsyncTask<Void, Void, String> {
+        class MiaoshaViewHolder extends RecyclerView.ViewHolder {
 
-        @Override
-        protected String doInBackground(Void... params) {
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < saleMiaoshas.size(); i++) {
-                if (i > 0) {
-                    builder.append(",");
-                }
-                builder.append(saleMiaoshas.get(i).getProdutId());
-            }
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair("productId", builder.toString()));
-            nameValuePairs.add(new BasicNameValuePair("type", "2"));
-            return netUtil.postWithoutCookie(API.API_SALE_PRICE,
-                    nameValuePairs, false, false);
-        }
+            ImageView imageView;
+            TextView priceTextView, salePriceTextView, stateTextView;
 
-        @Override
-        protected void onPostExecute(String result) {
-            if (result.length() > 0) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONArray array = object.optJSONArray("dataList");
-                        if (array != null) {
-                            for (int i = 0; i < array.length(); i++) {
-                                JSONObject jsonObject = array.optJSONObject(i);
-                                if (jsonObject != null) {
-                                    killPriceHashMap.put(jsonObject.optString("id"), new ModelKillPrice(jsonObject));
-                                }
-                            }
-                            miaoshaAdapter.notifyDataSetChanged();
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            public MiaoshaViewHolder(View view) {
+                super(view);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(screenWidth / 5 * 2, LinearLayout.LayoutParams.MATCH_PARENT);
+                imageView = (ImageView) view.findViewById(R.id.item_kill_image);
+                priceTextView = (TextView) view.findViewById(R.id.item_kill_price);
+                salePriceTextView = (TextView) view.findViewById(R.id.item_kill_sale_price);
+                stateTextView = (TextView) view.findViewById(R.id.item_kill_state);
+                priceTextView.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                view.setLayoutParams(layoutParams);
             }
         }
-
     }
 
 }

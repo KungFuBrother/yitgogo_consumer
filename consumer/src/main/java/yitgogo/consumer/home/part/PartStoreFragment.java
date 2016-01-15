@@ -26,7 +26,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import yitgogo.consumer.BaseNormalFragment;
+import yitgogo.consumer.base.BaseNormalFragment;
 import yitgogo.consumer.home.model.ModelLocalStore;
 import yitgogo.consumer.local.ui.LocalStoreDetailFragment;
 import yitgogo.consumer.local.ui.LocalStoreFragment;

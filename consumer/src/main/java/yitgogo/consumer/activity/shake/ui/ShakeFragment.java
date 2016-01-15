@@ -7,7 +7,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -26,21 +25,22 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Random;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.activity.shake.model.ModelActivity;
 import yitgogo.consumer.tools.API;
 import yitgogo.consumer.tools.Parameters;
@@ -181,7 +181,7 @@ public class ShakeFragment extends BaseNotifyFragment implements
         sensorManager.unregisterListener(this);
         int number = new Random().nextInt(activity.getWinExtent()) + 1;
         if (number == activity.getWinNum()) {
-            new Win().execute();
+            getWin();
         } else {
             sensorManager.registerListener(this,
                     sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
@@ -201,133 +201,158 @@ public class ShakeFragment extends BaseNotifyFragment implements
      * :"SUCCESS","cacheKey":null,"dataList":[],"totalCount"
      * :1,"dataMap":{"message":"活动结束啦","state":"failed"},"object":null}
      */
-    class Win extends AsyncTask<Void, Void, String> {
+    private void getWin() {
+        Request request = new Request();
+        request.setUrl(API.API_ACTIVITY_WIN);
+        request.addRequestParam("memberAccount", User.getUser().getUseraccount());
+        request.addRequestParam("activityId", activity.getId());
+        request.setUseCookie(true);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
 
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
 
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair("memberAccount", User.getUser().getUseraccount()));
-            nameValuePairs.add(new BasicNameValuePair("activityId", activity.getId()));
-            return netUtil.postWithCookie(API.API_ACTIVITY_WIN, nameValuePairs);
-        }
+            }
 
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (!TextUtils.isEmpty(result)) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONObject dataMap = object.optJSONObject("dataMap");
-                        if (dataMap != null) {
-                            if (dataMap.optString("state").equalsIgnoreCase("success")) {
-                                String s = dataMap.optString("winMoney");
-                                try {
-                                    double winMoney = Double.parseDouble(s);
-                                    WinDialog winDialog = new WinDialog();
-                                    Bundle bundle = new Bundle();
-                                    bundle.putString("winMoney", decimalFormat.format(winMoney));
-                                    winDialog.setArguments(bundle);
-                                    if (getFragmentManager() != null) {
-                                        winDialog.show(getFragmentManager(), null);
-                                    }
-                                } catch (NumberFormatException e) {
-                                    WinDialog winDialog = new WinDialog();
-                                    Bundle bundle = new Bundle();
-                                    bundle.putString("winMoney", s);
-                                    winDialog.setArguments(bundle);
-                                    if (getFragmentManager() != null) {
-                                        winDialog.show(getFragmentManager(), null);
-                                    }
-                                    e.printStackTrace();
-                                }
-                            } else {
-                                NormalAskDialog askDialog = new NormalAskDialog(
-                                        dataMap.optString("message"), "退出",
-                                        "关闭") {
-                                    @Override
-                                    public void onDismiss(DialogInterface dialog) {
-                                        super.onDismiss(dialog);
-                                        if (makeSure) {
-                                            ShakeFragment.this.getActivity()
-                                                    .finish();
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONObject dataMap = object.optJSONObject("dataMap");
+                            if (dataMap != null) {
+                                if (dataMap.optString("state").equalsIgnoreCase("success")) {
+                                    String s = dataMap.optString("winMoney");
+                                    try {
+                                        double winMoney = Double.parseDouble(s);
+                                        WinDialog winDialog = new WinDialog();
+                                        Bundle bundle = new Bundle();
+                                        bundle.putString("winMoney", decimalFormat.format(winMoney));
+                                        winDialog.setArguments(bundle);
+                                        if (getFragmentManager() != null) {
+                                            winDialog.show(getFragmentManager(), null);
                                         }
+                                    } catch (NumberFormatException e) {
+                                        WinDialog winDialog = new WinDialog();
+                                        Bundle bundle = new Bundle();
+                                        bundle.putString("winMoney", s);
+                                        winDialog.setArguments(bundle);
+                                        if (getFragmentManager() != null) {
+                                            winDialog.show(getFragmentManager(), null);
+                                        }
+                                        e.printStackTrace();
                                     }
-                                };
-                                if (getFragmentManager() != null) {
-                                    askDialog.show(getFragmentManager(), null);
+                                } else {
+                                    NormalAskDialog askDialog = new NormalAskDialog(
+                                            dataMap.optString("message"), "退出",
+                                            "关闭") {
+                                        @Override
+                                        public void onDismiss(DialogInterface dialog) {
+                                            super.onDismiss(dialog);
+                                            if (makeSure) {
+                                                ShakeFragment.this.getActivity()
+                                                        .finish();
+                                            }
+                                        }
+                                    };
+                                    if (getFragmentManager() != null) {
+                                        askDialog.show(getFragmentManager(), null);
+                                    }
                                 }
                             }
+                            return;
                         }
-                        return;
+                        Notify.show(object.optString("message"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                    Notify.show(object.optString("message"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
             }
-        }
-    }
 
-    class WinDialog extends DialogFragment {
-
-        View dialogView;
-        TextView moneyTextView;
-        ImageView closeButton;
-        String winMoney = "";
-
-        @Override
-        public void onCreate(@Nullable Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            init();
-            findViews();
-        }
-
-        private void init() {
-            setCancelable(false);
-            Bundle bundle = getArguments();
-            if (bundle != null) {
-                if (bundle.containsKey("winMoney")) {
-                    winMoney = bundle.getString("winMoney");
-                }
+            @Override
+            protected void onFinish() {
+                hideLoading();
             }
-        }
-
-        @Override
-        @NonNull
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            Dialog dialog = new Dialog(getActivity());
-            dialog.getWindow().setBackgroundDrawableResource(
-                    android.R.color.transparent);
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setContentView(dialogView, new LayoutParams(
-                    LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-            return dialog;
-        }
-
-        private void findViews() {
-            dialogView = layoutInflater.inflate(R.layout.dialog_activity_win,
-                    null);
-            dialogView.setBackgroundResource(android.R.color.transparent);
-            moneyTextView = (TextView) dialogView
-                    .findViewById(R.id.activity_win_money);
-            closeButton = (ImageView) dialogView
-                    .findViewById(R.id.activity_win_close);
-            moneyTextView.setText(Parameters.CONSTANT_RMB + winMoney);
-            closeButton.setOnClickListener(new OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    getActivity().finish();
-                }
-            });
-        }
+        });
     }
+
+//    class Win extends AsyncTask<Void, Void, String> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            showLoading();
+//        }
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+//            nameValuePairs.add(new BasicNameValuePair("memberAccount", User.getUser().getUseraccount()));
+//            nameValuePairs.add(new BasicNameValuePair("activityId", activity.getId()));
+//            return netUtil.postWithCookie(API.API_ACTIVITY_WIN, nameValuePairs);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            hideLoading();
+//            if (!TextUtils.isEmpty(result)) {
+//                try {
+//                    JSONObject object = new JSONObject(result);
+//                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+//                        JSONObject dataMap = object.optJSONObject("dataMap");
+//                        if (dataMap != null) {
+//                            if (dataMap.optString("state").equalsIgnoreCase("success")) {
+//                                String s = dataMap.optString("winMoney");
+//                                try {
+//                                    double winMoney = Double.parseDouble(s);
+//                                    WinDialog winDialog = new WinDialog();
+//                                    Bundle bundle = new Bundle();
+//                                    bundle.putString("winMoney", decimalFormat.format(winMoney));
+//                                    winDialog.setArguments(bundle);
+//                                    if (getFragmentManager() != null) {
+//                                        winDialog.show(getFragmentManager(), null);
+//                                    }
+//                                } catch (NumberFormatException e) {
+//                                    WinDialog winDialog = new WinDialog();
+//                                    Bundle bundle = new Bundle();
+//                                    bundle.putString("winMoney", s);
+//                                    winDialog.setArguments(bundle);
+//                                    if (getFragmentManager() != null) {
+//                                        winDialog.show(getFragmentManager(), null);
+//                                    }
+//                                    e.printStackTrace();
+//                                }
+//                            } else {
+//                                NormalAskDialog askDialog = new NormalAskDialog(
+//                                        dataMap.optString("message"), "退出",
+//                                        "关闭") {
+//                                    @Override
+//                                    public void onDismiss(DialogInterface dialog) {
+//                                        super.onDismiss(dialog);
+//                                        if (makeSure) {
+//                                            ShakeFragment.this.getActivity()
+//                                                    .finish();
+//                                        }
+//                                    }
+//                                };
+//                                if (getFragmentManager() != null) {
+//                                    askDialog.show(getFragmentManager(), null);
+//                                }
+//                            }
+//                        }
+//                        return;
+//                    }
+//                    Notify.show(object.optString("message"));
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
 
     private boolean isStarted() {
         try {
@@ -395,6 +420,61 @@ public class ShakeFragment extends BaseNotifyFragment implements
             }
         } catch (ParseException e) {
             e.printStackTrace();
+        }
+    }
+
+    class WinDialog extends DialogFragment {
+
+        View dialogView;
+        TextView moneyTextView;
+        ImageView closeButton;
+        String winMoney = "";
+
+        @Override
+        public void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            init();
+            findViews();
+        }
+
+        private void init() {
+            setCancelable(false);
+            Bundle bundle = getArguments();
+            if (bundle != null) {
+                if (bundle.containsKey("winMoney")) {
+                    winMoney = bundle.getString("winMoney");
+                }
+            }
+        }
+
+        @Override
+        @NonNull
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            Dialog dialog = new Dialog(getActivity());
+            dialog.getWindow().setBackgroundDrawableResource(
+                    android.R.color.transparent);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(dialogView, new LayoutParams(
+                    LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+            return dialog;
+        }
+
+        private void findViews() {
+            dialogView = layoutInflater.inflate(R.layout.dialog_activity_win,
+                    null);
+            dialogView.setBackgroundResource(android.R.color.transparent);
+            moneyTextView = (TextView) dialogView
+                    .findViewById(R.id.activity_win_money);
+            closeButton = (ImageView) dialogView
+                    .findViewById(R.id.activity_win_close);
+            moneyTextView.setText(Parameters.CONSTANT_RMB + winMoney);
+            closeButton.setOnClickListener(new OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    getActivity().finish();
+                }
+            });
         }
     }
 

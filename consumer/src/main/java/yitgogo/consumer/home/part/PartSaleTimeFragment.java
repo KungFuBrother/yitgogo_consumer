@@ -23,7 +23,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import yitgogo.consumer.BaseNormalFragment;
+import yitgogo.consumer.base.BaseNormalFragment;
 import yitgogo.consumer.home.model.ModelSaleTime;
 import yitgogo.consumer.product.ui.SaleTimeListFragment;
 import yitgogo.consumer.tools.ScreenUtil;

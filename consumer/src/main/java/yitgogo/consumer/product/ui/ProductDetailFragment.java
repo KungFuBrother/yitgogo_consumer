@@ -3,7 +3,6 @@ package yitgogo.consumer.product.ui;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -30,25 +29,26 @@ import com.dtr.zxing.activity.CaptureActivity;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.controller.shoppingcart.DataBaseHelper;
 import com.smartown.controller.shoppingcart.ShoppingCartController;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 import com.viewpagerindicator.CirclePageIndicator;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.order.ui.PlatformProductBuyFragment;
 import yitgogo.consumer.product.model.ModelFreight;
 import yitgogo.consumer.product.model.ModelProduct;
@@ -140,7 +140,7 @@ public class ProductDetailFragment extends BaseNotifyFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initArea();
-        new GetProductDetail().execute();
+        getProductDetail();
     }
 
     @Override
@@ -176,7 +176,7 @@ public class ProductDetailFragment extends BaseNotifyFragment {
         areaId = Content.getStringContent("product_detail_area_id", "2419");
         areaTextView.setText(areaName);
         if (!TextUtils.isEmpty(productDetail.getNumber())) {
-            new GetFreight().execute();
+            getFreight();
         }
     }
 
@@ -278,7 +278,7 @@ public class ProductDetailFragment extends BaseNotifyFragment {
                 }
                 if (buyCount < productDetail.getNum()) {
                     buyCount++;
-                    new GetFreight().execute();
+                    getFreight();
                 } else {
                     Notify.show("库存不足");
                 }
@@ -289,7 +289,7 @@ public class ProductDetailFragment extends BaseNotifyFragment {
             public void onClick(View view) {
                 if (buyCount > 1) {
                     buyCount--;
-                    new GetFreight().execute();
+                    getFreight();
                 }
             }
         });
@@ -306,19 +306,19 @@ public class ProductDetailFragment extends BaseNotifyFragment {
         switch (saleType) {
 
             case CaptureActivity.SALE_TYPE_TIME:
-                new GetTimeSaleDetail().execute();
+                getTimeSaleDetail();
                 break;
 
             case CaptureActivity.SALE_TYPE_MIAOSHA:
-                new GetMiaoshaSaleDetail().execute();
+                getMiaoshaSaleDetail();
                 break;
 
             case CaptureActivity.SALE_TYPE_TEJIA:
-                new GetTejiaSaleDetail().execute();
+                getTejiaSaleDetail();
                 break;
 
             default:
-                new GetFreight().execute();
+                getFreight();
                 break;
         }
     }
@@ -418,6 +418,316 @@ public class ProductDetailFragment extends BaseNotifyFragment {
             Notify.show("请先登录");
             jump(UserLoginFragment.class.getName(), "会员登录");
         }
+    }
+
+    /**
+     * 获取商品详情
+     *
+     * @author Tiger
+     */
+    private void getProductDetail() {
+        Request request = new Request();
+        request.setUrl(API.API_PRODUCT_DETAIL);
+        request.addRequestParam("jmdId", Store.getStore().getStoreId());
+        request.addRequestParam("productId", productId);
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    {
+                        JSONObject object;
+                        try {
+                            object = new JSONObject(requestMessage.getResult());
+                            if (object.getString("state").equalsIgnoreCase("SUCCESS")) {
+                                JSONObject detailObject = object.optJSONObject("dataMap");
+                                if (detailObject != null) {
+                                    productDetail = new ModelProduct(detailObject);
+                                    showDetail();
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
+    }
+
+    /**
+     * 秒杀商品详情
+     *
+     * @author Tiger
+     */
+    private void getMiaoshaSaleDetail() {
+        Request request = new Request();
+        request.setUrl(API.API_SALE_MIAOSHA_DETAIL);
+        request.addRequestParam("productId", productDetail.getId());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        saleDetailMiaosha = new ModelSaleDetailMiaosha(requestMessage.getResult());
+                        if (saleDetailMiaosha != null) {
+                            if (saleDetailMiaosha.getSeckillPrice() > 0) {
+                                // 开始时间<=当前时间，活动已开始
+                                if (saleDetailMiaosha.getStartTime() <= Calendar
+                                        .getInstance().getTime().getTime()) {
+                                    // 剩余秒杀数量>0，显示秒杀信息
+                                    if (saleDetailMiaosha.getSeckillNUmber() > 0) {
+                                        isSaleEnable = true;
+                                        saleLayout.setVisibility(View.VISIBLE);
+                                        StringBuilder saleInfo = new StringBuilder();
+                                        saleInfo.append(saleDetailMiaosha.getSeckillName());
+                                        saleInfo.append("\n");
+                                        priceTextView.setText("¥" + decimalFormat.format(saleDetailMiaosha.getSeckillPrice()));
+                                        saleInfo.append("秒杀已开始，每个账号限购" + saleDetailMiaosha.getMemberNumber() + "件。");
+                                        saleInfo.append("\n");
+                                        saleInfo.append("剩余" + saleDetailMiaosha.getSeckillNUmber() + "件");
+                                        saleInfo.append("\n");
+                                        saleInfo.append("原件:" + "¥" + decimalFormat.format(saleDetailMiaosha.getPrice()));
+                                        carButton.setVisibility(View.GONE);
+                                        saleTextView.setText(saleInfo.toString());
+                                    }
+                                } else {
+                                    // 开始时间>当前时间，活动未开始，显示预告
+                                    saleLayout.setVisibility(View.VISIBLE);
+                                    StringBuilder saleInfo = new StringBuilder();
+                                    saleInfo.append(saleDetailMiaosha.getSeckillName());
+                                    saleInfo.append("开始时间:\n" + simpleDateFormat.format(new Date(saleDetailMiaosha.getStartTime()))
+                                            + "\n原价：" + Parameters.CONSTANT_RMB + decimalFormat.format(saleDetailMiaosha.getPrice()) + ","
+                                            + "秒杀价：" + Parameters.CONSTANT_RMB + decimalFormat.format(saleDetailMiaosha.getSeckillPrice()));
+                                    saleTextView.setText(saleInfo.toString());
+                                }
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                getFreight();
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
+    }
+
+    /**
+     * 限时促销商品详情
+     *
+     * @author Tiger
+     */
+    private void getTimeSaleDetail() {
+
+        Request request = new Request();
+        request.setUrl(API.API_SALE_TIME_DETAIL);
+        request.addRequestParam("productId", productDetail
+                .getId());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        saleDetailTime = new ModelSaleDetailTime(requestMessage.getResult());
+                        if (saleDetailTime != null) {
+                            if (saleDetailTime.getPromotionPrice() > 0) {
+                                // 开始时间>当前时间，未开始，显示活动预告
+                                if (saleDetailTime.getStartTime() > Calendar.getInstance().getTime().getTime()) {
+                                    StringBuilder saleInfo = new StringBuilder();
+                                    saleLayout.setVisibility(View.VISIBLE);
+                                    saleInfo.append(saleDetailTime.getPromotionName());
+                                    saleInfo.append("活动时间:\n"
+                                            + simpleDateFormat.format(new Date(saleDetailTime.getStartTime()))
+                                            + " 至\n" + simpleDateFormat.format(new Date(saleDetailTime.getEndTime())));
+                                    saleTextView.setText(saleInfo.toString());
+                                } else if (saleDetailTime.getEndTime() > Calendar.getInstance().getTime().getTime()) {
+                                    // 开始时间<=当前时间，结束时间>当前时间，已开始未结束，活动进行时
+                                    isSaleEnable = true;
+                                    priceTextView.setText("¥" + decimalFormat.format(saleDetailTime.getPromotionPrice()));
+                                    StringBuilder saleInfo = new StringBuilder();
+                                    saleLayout.setVisibility(View.VISIBLE);
+                                    saleInfo.append(saleDetailTime.getPromotionName());
+                                    saleInfo.append("活动时间:\n"
+                                            + simpleDateFormat.format(new Date(saleDetailTime.getStartTime()))
+                                            + " 至\n" + simpleDateFormat.format(new Date(saleDetailTime.getEndTime())));
+                                    saleInfo.append("原价:¥" + decimalFormat.format(saleDetailTime.getPrice()));
+                                    carButton.setVisibility(View.GONE);
+                                    getFreight();
+                                } else {
+                                    // 活动结束
+                                }
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    getFreight();
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
+    }
+
+    /**
+     * 特价促销商品详情
+     *
+     * @author Tiger
+     */
+    private void getTejiaSaleDetail() {
+        Request request = new Request();
+        request.setUrl(API.API_SALE_TEJIA_DETAIL);
+        request.addRequestParam("productId", productDetail.getId());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        saleDetailTejia = new ModelSaleDetailTejia(requestMessage.getResult());
+                        if (saleDetailTejia != null) {
+                            if (saleDetailTejia.getSalePrice() > 0) {
+                                if (saleDetailTejia.getNumbers() > 0) {
+                                    StringBuilder saleInfo = new StringBuilder();
+                                    isSaleEnable = true;
+                                    saleLayout.setVisibility(View.VISIBLE);
+                                    priceTextView.setText("¥" + decimalFormat.format(saleDetailTejia.getSalePrice()));
+                                    saleInfo.append(saleDetailTejia.getType());
+                                    saleInfo.append(saleDetailTejia.getSalePromotionName());
+                                    saleInfo.append("原价:¥" + decimalFormat.format(saleDetailTejia.getPrice()));
+                                    carButton.setText("立即抢购");
+                                    carButton.setVisibility(View.GONE);
+                                }
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    getFreight();
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
+    }
+
+    private void getFreight() {
+        Request request = new Request();
+        request.setUrl(API.API_PRODUCT_FREIGHT);
+        request.addRequestParam("productNumber", productDetail.getNumber() + "-" + buyCount);
+        request.addRequestParam("areaid", areaId);
+        request.addRequestParam("spid", Store.getStore().getStoreId());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+                freightMap.clear();
+                countTextView.setText(String.valueOf(buyCount));
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONArray jsonArray = object.optJSONArray("dataList");
+                            if (jsonArray != null) {
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    ModelFreight modelFreight = new ModelFreight(jsonArray.optJSONObject(i));
+                                    if (!TextUtils.isEmpty(modelFreight.getAgencyId())) {
+                                        freightMap.put(modelFreight.getAgencyId(), modelFreight);
+                                    }
+                                }
+                                if (freightMap.containsKey(productDetail.getSupplierId())) {
+                                    freightTextView.setVisibility(View.VISIBLE);
+                                    freightTextView.setText("运费:" + Parameters.CONSTANT_RMB + decimalFormat.format(freightMap.get(productDetail.getSupplierId()).getFregith()));
+                                    if (!TextUtils.isEmpty(freightMap.get(productDetail.getSupplierId()).getPrompt())) {
+                                        freightLableTextView.setVisibility(View.VISIBLE);
+                                        freightLableTextView.setText(freightMap.get(productDetail.getSupplierId()).getPrompt());
+                                    } else {
+                                        freightLableTextView.setVisibility(View.GONE);
+                                        freightLableTextView.setText("");
+                                    }
+                                    countTotalMoney();
+                                } else {
+                                    freightTextView.setText("");
+                                    freightLableTextView.setVisibility(View.GONE);
+                                }
+                            }
+                            return;
+                        }
+                        Notify.show(object.optString("message"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
 
     /**
@@ -534,7 +844,7 @@ public class ProductDetailFragment extends BaseNotifyFragment {
                     if (!productDetail.getProductRelations().get(arg2).getId()
                             .equals(productDetail.getId())) {
                         productId = productDetail.getProductRelations().get(arg2).getId();
-                        new GetProductDetail().execute();
+                        getProductDetail();
                     }
                     dismiss();
                 }
@@ -590,276 +900,4 @@ public class ProductDetailFragment extends BaseNotifyFragment {
         }
 
     }
-
-    /**
-     * 获取商品详情
-     *
-     * @author Tiger
-     */
-    class GetProductDetail extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
-
-        @Override
-        protected String doInBackground(Void... arg0) {
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("jmdId", Store.getStore().getStoreId()));
-            nameValuePairs.add(new BasicNameValuePair("productId", productId));
-            String result = netUtil.postWithoutCookie(API.API_PRODUCT_DETAIL, nameValuePairs, false, false);
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (!TextUtils.isEmpty(result)) {
-                {
-                    JSONObject object;
-                    try {
-                        object = new JSONObject(result);
-                        if (object.getString("state").equalsIgnoreCase("SUCCESS")) {
-                            JSONObject detailObject = object.optJSONObject("dataMap");
-                            if (detailObject != null) {
-                                productDetail = new ModelProduct(detailObject);
-                                showDetail();
-                            }
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * 秒杀商品详情
-     *
-     * @author Tiger
-     */
-    class GetMiaoshaSaleDetail extends AsyncTask<Void, Void, String> {
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
-            valuePairs.add(new BasicNameValuePair("productId", productDetail.getId()));
-            return netUtil.postWithCookie(API.API_SALE_MIAOSHA_DETAIL, valuePairs);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            try {
-                saleDetailMiaosha = new ModelSaleDetailMiaosha(result);
-                if (saleDetailMiaosha != null) {
-                    if (saleDetailMiaosha.getSeckillPrice() > 0) {
-                        // 开始时间<=当前时间，活动已开始
-                        if (saleDetailMiaosha.getStartTime() <= Calendar
-                                .getInstance().getTime().getTime()) {
-                            // 剩余秒杀数量>0，显示秒杀信息
-                            if (saleDetailMiaosha.getSeckillNUmber() > 0) {
-                                isSaleEnable = true;
-                                saleLayout.setVisibility(View.VISIBLE);
-                                StringBuilder saleInfo = new StringBuilder();
-                                saleInfo.append(saleDetailMiaosha.getSeckillName());
-                                saleInfo.append("\n");
-                                priceTextView.setText("¥" + decimalFormat.format(saleDetailMiaosha.getSeckillPrice()));
-                                saleInfo.append("秒杀已开始，每个账号限购" + saleDetailMiaosha.getMemberNumber() + "件。");
-                                saleInfo.append("\n");
-                                saleInfo.append("剩余" + saleDetailMiaosha.getSeckillNUmber() + "件");
-                                saleInfo.append("\n");
-                                saleInfo.append("原件:" + "¥" + decimalFormat.format(saleDetailMiaosha.getPrice()));
-                                carButton.setVisibility(View.GONE);
-                                saleTextView.setText(saleInfo.toString());
-                            }
-                        } else {
-                            // 开始时间>当前时间，活动未开始，显示预告
-                            saleLayout.setVisibility(View.VISIBLE);
-                            StringBuilder saleInfo = new StringBuilder();
-                            saleInfo.append(saleDetailMiaosha.getSeckillName());
-                            saleInfo.append("开始时间:\n" + simpleDateFormat.format(new Date(saleDetailMiaosha.getStartTime()))
-                                    + "\n原价：" + Parameters.CONSTANT_RMB + decimalFormat.format(saleDetailMiaosha.getPrice()) + ","
-                                    + "秒杀价：" + Parameters.CONSTANT_RMB + decimalFormat.format(saleDetailMiaosha.getSeckillPrice()));
-                            saleTextView.setText(saleInfo.toString());
-                        }
-                    }
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            new GetFreight().execute();
-        }
-    }
-
-    /**
-     * 限时促销商品详情
-     *
-     * @author Tiger
-     */
-    class GetTimeSaleDetail extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
-            valuePairs.add(new BasicNameValuePair("productId", productDetail
-                    .getId()));
-            return netUtil.postWithCookie(API.API_SALE_TIME_DETAIL, valuePairs);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            try {
-                saleDetailTime = new ModelSaleDetailTime(result);
-                if (saleDetailTime != null) {
-                    if (saleDetailTime.getPromotionPrice() > 0) {
-                        // 开始时间>当前时间，未开始，显示活动预告
-                        if (saleDetailTime.getStartTime() > Calendar.getInstance().getTime().getTime()) {
-                            StringBuilder saleInfo = new StringBuilder();
-                            saleLayout.setVisibility(View.VISIBLE);
-                            saleInfo.append(saleDetailTime.getPromotionName());
-                            saleInfo.append("活动时间:\n"
-                                    + simpleDateFormat.format(new Date(saleDetailTime.getStartTime()))
-                                    + " 至\n" + simpleDateFormat.format(new Date(saleDetailTime.getEndTime())));
-                            saleTextView.setText(saleInfo.toString());
-                        } else if (saleDetailTime.getEndTime() > Calendar.getInstance().getTime().getTime()) {
-                            // 开始时间<=当前时间，结束时间>当前时间，已开始未结束，活动进行时
-                            isSaleEnable = true;
-                            priceTextView.setText("¥" + decimalFormat.format(saleDetailTime.getPromotionPrice()));
-                            StringBuilder saleInfo = new StringBuilder();
-                            saleLayout.setVisibility(View.VISIBLE);
-                            saleInfo.append(saleDetailTime.getPromotionName());
-                            saleInfo.append("活动时间:\n"
-                                    + simpleDateFormat.format(new Date(saleDetailTime.getStartTime()))
-                                    + " 至\n" + simpleDateFormat.format(new Date(saleDetailTime.getEndTime())));
-                            saleInfo.append("原价:¥" + decimalFormat.format(saleDetailTime.getPrice()));
-                            carButton.setVisibility(View.GONE);
-                        } else {
-                            // 活动结束
-                        }
-                    }
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            new GetFreight().execute();
-        }
-    }
-
-    /**
-     * 特价促销商品详情
-     *
-     * @author Tiger
-     */
-    class GetTejiaSaleDetail extends AsyncTask<Void, Void, String> {
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
-            valuePairs.add(new BasicNameValuePair("productId", productDetail.getId()));
-            return netUtil
-                    .postWithCookie(API.API_SALE_TEJIA_DETAIL, valuePairs);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            try {
-                saleDetailTejia = new ModelSaleDetailTejia(result);
-                if (saleDetailTejia != null) {
-                    if (saleDetailTejia.getSalePrice() > 0) {
-                        if (saleDetailTejia.getNumbers() > 0) {
-                            StringBuilder saleInfo = new StringBuilder();
-                            isSaleEnable = true;
-                            saleLayout.setVisibility(View.VISIBLE);
-                            priceTextView.setText("¥" + decimalFormat.format(saleDetailTejia.getSalePrice()));
-                            saleInfo.append(saleDetailTejia.getType());
-                            saleInfo.append(saleDetailTejia.getSalePromotionName());
-                            saleInfo.append("原价:¥" + decimalFormat.format(saleDetailTejia.getPrice()));
-                            carButton.setText("立即抢购");
-                            carButton.setVisibility(View.GONE);
-                        }
-                    }
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            new GetFreight().execute();
-        }
-    }
-
-    class GetFreight extends AsyncTask<Void, Void, String> {
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-            freightMap.clear();
-            countTextView.setText(String.valueOf(buyCount));
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> valuePairs = new ArrayList<>();
-            valuePairs.add(new BasicNameValuePair("productNumber", productDetail.getNumber() + "-" + buyCount));
-            valuePairs.add(new BasicNameValuePair("areaid", areaId));
-            valuePairs.add(new BasicNameValuePair("spid", Store.getStore().getStoreId()));
-            return netUtil.postWithCookie(API.API_PRODUCT_FREIGHT, valuePairs);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (!TextUtils.isEmpty(result)) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONArray jsonArray = object.optJSONArray("dataList");
-                        if (jsonArray != null) {
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                ModelFreight modelFreight = new ModelFreight(jsonArray.optJSONObject(i));
-                                if (!TextUtils.isEmpty(modelFreight.getAgencyId())) {
-                                    freightMap.put(modelFreight.getAgencyId(), modelFreight);
-                                }
-                            }
-                            if (freightMap.containsKey(productDetail.getSupplierId())) {
-                                freightTextView.setVisibility(View.VISIBLE);
-                                freightTextView.setText("运费:" + Parameters.CONSTANT_RMB + decimalFormat.format(freightMap.get(productDetail.getSupplierId()).getFregith()));
-                                if (!TextUtils.isEmpty(freightMap.get(productDetail.getSupplierId()).getPrompt())) {
-                                    freightLableTextView.setVisibility(View.VISIBLE);
-                                    freightLableTextView.setText(freightMap.get(productDetail.getSupplierId()).getPrompt());
-                                } else {
-                                    freightLableTextView.setVisibility(View.GONE);
-                                    freightLableTextView.setText("");
-                                }
-                                countTotalMoney();
-                            } else {
-                                freightTextView.setText("");
-                                freightLableTextView.setVisibility(View.GONE);
-                            }
-                        }
-                        return;
-                    }
-                    Notify.show(object.optString("message"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
 }

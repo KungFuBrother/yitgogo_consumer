@@ -1,6 +1,5 @@
 package yitgogo.consumer.suning.ui;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -11,11 +10,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,11 +26,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.money.ui.PayFragment;
 import yitgogo.consumer.order.ui.OrderConfirmPartPaymentFragment;
 import yitgogo.consumer.store.model.Store;
-import yitgogo.consumer.suning.model.GetNewSignature;
 import yitgogo.consumer.suning.model.ModelProductPrice;
 import yitgogo.consumer.suning.model.ModelSuningAreas;
 import yitgogo.consumer.suning.model.ModelSuningCar;
@@ -93,8 +94,8 @@ public class ShoppingCarBuyFragment extends BaseNotifyFragment {
         consumerNameEditText.setText(SuningManager.getSuningAreas().getConsumerName());
         consumerPhoneEditText.setText(SuningManager.getSuningAreas().getConsumerPhone());
         detailAddressEditText.setText(SuningManager.getSuningAreas().getConsumerAddress());
-        new GetSuningProductPrice().execute();
-    }
+        getSuningProductPrice();
+}
 
     @Override
     public void onPause() {
@@ -156,7 +157,7 @@ public class ShoppingCarBuyFragment extends BaseNotifyFragment {
             Notify.show("请输入详细收货地址");
         } else {
             if (goodsMoney > 0) {
-                new Buy().execute();
+                buy();
             } else {
                 Notify.show("有商品信息有误，暂不能购买");
             }
@@ -243,153 +244,319 @@ public class ShoppingCarBuyFragment extends BaseNotifyFragment {
      * @Parameters: [menberAccount=13032889558, name=雷小武, mobile=13032889558, address=解放路二段, spId=674, amount=30.0, provinceId=230, cityId=028, countyId=03, townId=02, sku=[{"num":1,"number":"120855028","name":"NEW17","price":30}]]
      * @Result: {"message":"ok","state":"SUCCESS","cacheKey":null,"dataList":[],"totalCount":1,"dataMap":{"fuwuZuoji":"028-66133688","orderType":"新订单","orderNumber":"SN464351824310","zongjine":"30.0","freight":"5","productInfo":[{"num":1"Amount":30.0,"price":30.0,"spname":"NEW17"}],"fuwushang":"成都成华区罗飞加盟商","shijian":"2015-10-28 09:46:43","fuwuPhone":"13880353588"},"object":null}
      */
-    class Buy extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-            ModelSuningAreas suningAreas = SuningManager.getSuningAreas();
-            suningAreas.setConsumerName(consumerNameEditText.getText().toString());
-            suningAreas.setConsumerPhone(consumerPhoneEditText.getText().toString());
-            suningAreas.setConsumerAddress(detailAddressEditText.getText().toString());
-            suningAreas.save();
+    private void buy(){
+        Request request = new Request();
+        request.setUrl(API.API_SUNING_ORDER_ADD);
+        request.addRequestParam("menberAccount",User.getUser().getUseraccount());
+        request.addRequestParam("name",SuningManager.getSuningAreas().getConsumerName());
+        request.addRequestParam("mobile",SuningManager.getSuningAreas().getConsumerPhone());
+        request.addRequestParam("address",SuningManager.getSuningAreas().getConsumerAddress());
+        request.addRequestParam("spId",Store.getStore().getStoreId());
+        request.addRequestParam("amount",decimalFormat.format(goodsMoney));
+        request.addRequestParam("provinceId",SuningManager.getSuningAreas().getProvince().getCode());
+        request.addRequestParam("cityId",SuningManager.getSuningAreas().getCity().getCode());
+        request.addRequestParam("countyId",SuningManager.getSuningAreas().getDistrict().getCode());
+        request.addRequestParam("townId",SuningManager.getSuningAreas().getTown().getCode());
+        JSONArray skuArray = new JSONArray();
+        for (int i = 0; i < suningCars.size(); i++) {
+            if (priceHashMap.containsKey(suningCars.get(i).getProductDetail().getSku())) {
+                try {
+                    JSONObject skuObject = new JSONObject();
+                    skuObject.put("number", suningCars.get(i).getProductDetail().getSku());
+                    skuObject.put("num", suningCars.get(i).getProductCount());
+                    skuObject.put("price", priceHashMap.get(suningCars.get(i).getProductDetail().getSku()).getPrice());
+                    skuObject.put("name", suningCars.get(i).getProductDetail().getName());
+                    skuObject.put("attr", suningCars.get(i).getProductDetail().getModel());
+                    skuArray.put(skuObject);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
         }
+        request.addRequestParam("sku",skuArray.toString());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+                ModelSuningAreas suningAreas = SuningManager.getSuningAreas();
+                suningAreas.setConsumerName(consumerNameEditText.getText().toString());
+                suningAreas.setConsumerPhone(consumerPhoneEditText.getText().toString());
+                suningAreas.setConsumerAddress(detailAddressEditText.getText().toString());
+                suningAreas.save();
+            }
 
-        @Override
-        protected String doInBackground(Void... voids) {
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("menberAccount", User.getUser().getUseraccount()));
-            nameValuePairs.add(new BasicNameValuePair("name", SuningManager.getSuningAreas().getConsumerName()));
-            nameValuePairs.add(new BasicNameValuePair("mobile", SuningManager.getSuningAreas().getConsumerPhone()));
-            nameValuePairs.add(new BasicNameValuePair("address", SuningManager.getSuningAreas().getConsumerAddress()));
-            nameValuePairs.add(new BasicNameValuePair("spId", Store.getStore().getStoreId()));
-            nameValuePairs.add(new BasicNameValuePair("amount", decimalFormat.format(goodsMoney)));
-            nameValuePairs.add(new BasicNameValuePair("provinceId", SuningManager.getSuningAreas().getProvince().getCode()));
-            nameValuePairs.add(new BasicNameValuePair("cityId", SuningManager.getSuningAreas().getCity().getCode()));
-            nameValuePairs.add(new BasicNameValuePair("countyId", SuningManager.getSuningAreas().getDistrict().getCode()));
-            nameValuePairs.add(new BasicNameValuePair("townId", SuningManager.getSuningAreas().getTown().getCode()));
-            JSONArray skuArray = new JSONArray();
-            for (int i = 0; i < suningCars.size(); i++) {
-                if (priceHashMap.containsKey(suningCars.get(i).getProductDetail().getSku())) {
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+                Notify.show("下单失败,"+missionMessage.getMessage());
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
                     try {
-                        JSONObject skuObject = new JSONObject();
-                        skuObject.put("number", suningCars.get(i).getProductDetail().getSku());
-                        skuObject.put("num", suningCars.get(i).getProductCount());
-                        skuObject.put("price", priceHashMap.get(suningCars.get(i).getProductDetail().getSku()).getPrice());
-                        skuObject.put("name", suningCars.get(i).getProductDetail().getName());
-                        skuObject.put("attr", suningCars.get(i).getProductDetail().getModel());
-                        skuArray.put(skuObject);
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equals("SUCCESS")) {
+                            Notify.show("下单成功");
+                            SuningCarController.deleteSelectedCars();
+                            ModelSuningOrderResult orderResult = new ModelSuningOrderResult(object.optJSONObject("dataMap"));
+                            if (orderResult.getZongjine() > 0) {
+                                if (paymentFragment.getPaymentType() == OrderConfirmPartPaymentFragment.PAY_TYPE_CODE_ONLINE) {
+                                    payMoney(orderResult.getOrderNumber(), orderResult.getZongjine() + orderResult.getFreight(), PayFragment.ORDER_TYPE_SN);
+                                    getActivity().finish();
+                                    return;
+                                }
+                            }
+                            showOrder(PayFragment.ORDER_TYPE_SN);
+                            getActivity().finish();
+                            return;
+                        }
+                        Notify.show(object.optString("message"));
+                        return;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }else {
+                    Notify.show("下单失败");
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
+    }
+//    class Buy extends AsyncTask<Void, Void, String> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            showLoading();
+//            ModelSuningAreas suningAreas = SuningManager.getSuningAreas();
+//            suningAreas.setConsumerName(consumerNameEditText.getText().toString());
+//            suningAreas.setConsumerPhone(consumerPhoneEditText.getText().toString());
+//            suningAreas.setConsumerAddress(detailAddressEditText.getText().toString());
+//            suningAreas.save();
+//        }
+//
+//        @Override
+//        protected String doInBackground(Void... voids) {
+//            List<NameValuePair> nameValuePairs = new ArrayList<>();
+//            nameValuePairs.add(new BasicNameValuePair("menberAccount", User.getUser().getUseraccount()));
+//            nameValuePairs.add(new BasicNameValuePair("name", SuningManager.getSuningAreas().getConsumerName()));
+//            nameValuePairs.add(new BasicNameValuePair("mobile", SuningManager.getSuningAreas().getConsumerPhone()));
+//            nameValuePairs.add(new BasicNameValuePair("address", SuningManager.getSuningAreas().getConsumerAddress()));
+//            nameValuePairs.add(new BasicNameValuePair("spId", Store.getStore().getStoreId()));
+//            nameValuePairs.add(new BasicNameValuePair("amount", decimalFormat.format(goodsMoney)));
+//            nameValuePairs.add(new BasicNameValuePair("provinceId", SuningManager.getSuningAreas().getProvince().getCode()));
+//            nameValuePairs.add(new BasicNameValuePair("cityId", SuningManager.getSuningAreas().getCity().getCode()));
+//            nameValuePairs.add(new BasicNameValuePair("countyId", SuningManager.getSuningAreas().getDistrict().getCode()));
+//            nameValuePairs.add(new BasicNameValuePair("townId", SuningManager.getSuningAreas().getTown().getCode()));
+//            JSONArray skuArray = new JSONArray();
+//            for (int i = 0; i < suningCars.size(); i++) {
+//                if (priceHashMap.containsKey(suningCars.get(i).getProductDetail().getSku())) {
+//                    try {
+//                        JSONObject skuObject = new JSONObject();
+//                        skuObject.put("number", suningCars.get(i).getProductDetail().getSku());
+//                        skuObject.put("num", suningCars.get(i).getProductCount());
+//                        skuObject.put("price", priceHashMap.get(suningCars.get(i).getProductDetail().getSku()).getPrice());
+//                        skuObject.put("name", suningCars.get(i).getProductDetail().getName());
+//                        skuObject.put("attr", suningCars.get(i).getProductDetail().getModel());
+//                        skuArray.put(skuObject);
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//            nameValuePairs.add(new BasicNameValuePair("sku", skuArray.toString()));
+//            return netUtil.postWithoutCookie(API.API_SUNING_ORDER_ADD, nameValuePairs, false, false);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String s) {
+//            hideLoading();
+//            if (!TextUtils.isEmpty(s)) {
+//                try {
+//                    JSONObject object = new JSONObject(s);
+//                    if (object.optString("state").equals("SUCCESS")) {
+//                        Notify.show("下单成功");
+//                        SuningCarController.deleteSelectedCars();
+//                        ModelSuningOrderResult orderResult = new ModelSuningOrderResult(object.optJSONObject("dataMap"));
+//                        if (orderResult.getZongjine() > 0) {
+//                            if (paymentFragment.getPaymentType() == OrderConfirmPartPaymentFragment.PAY_TYPE_CODE_ONLINE) {
+//                                payMoney(orderResult.getOrderNumber(), orderResult.getZongjine() + orderResult.getFreight(), PayFragment.ORDER_TYPE_SN);
+//                                getActivity().finish();
+//                                return;
+//                            }
+//                        }
+//                        showOrder(PayFragment.ORDER_TYPE_SN);
+//                        getActivity().finish();
+//                        return;
+//                    }
+//                    Notify.show(object.optString("message"));
+//                    return;
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            Notify.show("下单失败");
+//        }
+//    }
+
+    private void getSuningProductPrice(){
+        Request request = new Request();
+        request.setUrl(API.API_SUNING_PRODUCT_PRICE);
+        JSONArray dataArray = new JSONArray();
+        for (int i = 0; i < suningCars.size(); i++) {
+            dataArray.put(suningCars.get(i).getProductDetail().getSku());
+        }
+        JSONObject data = new JSONObject();
+        try {
+            data.put("accessToken", SuningManager.getSignature().getToken());
+            data.put("appKey", SuningManager.appKey);
+            data.put("v", SuningManager.version);
+            data.put("cityId", SuningManager.getSuningAreas().getCity().getCode());
+            data.put("sku", dataArray);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        request.addRequestParam("data", data.toString());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    if (SuningManager.isSignatureOutOfDate(requestMessage.getResult())) {
+                        SuningManager.getNewSignature(getActivity(), new RequestListener() {
+                            @Override
+                            protected void onStart() {
+
+                            }
+
+                            @Override
+                            protected void onFail(MissionMessage missionMessage) {
+
+                            }
+
+                            @Override
+                            protected void onSuccess(RequestMessage requestMessage) {
+                                if (SuningManager.initSignature(requestMessage)) {
+                                    getSuningProductPrice();
+                                }
+                            }
+
+                            @Override
+                            protected void onFinish() {
+
+                            }
+                        });
+                        return;
+                    }
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optBoolean("isSuccess")) {
+                            JSONArray array = object.optJSONArray("result");
+                            if (array != null) {
+                                for (int j = 0; j < array.length(); j++) {
+                                    ModelProductPrice productPrice = new ModelProductPrice(array.optJSONObject(j));
+                                    priceHashMap.put(productPrice.getSkuId(), productPrice);
+                                }
+                                productAdapter.notifyDataSetChanged();
+                                countTotalPrice();
+                            }
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
             }
-            nameValuePairs.add(new BasicNameValuePair("sku", skuArray.toString()));
-            return netUtil.postWithoutCookie(API.API_SUNING_ORDER_ADD, nameValuePairs, false, false);
-        }
 
-        @Override
-        protected void onPostExecute(String s) {
-            hideLoading();
-            if (!TextUtils.isEmpty(s)) {
-                try {
-                    JSONObject object = new JSONObject(s);
-                    if (object.optString("state").equals("SUCCESS")) {
-                        Notify.show("下单成功");
-                        SuningCarController.deleteSelectedCars();
-                        ModelSuningOrderResult orderResult = new ModelSuningOrderResult(object.optJSONObject("dataMap"));
-                        if (orderResult.getZongjine() > 0) {
-                            if (paymentFragment.getPaymentType() == OrderConfirmPartPaymentFragment.PAY_TYPE_CODE_ONLINE) {
-                                payMoney(orderResult.getOrderNumber(), orderResult.getZongjine() + orderResult.getFreight(), PayFragment.ORDER_TYPE_SN);
-                                getActivity().finish();
-                                return;
-                            }
-                        }
-                        showOrder(PayFragment.ORDER_TYPE_SN);
-                        getActivity().finish();
-                        return;
-                    }
-                    Notify.show(object.optString("message"));
-                    return;
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            @Override
+            protected void onFinish() {
+                hideLoading();
             }
-            Notify.show("下单失败");
-        }
+        });
     }
 
-    class GetSuningProductPrice extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            JSONArray dataArray = new JSONArray();
-            for (int i = 0; i < suningCars.size(); i++) {
-                dataArray.put(suningCars.get(i).getProductDetail().getSku());
-            }
-            JSONObject data = new JSONObject();
-            try {
-                data.put("accessToken", SuningManager.getSignature().getToken());
-                data.put("appKey", SuningManager.appKey);
-                data.put("v", SuningManager.version);
-                data.put("cityId", SuningManager.getSuningAreas().getCity().getCode());
-                data.put("sku", dataArray);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("data", data.toString()));
-            return netUtil.postWithoutCookie(API.API_SUNING_PRODUCT_PRICE, nameValuePairs, false, false);
-        }
-
-        /**
-         * {"result":[{"skuId":"108246148","price":15000.00}],"isSuccess":true,"returnMsg":"查询成功。"}
-         */
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            if (SuningManager.isSignatureOutOfDate(result)) {
-                GetNewSignature getNewSignature = new GetNewSignature() {
-                    @Override
-                    protected void onPreExecute() {
-                        showLoading();
-                    }
-
-                    @Override
-                    protected void onPostExecute(Boolean isSuccess) {
-                        hideLoading();
-                        if (isSuccess) {
-                            new GetSuningProductPrice().execute();
-                        }
-                    }
-                };
-                getNewSignature.execute();
-                return;
-            }
-            if (!TextUtils.isEmpty(result)) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optBoolean("isSuccess")) {
-                        JSONArray array = object.optJSONArray("result");
-                        if (array != null) {
-                            for (int j = 0; j < array.length(); j++) {
-                                ModelProductPrice productPrice = new ModelProductPrice(array.optJSONObject(j));
-                                priceHashMap.put(productPrice.getSkuId(), productPrice);
-                            }
-                            productAdapter.notifyDataSetChanged();
-                            countTotalPrice();
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
+//    class GetSuningProductPrice extends AsyncTask<Void, Void, String> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            showLoading();
+//        }
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            JSONArray dataArray = new JSONArray();
+//            for (int i = 0; i < suningCars.size(); i++) {
+//                dataArray.put(suningCars.get(i).getProductDetail().getSku());
+//            }
+//            JSONObject data = new JSONObject();
+//            try {
+//                data.put("accessToken", SuningManager.getSignature().getToken());
+//                data.put("appKey", SuningManager.appKey);
+//                data.put("v", SuningManager.version);
+//                data.put("cityId", SuningManager.getSuningAreas().getCity().getCode());
+//                data.put("sku", dataArray);
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//            List<NameValuePair> nameValuePairs = new ArrayList<>();
+//            nameValuePairs.add(new BasicNameValuePair("data", data.toString()));
+//            return netUtil.postWithoutCookie(API.API_SUNING_PRODUCT_PRICE, nameValuePairs, false, false);
+//        }
+//
+//        /**
+//         * {"result":[{"skuId":"108246148","price":15000.00}],"isSuccess":true,"returnMsg":"查询成功。"}
+//         */
+//        @Override
+//        protected void onPostExecute(String result) {
+//            hideLoading();
+//            if (SuningManager.isSignatureOutOfDate(result)) {
+//                GetNewSignature getNewSignature = new GetNewSignature() {
+//                    @Override
+//                    protected void onPreExecute() {
+//                        showLoading();
+//                    }
+//
+//                    @Override
+//                    protected void onPostExecute(Boolean isSuccess) {
+//                        hideLoading();
+//                        if (isSuccess) {
+//                            new GetSuningProductPrice().execute();
+//                        }
+//                    }
+//                };
+//                getNewSignature.execute();
+//                return;
+//            }
+//            if (!TextUtils.isEmpty(result)) {
+//                try {
+//                    JSONObject object = new JSONObject(result);
+//                    if (object.optBoolean("isSuccess")) {
+//                        JSONArray array = object.optJSONArray("result");
+//                        if (array != null) {
+//                            for (int j = 0; j < array.length(); j++) {
+//                                ModelProductPrice productPrice = new ModelProductPrice(array.optJSONObject(j));
+//                                priceHashMap.put(productPrice.getSkuId(), productPrice);
+//                            }
+//                            productAdapter.notifyDataSetChanged();
+//                            countTotalPrice();
+//                        }
+//                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
 
 }

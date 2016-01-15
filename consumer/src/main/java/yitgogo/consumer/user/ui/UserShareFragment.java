@@ -13,7 +13,7 @@ import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONException;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.tools.API;
 import yitgogo.consumer.tools.EncodeQRTask;
 import yitgogo.consumer.user.model.User;

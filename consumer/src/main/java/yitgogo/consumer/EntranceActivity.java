@@ -2,9 +2,9 @@ package yitgogo.consumer;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.view.WindowManager;
 
 import com.baidu.location.BDLocation;
@@ -12,41 +12,45 @@ import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.location.LocationClientOption.LocationMode;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
+import com.umeng.update.UmengDialogButtonListener;
+import com.umeng.update.UmengDownloadListener;
+import com.umeng.update.UmengUpdateAgent;
+import com.umeng.update.UmengUpdateListener;
+import com.umeng.update.UpdateResponse;
+import com.umeng.update.UpdateStatus;
 
-import org.apache.http.Header;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
 
+import yitgogo.consumer.base.BaseActivity;
 import yitgogo.consumer.main.ui.MainActivity;
 import yitgogo.consumer.store.SelectStoreByAreaFragment;
 import yitgogo.consumer.store.model.Store;
 import yitgogo.consumer.tools.API;
 import yitgogo.consumer.tools.Content;
 import yitgogo.consumer.tools.LogUtil;
-import yitgogo.consumer.tools.PackageTool;
 import yitgogo.consumer.tools.Parameters;
 import yitgogo.consumer.user.model.User;
-import yitgogo.consumer.user.model.VersionInfo;
-import yitgogo.consumer.view.DownloadDialog;
 import yitgogo.consumer.view.NormalAskDialog;
+import yitgogo.consumer.view.Notify;
 
 public class EntranceActivity extends BaseActivity {
 
-    LocationClient locationClient;
-    BDLocation location;
-    int locateTime = 0;
-    boolean disConnect = false;
+    private LocationClient locationClient;
+    private BDLocation location;
+    private int locateTime = 0;
+    private boolean disConnect = false;
+    private UpdateResponse updateResponse;
 
     @Override
     protected void onCreate(Bundle bundle) {
@@ -73,7 +77,7 @@ public class EntranceActivity extends BaseActivity {
         if (disConnect) {
             if (isConnected()) {
                 disConnect = false;
-                new CheckUpdate().execute();
+                checkUpdate();
             } else {
                 NormalAskDialog askDialog = new NormalAskDialog(
                         "无法连接网络，请检查网络设置！", "查看设置", "退出", false) {
@@ -85,6 +89,7 @@ public class EntranceActivity extends BaseActivity {
                             startActivity(intent);
                         } else {
                             finish();
+//                            android.os.Process.killProcess(android.os.Process.myPid());
                         }
                     }
                 };
@@ -104,7 +109,7 @@ public class EntranceActivity extends BaseActivity {
     private void checkConnection() {
         if (isConnected()) {
             //能访问网络，检查更新
-            new CheckUpdate().execute();
+            checkUpdate();
         } else {
             //不能访问网络
             disConnect = true;
@@ -132,7 +137,34 @@ public class EntranceActivity extends BaseActivity {
     private void updateUserLocation() {
         if (User.getUser().isLogin()) {
             if (location != null) {
-                new UpdateUserLocation().execute();
+                Request request = new Request();
+                request.setUrl(API.API_USER_UPDATE_LOCATION);
+                request.setUseCookie(true);
+                request.addRequestParam("member_account", User.getUser().getUseraccount());
+                request.addRequestParam("store_id", Store.getStore().getStoreId());
+                request.addRequestParam("location", location.getAddrStr());
+                request.addRequestParam("coordinate", location.getLongitude() + "," + location.getLatitude());
+                MissionController.startRequestMission(this, request, new RequestListener() {
+                    @Override
+                    protected void onStart() {
+
+                    }
+
+                    @Override
+                    protected void onFail(MissionMessage missionMessage) {
+
+                    }
+
+                    @Override
+                    protected void onSuccess(RequestMessage requestMessage) {
+
+                    }
+
+                    @Override
+                    protected void onFinish() {
+
+                    }
+                });
             }
         }
     }
@@ -197,115 +229,133 @@ public class EntranceActivity extends BaseActivity {
 
     private void getNearestStore(boolean must) {
         final boolean mustGetStore = must;
-        RequestParams requestParams = new RequestParams();
-        requestParams.add("ak", Parameters.CONSTANT_LBS_AK);
-        requestParams.add("geotable_id", Parameters.CONSTANT_LBS_TABLE);
-        requestParams.add("sortby", "distance:1");
-        requestParams.add("radius", "30000");
-        requestParams.add("page_index", "0");
-        requestParams.add("page_size", "1");
-        requestParams.add("location", location.getLongitude() + "," + location.getLatitude());
-        AsyncHttpClient httpClient = new AsyncHttpClient();
-        httpClient.get(API.API_LBS_NEARBY, requestParams,
-                new JsonHttpResponseHandler() {
+        Request request = new Request();
+        request.setUrl(API.API_LBS_NEARBY);
+        request.setRequestType(Request.REQUEST_TYPE_GET);
+        request.addRequestParam("ak", Parameters.CONSTANT_LBS_AK);
+        request.addRequestParam("geotable_id", Parameters.CONSTANT_LBS_TABLE);
+        request.addRequestParam("sortby", "distance:1");
+        request.addRequestParam("radius", "30000");
+        request.addRequestParam("page_index", "0");
+        request.addRequestParam("page_size", "1");
+        request.addRequestParam("location", location.getLongitude() + "," + location.getLatitude());
+        MissionController.startRequestMission(this, request, new RequestListener() {
+            @Override
+            protected void onStart() {
 
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers,
-                                          JSONObject response) {
-                        // {"total":102,"contents":[{"uid":723032242,"tags":"","coord_type":3,"jmdNo":"YT445572733429","phone":"15123568974","weight":0,"location":[104.0866308,30.68404769],"jmdId":"7","type":0,"city":"成都市","distance":49,"title":"易田测试加盟店五","geotable_id":96314,"address":"解放路二段六号凤凰大厦","province":"四川省","create_time":1427430737,"icon_style_id":"sid1","bossName":"张帅的","district":"金牛区"}],"status":0,"size":1}
-                        LogUtil.logInfo("API_LBS_NEARBY", response.toString());
-                        if (statusCode == 200) {
-                            if (response != null) {
-                                JSONArray array;
-                                try {
-                                    array = response.getJSONArray("contents");
-                                    if (array.length() > 0) {
-                                        Content.saveIntContent(Parameters.CACHE_KEY_STORE_TYPE, Parameters.CACHE_VALUE_STORE_TYPE_LOCATED);
-                                        Content.saveStringContent(Parameters.CACHE_KEY_STORE_JSONSTRING, array.getString(0));
-                                        Store.init(getApplicationContext());
-                                        // 自动定位到到最近加盟店，跳转到主页
-                                        jumpToHome();
-                                        return;
-                                    }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+                // 执行到这里说明没有自动定位到到最近加盟店，需要手选
+                if (mustGetStore) {
+                    selectJmd();
+                } else {
+                    jumpToHome();
+                }
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    LogUtil.logInfo("API_LBS_NEARBY", requestMessage.getResult());
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        JSONArray array = object.optJSONArray("contents");
+                        if (array != null) {
+                            if (array.length() > 0) {
+                                Content.saveIntContent(Parameters.CACHE_KEY_STORE_TYPE, Parameters.CACHE_VALUE_STORE_TYPE_LOCATED);
+                                Content.saveStringContent(Parameters.CACHE_KEY_STORE_JSONSTRING, array.getString(0));
+                                Store.init(getApplicationContext());
+                                // 自动定位到到最近加盟店，跳转到主页
+                                jumpToHome();
+                                return;
                             }
                         }
-                        // 执行到这里说明没有自动定位到到最近加盟店，需要手选
-                        if (mustGetStore) {
-                            selectJmd();
-                        } else {
-                            jumpToHome();
-                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                });
+                    // 执行到这里说明没有自动定位到到最近加盟店，需要手选
+                    if (mustGetStore) {
+                        selectJmd();
+                    } else {
+                        jumpToHome();
+                    }
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+
+            }
+        });
     }
 
-    /**
-     * 检查更新
-     *
-     * @author Tiger
-     */
-    class CheckUpdate extends AsyncTask<Void, Void, String> {
+    private void checkUpdate() {
+        UmengUpdateAgent.setUpdateListener(new UmengUpdateListener() {
+            @Override
+            public void onUpdateReturned(int updateStatus, UpdateResponse response) {
+                if (updateStatus == UpdateStatus.Yes) {
+                    updateResponse = response;
+                    showUpdateDialog();
+                    return;
+                }
+                locate();
+            }
+        });
+        UmengUpdateAgent.update(this);
+    }
 
-        @Override
-        protected String doInBackground(Void... params) {
-            return netUtil
-                    .postWithoutCookie(API.API_UPDATE, null, false, false);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            final VersionInfo versionInfo = new VersionInfo(result);
-            if (versionInfo.getVerCode() > PackageTool.getVersionCode()) {
-                NormalAskDialog askDialog = new NormalAskDialog(versionInfo) {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        if (makeSure) {
-                            DownloadDialog downloadDialog = new DownloadDialog(
-                                    versionInfo) {
-                                public void onDismiss(DialogInterface dialog) {
-                                    locate();
-                                    super.onDismiss(dialog);
-                                }
-                            };
-                            downloadDialog.show(getSupportFragmentManager(),
-                                    null);
+    private void showUpdateDialog() {
+        UmengUpdateAgent.setDialogListener(new UmengDialogButtonListener() {
+            @Override
+            public void onClick(int status) {
+                switch (status) {
+                    case UpdateStatus.Update:
+                        File downloadedFile = UmengUpdateAgent.downloadedFile(EntranceActivity.this, updateResponse);
+                        if (downloadedFile != null) {
+                            UmengUpdateAgent.startInstall(EntranceActivity.this, downloadedFile);
+                            finish();
                         } else {
+                            download();
                             locate();
                         }
-                        super.onDismiss(dialog);
-                    }
-                };
-                askDialog.show(getSupportFragmentManager(), null);
-                return;
+                        break;
+                    case UpdateStatus.Ignore:
+                        locate();
+                        break;
+                    case UpdateStatus.NotNow:
+                        locate();
+                        break;
+                }
             }
-            locate();
-        }
+        });
+        UmengUpdateAgent.showUpdateDialog(EntranceActivity.this, updateResponse);
     }
 
-    class UpdateUserLocation extends AsyncTask<Void, Void, String> {
+    private void download() {
+        UmengUpdateAgent.setDownloadListener(new UmengDownloadListener() {
+            @Override
+            public void OnDownloadStart() {
+                Notify.show("正在下载新版本,请在通知栏查看下载进度");
+            }
 
-        @Override
-        protected String doInBackground(Void... params) {
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair("member_account", User
-                    .getUser().getUseraccount()));
-            nameValuePairs.add(new BasicNameValuePair("store_id", Store
-                    .getStore().getStoreId()));
-            nameValuePairs.add(new BasicNameValuePair("location", location
-                    .getAddrStr()));
-            nameValuePairs.add(new BasicNameValuePair("coordinate", location
-                    .getLongitude() + "," + location.getLatitude()));
-            return netUtil.postWithCookie(API.API_USER_UPDATE_LOCATION,
-                    nameValuePairs);
-        }
+            @Override
+            public void OnDownloadUpdate(int i) {
 
-        @Override
-        protected void onPostExecute(String result) {
-            // {"message":"ok","state":"SUCCESS","cacheKey":null,"dataList":[],"totalCount":1,"dataMap":{},"object":{"id":29,"member_account":"13032889558","store_id":1069,"location":"四川省成都市金牛区解放路2段-95号","coordinate":"104.086343,30.68379","record_time":"2015-06-26 09:44:29"}}
-        }
+            }
+
+            @Override
+            public void OnDownloadEnd(int i, String s) {
+                File downloadedFile = UmengUpdateAgent.downloadedFile(EntranceActivity.this, updateResponse);
+                if (downloadedFile != null) {
+                    UmengUpdateAgent.startInstall(EntranceActivity.this, downloadedFile);
+                } else {
+                    Notify.show("下载新版本失败");
+                }
+            }
+        });
+        UmengUpdateAgent.startDownload(EntranceActivity.this, updateResponse);
     }
 
 }

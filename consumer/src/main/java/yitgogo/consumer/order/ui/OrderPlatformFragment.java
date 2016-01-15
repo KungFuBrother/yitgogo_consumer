@@ -1,6 +1,5 @@
 package yitgogo.consumer.order.ui;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -20,11 +19,14 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.smartown.controller.mission.MissionController;
+import com.smartown.controller.mission.MissionMessage;
+import com.smartown.controller.mission.Request;
+import com.smartown.controller.mission.RequestListener;
+import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,7 +34,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import yitgogo.consumer.BaseNotifyFragment;
+import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.order.model.ModelPlatformOrder;
 import yitgogo.consumer.order.model.ModelPlatformOrderProduct;
 import yitgogo.consumer.tools.API;
@@ -102,7 +104,7 @@ public class OrderPlatformFragment extends BaseNotifyFragment {
 
             @Override
             public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
-                new GetOrders().execute();
+                getPlatformOrders();
             }
         });
     }
@@ -118,54 +120,61 @@ public class OrderPlatformFragment extends BaseNotifyFragment {
         pagenum = 0;
         orders.clear();
         orderAdapter.notifyDataSetChanged();
-        new GetOrders().execute();
+        getPlatformOrders();
     }
 
-    class GetOrders extends AsyncTask<Void, Void, String> {
+    private void getPlatformOrders() {
+        pagenum++;
+        Request request = new Request();
+        request.setUrl(API.API_ORDER_LIST);
+        request.addRequestParam("userNumber", User.getUser().getUseraccount());
+        request.addRequestParam("timeslot", "0");
+        request.addRequestParam("pagenum", String.valueOf(pagenum));
+        request.addRequestParam("pagesize", String.valueOf(pagesize));
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
 
-        @Override
-        protected void onPreExecute() {
-            showLoading();
-            pagenum++;
-        }
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+                orderList.onRefreshComplete();
+                pagenum--;
+            }
 
-        @Override
-        protected String doInBackground(Void... arg0) {
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair("userNumber", User.getUser().getUseraccount()));
-            nameValuePairs.add(new BasicNameValuePair("timeslot", "0"));
-            nameValuePairs.add(new BasicNameValuePair("pagenum", String.valueOf(pagenum)));
-            nameValuePairs.add(new BasicNameValuePair("pagesize", String.valueOf(pagesize)));
-            return netUtil.postWithoutCookie(API.API_ORDER_LIST, nameValuePairs, false, false);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            hideLoading();
-            orderList.onRefreshComplete();
-            if (!TextUtils.isEmpty(result)) {
-                try {
-                    JSONObject object = new JSONObject(result);
-                    if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
-                        JSONArray array = object.optJSONArray("dataList");
-                        if (array != null) {
-                            if (array.length() < pagesize) {
-                                orderList.setMode(Mode.PULL_FROM_START);
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                orderList.onRefreshComplete();
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
+                            JSONArray array = object.optJSONArray("dataList");
+                            if (array != null) {
+                                if (array.length() < pagesize) {
+                                    orderList.setMode(Mode.PULL_FROM_START);
+                                }
+                                for (int i = 0; i < array.length(); i++) {
+                                    orders.add(new ModelPlatformOrder(array.getJSONObject(i)));
+                                }
+                                orderAdapter.notifyDataSetChanged();
                             }
-                            for (int i = 0; i < array.length(); i++) {
-                                orders.add(new ModelPlatformOrder(array.getJSONObject(i)));
-                            }
-                            orderAdapter.notifyDataSetChanged();
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                }
+                if (orders.isEmpty()) {
+                    loadingEmpty();
                 }
             }
-            if (orders.isEmpty()) {
-                loadingEmpty();
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
             }
-        }
+        });
     }
 
     class OrderAdapter extends BaseAdapter {
