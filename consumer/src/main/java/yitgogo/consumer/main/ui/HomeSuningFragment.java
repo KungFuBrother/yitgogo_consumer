@@ -1,7 +1,6 @@
 package yitgogo.consumer.main.ui;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
 import android.view.View;
@@ -149,8 +148,7 @@ public class HomeSuningFragment extends BaseNotifyFragment {
                 if (priceHashMap.containsKey(product.getSku())) {
                     if (priceHashMap.get(product.getSku()).getPrice() > 0) {
                         Bundle bundle = new Bundle();
-                        bundle.putString("product", product.getJsonObject().toString());
-                        bundle.putString("price", priceHashMap.get(product.getSku()).getJsonObject().toString());
+                        bundle.putString("skuId", product.getSku());
                         jump(ProductDetailFragment.class.getName(), product.getName(), bundle);
                     } else {
                         Notify.show("此商品暂未设置价格");

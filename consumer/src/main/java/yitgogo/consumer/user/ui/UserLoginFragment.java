@@ -1,6 +1,8 @@
 package yitgogo.consumer.user.ui;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -16,6 +18,7 @@ import com.smartown.controller.mission.MissionMessage;
 import com.smartown.controller.mission.Request;
 import com.smartown.controller.mission.RequestListener;
 import com.smartown.controller.mission.RequestMessage;
+import com.smartown.jni.YtBox;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
@@ -26,6 +29,7 @@ import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.tools.API;
 import yitgogo.consumer.tools.Content;
 import yitgogo.consumer.tools.Parameters;
+import yitgogo.consumer.tools.SignatureTool;
 import yitgogo.consumer.user.model.User;
 import yitgogo.consumer.view.Notify;
 
@@ -144,12 +148,14 @@ public class UserLoginFragment extends BaseNotifyFragment implements
                         JSONObject object = new JSONObject(requestMessage.getResult());
                         if (object.optString("state").equalsIgnoreCase("SUCCESS")) {
                             Notify.show("登录成功");
+
                             Content.saveStringContent(Parameters.CACHE_KEY_MONEY_SN, object.optString("cacheKey"));
                             JSONObject userObject = object.optJSONObject("object");
                             if (userObject != null) {
                                 Content.saveStringContent(Parameters.CACHE_KEY_USER_JSON, userObject.toString());
                                 Content.saveStringContent(Parameters.CACHE_KEY_USER_PASSWORD, getEncodedPassWord(passwordEdit.getText().toString().trim()));
                                 User.init(getActivity());
+                                initSignature();
                             }
                             getActivity().finish();
                             return;
@@ -193,6 +199,11 @@ public class UserLoginFragment extends BaseNotifyFragment implements
             default:
                 break;
         }
+    }
+
+    private void initSignature() {
+        TelephonyManager telephonyManager = (TelephonyManager) getActivity().getSystemService(Context.TELEPHONY_SERVICE);
+        SignatureTool.saveSignature(YtBox.encode(SignatureTool.key, User.getUser().getUseraccount() + "ytgogo" + telephonyManager.getDeviceId()));
     }
 
 }

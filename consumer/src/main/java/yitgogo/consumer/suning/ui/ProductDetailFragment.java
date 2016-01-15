@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,12 +29,17 @@ import com.smartown.controller.mission.RequestMessage;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.product.ui.WebFragment;
-import yitgogo.consumer.suning.model.ModelProduct;
+import yitgogo.consumer.suning.model.ModelProductDetail;
+import yitgogo.consumer.suning.model.ModelProductImage;
 import yitgogo.consumer.suning.model.ModelProductPrice;
 import yitgogo.consumer.suning.model.SuningCarController;
 import yitgogo.consumer.suning.model.SuningManager;
@@ -54,10 +60,12 @@ public class ProductDetailFragment extends BaseNotifyFragment {
 
     ImageAdapter imageAdapter;
 
-    ModelProduct product = new ModelProduct();
+    ModelProductDetail product = new ModelProductDetail();
+    List<ModelProductImage> productImages = new ArrayList<>();
     ModelProductPrice productPrice = new ModelProductPrice();
 
     Bundle bundle = new Bundle();
+    String skuId = "";
 
     String state = "";
 
@@ -65,11 +73,7 @@ public class ProductDetailFragment extends BaseNotifyFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_product_suning_detail);
-        try {
-            init();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        init();
         findViews();
     }
 
@@ -93,18 +97,15 @@ public class ProductDetailFragment extends BaseNotifyFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        getProductStock();
+        getProductDetail();
     }
 
-    private void init() throws JSONException {
+    private void init() {
         measureScreen();
         bundle = getArguments();
         if (bundle != null) {
-            if (bundle.containsKey("product")) {
-                product = new ModelProduct(new JSONObject(bundle.getString("product")));
-            }
-            if (bundle.containsKey("price")) {
-                productPrice = new ModelProductPrice(new JSONObject(bundle.getString("price")));
+            if (bundle.containsKey("skuId")) {
+                skuId = bundle.getString("skuId");
             }
         }
         imageAdapter = new ImageAdapter();
@@ -156,11 +157,13 @@ public class ProductDetailFragment extends BaseNotifyFragment {
         imagePager.setLayoutParams(layoutParams);
         imagePager.setAdapter(imageAdapter);
         imageIndexText.setText("1/" + imageAdapter.getCount());
+    }
+
+    private void showDetail() {
         nameTextView.setText(product.getName());
-        priceTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format(productPrice.getPrice()));
         brandTextView.setText(product.getBrand());
         modelTextView.setText(product.getModel());
-//        serviceTextView.setText(Html.fromHtml(productDetail.getService()));
+        serviceTextView.setText(Html.fromHtml(product.getService()));
     }
 
     @SuppressWarnings("deprecation")
@@ -229,6 +232,8 @@ public class ProductDetailFragment extends BaseNotifyFragment {
                 if (state.equals("00")) {
                     if (productPrice.getPrice() > 0) {
                         if (User.getUser().isLogin()) {
+                            Bundle bundle = new Bundle();
+                            bundle.putString("product", product.getJsonObject().toString());
                             jump(SuningProductBuyFragment.class.getName(), "确认订单", bundle);
                         } else {
                             Toast.makeText(getActivity(), "请先登录", Toast.LENGTH_SHORT).show();
@@ -272,6 +277,256 @@ public class ProductDetailFragment extends BaseNotifyFragment {
     private void setImagePosition(int imagePosition) {
         imagePager.setCurrentItem(imagePosition, true);
         imageIndexText.setText((imagePosition + 1) + "/" + imageAdapter.getCount());
+    }
+
+    private void getProductDetail() {
+        Request request = new Request();
+        request.setUrl(API.API_SUNING_PRODUCT_DETAIL);
+        JSONObject data = new JSONObject();
+        try {
+            data.put("accessToken", SuningManager.getSignature().getToken());
+            data.put("appKey", SuningManager.appKey);
+            data.put("v", SuningManager.version);
+            data.put("sku", skuId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        request.addRequestParam("data", data.toString());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+                    @Override
+                    protected void onStart() {
+                        showLoading();
+                    }
+
+                    @Override
+                    protected void onFail(MissionMessage missionMessage) {
+
+                    }
+
+                    @Override
+                    protected void onSuccess(RequestMessage requestMessage) {
+                        if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                            if (SuningManager.isSignatureOutOfDate(requestMessage.getResult())) {
+                                SuningManager.getNewSignature(getActivity(), new RequestListener() {
+                                    @Override
+                                    protected void onStart() {
+
+                                    }
+
+                                    @Override
+                                    protected void onFail(MissionMessage missionMessage) {
+
+                                    }
+
+                                    @Override
+                                    protected void onSuccess(RequestMessage requestMessage) {
+                                        if (SuningManager.initSignature(requestMessage)) {
+                                            getProductDetail();
+                                        }
+                                    }
+
+                                    @Override
+                                    protected void onFinish() {
+
+                                    }
+                                });
+                                return;
+                            }
+                            try {
+                                JSONObject object = new JSONObject(requestMessage.getResult());
+                                if (object.optBoolean("isSuccess")) {
+                                    product = new ModelProductDetail(object);
+                                    showDetail();
+                                    getProductImage();
+                                    getProductPrice();
+                                    getProductStock();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    @Override
+                    protected void onFinish() {
+                        hideLoading();
+                    }
+                }
+
+        );
+    }
+
+    private void getProductImage() {
+        Request request = new Request();
+        request.setUrl(API.API_SUNING_PRODUCT_IMAGES);
+        JSONArray dataArray = new JSONArray();
+        dataArray.put(product.getSku());
+        JSONObject data = new JSONObject();
+        try {
+            data.put("accessToken", SuningManager.getSignature().getToken());
+            data.put("appKey", SuningManager.appKey);
+            data.put("v", SuningManager.version);
+            data.put("sku", dataArray);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        request.addRequestParam("data", data.toString());
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    if (SuningManager.isSignatureOutOfDate(requestMessage.getResult())) {
+                        SuningManager.getNewSignature(getActivity(), new RequestListener() {
+                            @Override
+                            protected void onStart() {
+
+                            }
+
+                            @Override
+                            protected void onFail(MissionMessage missionMessage) {
+
+                            }
+
+                            @Override
+                            protected void onSuccess(RequestMessage requestMessage) {
+                                if (SuningManager.initSignature(requestMessage)) {
+                                    getProductImage();
+                                }
+                            }
+
+                            @Override
+                            protected void onFinish() {
+
+                            }
+                        });
+                        return;
+                    }
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optBoolean("isSuccess")) {
+                            JSONArray array = object.optJSONArray("result");
+                            if (array != null) {
+                                if (array.length() > 0) {
+                                    JSONObject imageObject = array.optJSONObject(0);
+                                    if (imageObject != null) {
+                                        JSONArray imageArray = imageObject.optJSONArray("urls");
+                                        if (imageArray != null) {
+                                            for (int i = 0; i < imageArray.length(); i++) {
+                                                productImages.add(new ModelProductImage(imageArray.optJSONObject(i)));
+                                            }
+                                            imageAdapter.notifyDataSetChanged();
+                                            imageIndexText.setText("1/" + imageAdapter.getCount());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
+    }
+
+    private void getProductPrice() {
+        Request request = new Request();
+        request.setUrl(API.API_SUNING_PRODUCT_PRICE);
+
+        JSONArray skuJsonArray = new JSONArray();
+        skuJsonArray.put(product.getSku());
+
+        JSONObject data = new JSONObject();
+        try {
+            data.put("accessToken", SuningManager.getSignature().getToken());
+            data.put("appKey", SuningManager.appKey);
+            data.put("v", SuningManager.version);
+            data.put("cityId", SuningManager.getSuningAreas().getCity().getCode());
+            data.put("sku", skuJsonArray);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        request.addRequestParam("data", data.toString());
+
+        MissionController.startRequestMission(getActivity(), request, new RequestListener() {
+            @Override
+            protected void onStart() {
+                showLoading();
+            }
+
+            @Override
+            protected void onFail(MissionMessage missionMessage) {
+                Notify.show("查询价格失败");
+            }
+
+            @Override
+            protected void onSuccess(RequestMessage requestMessage) {
+                if (!TextUtils.isEmpty(requestMessage.getResult())) {
+                    if (SuningManager.isSignatureOutOfDate(requestMessage.getResult())) {
+                        SuningManager.getNewSignature(getActivity(), new RequestListener() {
+                            @Override
+                            protected void onStart() {
+
+                            }
+
+                            @Override
+                            protected void onFail(MissionMessage missionMessage) {
+
+                            }
+
+                            @Override
+                            protected void onSuccess(RequestMessage requestMessage) {
+                                if (SuningManager.initSignature(requestMessage)) {
+                                    getProductStock();
+                                }
+                            }
+
+                            @Override
+                            protected void onFinish() {
+
+                            }
+                        });
+                        return;
+                    }
+                    try {
+                        JSONObject object = new JSONObject(requestMessage.getResult());
+                        if (object.optBoolean("isSuccess")) {
+                            JSONArray array = object.optJSONArray("result");
+                            if (array != null) {
+                                if (array.length() > 0) {
+                                    productPrice = new ModelProductPrice(array.optJSONObject(0));
+                                    priceTextView.setText(Parameters.CONSTANT_RMB + decimalFormat.format(productPrice.getPrice()));
+                                    return;
+                                }
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Notify.show("查询价格失败");
+            }
+
+            @Override
+            protected void onFinish() {
+                hideLoading();
+            }
+        });
     }
 
     private void getProductStock() {
@@ -368,7 +623,7 @@ public class ProductDetailFragment extends BaseNotifyFragment {
 
         @Override
         public int getCount() {
-            return product.getImages().size();
+            return productImages.size();
         }
 
         @Override
@@ -380,7 +635,7 @@ public class ProductDetailFragment extends BaseNotifyFragment {
                     .findViewById(R.id.view_pager_img);
             final ProgressBar spinner = (ProgressBar) imageLayout
                     .findViewById(R.id.view_pager_loading);
-            ImageLoader.getInstance().displayImage(product.getImages().get(position).getImg(),
+            ImageLoader.getInstance().displayImage(productImages.get(position).getPath(),
                     imageView, new SimpleImageLoadingListener() {
                         @Override
                         public void onLoadingStarted(String imageUri, View view) {

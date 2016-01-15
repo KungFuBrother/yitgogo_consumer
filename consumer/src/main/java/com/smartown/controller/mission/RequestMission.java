@@ -3,6 +3,8 @@ package com.smartown.controller.mission;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.smartown.jni.YtBox;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -22,6 +24,7 @@ import yitgogo.consumer.tools.Content;
 import yitgogo.consumer.tools.LogUtil;
 import yitgogo.consumer.tools.PackageTool;
 import yitgogo.consumer.tools.Parameters;
+import yitgogo.consumer.tools.SignatureTool;
 import yitgogo.consumer.user.model.User;
 
 public class RequestMission extends Mission {
@@ -52,6 +55,7 @@ public class RequestMission extends Mission {
             httpURLConnection.setConnectTimeout(5000);//连接超时 单位毫秒
             httpURLConnection.setReadTimeout(5000);//读取超时 单位毫秒
             httpURLConnection.setRequestProperty("version", PackageTool.getVersionName());
+            httpURLConnection.setRequestProperty("token", YtBox.encode(SignatureTool.key, SignatureTool.getSignature() + System.currentTimeMillis()));
             if (request.isUseCookie()) {
                 if (request.getUrl().startsWith(API.IP_PUBLIC)) {
                     httpURLConnection.setRequestProperty("Cookie", CookieController.getCookie(API.IP_PUBLIC));
@@ -202,6 +206,8 @@ public class RequestMission extends Mission {
             httpURLConnection.setUseCaches(false); // Post 请求不能使用缓存
             httpURLConnection.setConnectTimeout(5000);//连接超时 单位毫秒
             httpURLConnection.setReadTimeout(5000);//读取超时 单位毫秒
+            httpURLConnection.setRequestProperty("version", PackageTool.getVersionName());
+            httpURLConnection.setRequestProperty("token", YtBox.encode(SignatureTool.key, SignatureTool.getSignature() + System.currentTimeMillis()));
             if (isCanceled()) {
                 return;
             }

@@ -1,10 +1,11 @@
 package yitgogo.consumer.main.ui;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -19,6 +20,7 @@ import com.smartown.controller.mission.MissionMessage;
 import com.smartown.controller.mission.Request;
 import com.smartown.controller.mission.RequestListener;
 import com.smartown.controller.mission.RequestMessage;
+import com.smartown.jni.YtBox;
 import com.smartown.yitian.gogo.R;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.update.UmengDialogButtonListener;
@@ -43,6 +45,7 @@ import yitgogo.consumer.store.model.Store;
 import yitgogo.consumer.tools.API;
 import yitgogo.consumer.tools.Content;
 import yitgogo.consumer.tools.Parameters;
+import yitgogo.consumer.tools.SignatureTool;
 import yitgogo.consumer.user.model.User;
 import yitgogo.consumer.user.ui.OpenStoreFragment;
 import yitgogo.consumer.user.ui.UserAddressFragment;
@@ -238,6 +241,7 @@ public class HomeUserFragment extends BaseNotifyFragment implements
                                 loginButton.setText("登录");
                                 userNameTextView.setText("");
                                 userLevelTextView.setText("");
+                                initSignature();
                             }
                             super.onDismiss(dialog);
                         }
@@ -263,6 +267,11 @@ public class HomeUserFragment extends BaseNotifyFragment implements
         } else {
             jump(UserLoginFragment.class.getName(), "会员登录");
         }
+    }
+
+    private void initSignature() {
+        TelephonyManager telephonyManager = (TelephonyManager) getActivity().getSystemService(Context.TELEPHONY_SERVICE);
+        SignatureTool.saveSignature(YtBox.encode(SignatureTool.key, "ytgogo" + telephonyManager.getDeviceId()));
     }
 
     private void getUserInfo() {

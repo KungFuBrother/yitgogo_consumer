@@ -23,6 +23,8 @@ import com.umeng.analytics.MobclickAgent;
 import java.io.File;
 
 import yitgogo.consumer.base.BaseNotifyFragment;
+import yitgogo.consumer.local.ui.LocalGoodsDetailFragment;
+import yitgogo.consumer.local.ui.LocalServiceDetailFragment;
 
 public class WebFragment extends BaseNotifyFragment {
 
@@ -202,7 +204,38 @@ public class WebFragment extends BaseNotifyFragment {
 
         @JavascriptInterface
         public boolean showProductInfo(String productId) {
-            showProductDetail(productId, "商品详情", CaptureActivity.SALE_TYPE_NONE);
+            String id = productId;
+            int type = 1;
+
+            if (productId.contains("-")) {
+                int index = productId.lastIndexOf("-");
+                id = productId.substring(0, index);
+                try {
+                    type = Integer.parseInt(productId.substring(index + 1, productId.length()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            switch (type) {
+                case 1:
+                    showProductDetail(id, "商品详情", CaptureActivity.SALE_TYPE_NONE);
+                    break;
+                case 2:
+                    Bundle bundle2 = new Bundle();
+                    bundle2.putString("id", id);
+                    jump(LocalGoodsDetailFragment.class.getName(), "商品详情", bundle2);
+                    break;
+                case 3:
+                    Bundle bundle3 = new Bundle();
+                    bundle3.putString("productId", id);
+                    jump(LocalServiceDetailFragment.class.getName(), "商品详情", bundle3);
+                    break;
+                case 4:
+                    Bundle bundle4 = new Bundle();
+                    bundle4.putString("skuId", id);
+                    jump(yitgogo.consumer.suning.ui.ProductDetailFragment.class.getName(), "商品详情", bundle4);
+                    break;
+            }
             return true;
         }
     }

@@ -2,6 +2,8 @@ package yitgogo.consumer;
 
 import android.app.Application;
 import android.graphics.Bitmap;
+import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 
 import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -22,6 +24,7 @@ import yitgogo.consumer.tools.Content;
 import yitgogo.consumer.tools.LogUtil;
 import yitgogo.consumer.tools.PackageTool;
 import yitgogo.consumer.tools.ScreenUtil;
+import yitgogo.consumer.tools.SignatureTool;
 import yitgogo.consumer.user.model.User;
 import yitgogo.consumer.view.Notify;
 
@@ -46,6 +49,7 @@ public class YitgogoApplication extends Application {
         ScreenUtil.init(this);
         initImageLoader();
         initUmeng();
+        initSignature();
     }
 
     private void initImageLoader() {
@@ -98,10 +102,13 @@ public class YitgogoApplication extends Application {
         UmengUpdateAgent.setUpdateOnlyWifi(false);
         UmengUpdateAgent.setUpdateAutoPopup(false);
 
-        String encodedString = YtBox.encode("0000000000000000", "123456789");
-        System.out.println(encodedString.trim());
-        System.out.println(YtBox.decode("0000000000000000", encodedString).trim());
+    }
 
+    private void initSignature() {
+        if (TextUtils.isEmpty(SignatureTool.getSignature())) {
+            TelephonyManager telephonyManager = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
+            SignatureTool.saveSignature(YtBox.encode(SignatureTool.key, User.getUser().getUseraccount() + "ytgogo" + telephonyManager.getDeviceId()));
+        }
     }
 
 }

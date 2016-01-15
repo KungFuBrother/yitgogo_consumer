@@ -26,7 +26,7 @@ import yitgogo.consumer.base.BaseNotifyFragment;
 import yitgogo.consumer.money.ui.PayFragment;
 import yitgogo.consumer.order.ui.OrderConfirmPartPaymentFragment;
 import yitgogo.consumer.store.model.Store;
-import yitgogo.consumer.suning.model.ModelProduct;
+import yitgogo.consumer.suning.model.ModelProductDetail;
 import yitgogo.consumer.suning.model.ModelProductPrice;
 import yitgogo.consumer.suning.model.ModelSuningAreas;
 import yitgogo.consumer.suning.model.ModelSuningOrderResult;
@@ -48,7 +48,7 @@ public class SuningProductBuyFragment extends BaseNotifyFragment {
     EditText consumerNameEditText, consumerPhoneEditText, detailAddressEditText;
     TextView areaTextView;
 
-    ModelProduct product = new ModelProduct();
+    ModelProductDetail product = new ModelProductDetail();
     ModelProductPrice productPrice = new ModelProductPrice();
 
     OrderConfirmPartPaymentFragment paymentFragment;
@@ -112,7 +112,7 @@ public class SuningProductBuyFragment extends BaseNotifyFragment {
         Bundle bundle = getArguments();
         if (bundle != null) {
             if (bundle.containsKey("product")) {
-                product = new ModelProduct(new JSONObject(bundle.getString("product")));
+                product = new ModelProductDetail(new JSONObject(bundle.getString("product")));
             }
         }
         paymentFragment = new OrderConfirmPartPaymentFragment(true, true, false);
@@ -281,7 +281,7 @@ public class SuningProductBuyFragment extends BaseNotifyFragment {
             JSONObject skuObject = new JSONObject();
             skuObject.put("number", product.getSku());
             skuObject.put("num", buyCount);
-            skuObject.put("price", productPrice.getPrice());
+            skuObject.put("price", decimalFormat.format(productPrice.getPrice()));
             skuObject.put("name", product.getName());
             skuObject.put("attr", product.getModel());
             skuArray.put(skuObject);

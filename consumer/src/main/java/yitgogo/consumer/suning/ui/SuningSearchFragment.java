@@ -135,8 +135,7 @@ public class SuningSearchFragment extends BaseNotifyFragment {
                 if (priceHashMap.containsKey(product.getSku())) {
                     if (priceHashMap.get(product.getSku()).getPrice() > 0) {
                         Bundle bundle = new Bundle();
-                        bundle.putString("product", product.getJsonObject().toString());
-                        bundle.putString("price", priceHashMap.get(product.getSku()).getJsonObject().toString());
+                        bundle.putString("skuId", product.getSku());
                         jump(ProductDetailFragment.class.getName(), product.getName(), bundle);
                     } else {
                         Notify.show("此商品暂未设置价格");
