@@ -299,7 +299,11 @@ public class LocalServiceDetailFragment extends BaseNotifyFragment {
     private void getServiceDetail() {
         Request request = new Request();
         request.setUrl(API.API_LOCAL_BUSINESS_SERVICE_DETAIL);
-        request.addRequestParam("productId", productId);
+        if (productId.startsWith("YT")) {
+            request.addRequestParam("productNumber", productId);
+        } else {
+            request.addRequestParam("productId", productId);
+        }
         MissionController.startRequestMission(getActivity(), request, new RequestListener() {
             @Override
             protected void onStart() {
